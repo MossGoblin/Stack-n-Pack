@@ -8,6 +8,7 @@ public class StorageMaster : MonoBehaviour
     StorageAreaCreator areaCreator;
     CrateMaster crateMaster;
 
+    [SerializeField] PlayerController player;
     [SerializeField] int initialRandomSpawnNumber;
 
     void Start()
@@ -31,12 +32,20 @@ public class StorageMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleInput();
+    }
+
+    private void HandleInput()
+    {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            //if (areaCreator.HasSpace())
-            //{
-            //    crateMaster.SpawnCrateAtRandomPsition(1);
-            //}
+            // check if the hold is empty and create a random crate inside if it is
+            if (player.crateOnHold == 0)
+            {
+                int randType = (int)Mathf.Round(Random.Range(1, 5));
+                player.crateOnHold = randType;
+            }
+
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
