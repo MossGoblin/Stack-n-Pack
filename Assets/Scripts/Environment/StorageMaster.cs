@@ -18,10 +18,10 @@ public class StorageMaster : MonoBehaviour
         if (areaCreator.CreateFloor())
         {
             Debug.Log("Floor created");
-            if (crateMaster.SpawnCrateAtRandomPsition(initialRandomSpawnNumber));
-            {
-                Debug.Log("master: Done");
-            }
+            //if (crateMaster.SpawnCrateAtRandomPsition(initialRandomSpawnNumber));
+            //{
+            //    Debug.Log("master: Done");
+            //}
         }
 
 
@@ -33,10 +33,10 @@ public class StorageMaster : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (areaCreator.HasSpace())
-            {
-                crateMaster.SpawnCrateAtRandomPsition(1);
-            }
+            //if (areaCreator.HasSpace())
+            //{
+            //    crateMaster.SpawnCrateAtRandomPsition(1);
+            //}
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))

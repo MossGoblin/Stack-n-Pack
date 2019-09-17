@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour
         bool crateToBeReleased = false;
         bool crateIsReleased = false;
         bool crateToBePickedUp = false;
+        bool moved = false;
 
         // check for storage boundaries
         int desiredX = (int)(playerTransform.position.x + directionX);
@@ -124,11 +125,16 @@ public class PlayerController : MonoBehaviour
                 crateOnHold = 0;
             }
 
-            // 05.02 move to new location
-            playerTransform.Translate(new Vector3(directionX, directionY));
+            // 05.02 move to new location if OK
+            if ((crateToBePickedUp && crateOnHold == 0) || !crateToBePickedUp)
+            {
+                playerTransform.Translate(new Vector3(directionX, directionY));
+                moved = true;
+
+            }
 
             // 05.03 pick up new crate if any
-            if (crateToBePickedUp)
+            if (moved && crateToBePickedUp)
             {
                 GameObject incomingCrate = GetCrateFromCoordinates((int)transform.position.x, (int)transform.position.y);
                 crateOnHold = GetCrateTypeFromName(incomingCrate);
