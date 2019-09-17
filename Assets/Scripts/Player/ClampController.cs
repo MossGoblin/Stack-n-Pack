@@ -25,7 +25,7 @@ public class ClampController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player.GetComponent<PlayerController>().releaseFlag)
+        if (player.GetComponent<PlayerController>().releaseClampFlag)
         {
             clampImage.sprite = clampSpriteOpen;
         }

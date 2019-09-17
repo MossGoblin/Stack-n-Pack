@@ -27,24 +27,24 @@ public class CrateHoldController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameObject crateOnHold = player.GetComponent<PlayerController>().crateOnHold;
-        if (crateOnHold == null)
+        int crateOnHold = player.GetComponent<PlayerController>().crateOnHold;
+        if (crateOnHold == 0)
         {
             cargoImage.sprite = crateEmpty;
         }
-        else if(crateOnHold.name == "crate 01")
+        else if(crateOnHold == 1)
         {
             cargoImage.sprite = crateOne;
         }
-        else if (crateOnHold.name == "crate 02")
+        else if (crateOnHold ==  2)
         {
             cargoImage.sprite = crateTwo;
         }
-        else if (crateOnHold.name == "crate 03")
+        else if (crateOnHold == 3)
         {
             cargoImage.sprite = crateThree;
         }
-        else if (crateOnHold.name == "crate 04")
+        else if (crateOnHold == 4)
         {
             cargoImage.sprite = crateFour;
         }

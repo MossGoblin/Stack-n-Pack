@@ -29,25 +29,9 @@ public class StorageAreaCreator : MonoBehaviour
         {
             for (int countHeight = 0; countHeight < storageAreaH; countHeight++)
             {
-                vacancyGrid[countWidth, countHeight] = true;
+                MarkVacancyGrid(countWidth, countHeight, true);
             }
         }
-
-        // init test grid - diagonal
-        // for (int countWidth = 0; countWidth < storageAreaW; countWidth++)
-        // {
-        //     for (int countHeight = 0; countHeight < storageAreaH; countHeight++)
-        //     {
-        //         if (countWidth == countHeight)
-        //         {
-        //             vacancyStatus[countWidth, countHeight] = true;
-        //         }
-        //         else
-        //         {
-        //             vacancyStatus[countWidth, countHeight] = false;
-        //         }
-        //     }
-        // }
     }
 
     internal bool HasSpace()
@@ -109,14 +93,23 @@ public class StorageAreaCreator : MonoBehaviour
         }
         //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
     }
-    public bool IsTileAvailableForMove(int coordW, int coordH)
+    public bool IsTileVacant(int coordW, int coordH)
     {
-        bool result = vacancyGrid[coordW, coordH];
         return vacancyGrid[coordW, coordH];
     }
 
-    public void MarkVacantyGrid(int coordW, int coordH)
+    public void MarkVacancyGrid(int coordW, int coordH, bool free)
     {
-        vacancyGrid[coordW, coordH] = false;
+        vacancyGrid[coordW, coordH] = free;
+    }
+
+    public int GetRelToAbs_H(int y)
+    {
+        return y - storageAreaOriginH;
+    }
+
+    public int GetRelToAbs_W(int x)
+    {
+        return x - storageAreaOriginW;
     }
 }

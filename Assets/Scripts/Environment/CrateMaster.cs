@@ -30,7 +30,7 @@ public class CrateMaster : MonoBehaviour
         
     }
 
-    public bool SpawnCrate(int number)
+    public bool SpawnCrateAtRandomPsition(int number)
     {
         for (int count = 0; count < number; count++)
         {
@@ -50,34 +50,61 @@ public class CrateMaster : MonoBehaviour
             positionH = randomH + storageCreator.storageAreaOriginH;
             Debug.Log("found spot @ " + randomW + " / " + randomH);
 
-            GameObject crateToSpawn;
             // Choose random crate type
             int crateType = Random.Range(1, 5);
-            if (crateType == 1)
-            {
-                crateToSpawn = crateOne;
-            }
-            else if (crateType == 2)
-            {
-                crateToSpawn = crateTwo;
-            }
-            else if (crateType == 3)
-            {
-                crateToSpawn = crateThree;
-            }
-            else
-            {
-                crateToSpawn = crateFour;
-            }
-            GameObject newCrate = Instantiate(crateToSpawn, new Vector3(positionW, positionH), Quaternion.identity);
 
-            cratesList.Add(newCrate);
-            newCrate.transform.SetParent(crateHolder);
-            newCrate.name = "crate 0" + crateType;
-            storageCreator.MarkVacantyGrid((int)randomW, (int)randomH);
+            bool result = CreateCrateByType(crateType, randomW, randomH);
+
             Debug.Log("crate @ " + randomW + " / " + randomH);
         }
 
         return true;
+    }
+
+    public bool CreateCrateByType(int crateType, float coordW, float coordH)
+    {
+        GameObject newCrate = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity);
+        RegisterCrate(newCrate);
+        newCrate.transform.SetParent(crateHolder);
+        newCrate.name = "crate 0" + crateType;
+        int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_W((int)coordW);
+        int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_H((int)coordH);
+        storageCreator.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
+        Debug.Log("crate @ " + coordW + " / " + coordH);
+
+        return true;
+    }
+
+    public GameObject NewCrateByType(int crateType)
+    {
+        GameObject crateToSpawn;
+        if (crateType == 1)
+        {
+            crateToSpawn = crateOne;
+        }
+        else if (crateType == 2)
+        {
+            crateToSpawn = crateTwo;
+        }
+        else if (crateType == 3)
+        {
+            crateToSpawn = crateThree;
+        }
+        else
+        {
+            crateToSpawn = crateFour;
+        }
+
+        return crateToSpawn;
+    }
+
+    public void RegisterCrate(GameObject newCrate)
+    {
+        cratesList.Add(newCrate);
+    }
+
+    public void EraseCrate(GameObject newCrate)
+    {
+        cratesList.Remove(newCrate);
     }
 }
