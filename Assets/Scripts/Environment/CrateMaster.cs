@@ -15,7 +15,13 @@ public class CrateMaster : MonoBehaviour
     float positionH;
 
     [SerializeField] public List<GameObject> cratesList; // list of all the crates
+    
+    // stack structures
+    // 1 - a grid tracking which positions are checked
+    private bool[,] checkGrid;
 
+    // 2 - a list of groups - may contain up to toal area / 2 number of groups
+    private List<List<GameObject>> groupList;
 
     // Start is called before the first frame update
     void Start()
@@ -106,5 +112,24 @@ public class CrateMaster : MonoBehaviour
     public void EraseCrate(GameObject newCrate)
     {
         cratesList.Remove(newCrate);
+    }
+
+    private void BuildGroups()
+    {
+        // RECURSIVE
+        // start from Origin
+        // find the first unckecked crate
+        // mark all neighbours
+        // check all neighbours
+
+        // start group
+        // keep track of current group
+        // take unchecked cell
+        // add to current group
+        // put all unchecked neighbours in a queue
+        // check all cells in the queue until it is empty
+        // change current group
+        // find next unchecked cell
+
     }
 }

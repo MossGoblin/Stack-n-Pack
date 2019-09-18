@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Environment\CrateMaster.cs" />
+    <Compile Include="Assets\Scripts\Environment\CrateStack.cs" />
+    <Compile Include="Assets\Scripts\Environment\StackController.cs" />
     <Compile Include="Assets\Scripts\Environment\StorageAreaCreator.cs" />
     <Compile Include="Assets\Scripts\Environment\StorageMaster.cs" />
     <Compile Include="Assets\Scripts\Player\ClampController.cs" />

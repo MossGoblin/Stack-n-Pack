@@ -17,7 +17,7 @@ public class StorageAreaCreator : MonoBehaviour
     public int storageAreaEndPointW;
     public int storageAreaEndPointH;
 
-    bool[,] vacancyGrid;
+    private bool[,] vacancyGrid;
 
 
     void Awake()
