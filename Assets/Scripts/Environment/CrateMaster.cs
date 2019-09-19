@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ public class CrateMaster : MonoBehaviour
     // stack structures
     // 1 - a grid tracking which positions are checked
     private bool[,] checkGrid;
+    // temporary grid to track group numbers by cell
+    private int[,] groupGrid;
 
     // 2 - a list of groups - may contain up to toal area / 2 number of groups
     private List<List<GameObject>> groupList;
@@ -27,13 +30,12 @@ public class CrateMaster : MonoBehaviour
     void Start()
     {
         cratesList = new List<GameObject>();
-        
+        groupList = new List<List<GameObject>>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public bool SpawnCrateAtRandomPsition(int number)
@@ -43,13 +45,13 @@ public class CrateMaster : MonoBehaviour
             // find random coordinates
             float maxW = storageCreator.storageAreaW-1;
             float maxH = storageCreator.storageAreaH-1;
-            int randomW = (int)Mathf.Round(Random.Range(0, maxW));
-            int randomH = (int)Mathf.Round(Random.Range(0, maxH));
+            int randomW = (int)Mathf.Round(UnityEngine.Random.Range(0, maxW));
+            int randomH = (int)Mathf.Round(UnityEngine.Random.Range(0, maxH));
 
             while (!storageCreator.IsTileAvailableForCrate(randomW, randomH))
             {
-                randomW = randomW = (int)Mathf.Round(Random.Range(0, maxW));
-                randomH = randomH = (int)Mathf.Round(Random.Range(0, maxH));
+                randomW = randomW = (int)Mathf.Round(UnityEngine.Random.Range(0, maxW));
+                randomH = randomH = (int)Mathf.Round(UnityEngine.Random.Range(0, maxH));
             }
 
             positionW = randomW + storageCreator.storageAreaOriginW;
@@ -57,7 +59,7 @@ public class CrateMaster : MonoBehaviour
             Debug.Log("found spot @ " + randomW + " / " + randomH);
 
             // Choose random crate type
-            int crateType = Random.Range(1, 5);
+            int crateType = UnityEngine.Random.Range(1, 5);
 
             bool result = CreateCrateByType(crateType, randomW, randomH);
 
@@ -114,22 +116,97 @@ public class CrateMaster : MonoBehaviour
         cratesList.Remove(newCrate);
     }
 
-    private void BuildGroups()
+    public void BuildGroups()
     {
-        // RECURSIVE
-        // start from Origin
-        // find the first unckecked crate
-        // mark all neighbours
-        // check all neighbours
+        // NON-RECURSIVE APPROACH
+        // prepare to loop the grip multiple times
+        int loopCount = 0;
+        bool cleanCheck = false;
+        // build groupGrid
+        groupGrid = new int[storageCreator.storageAreaW, storageCreator.storageAreaH];
+        for (int countW = 0; countW < storageCreator.storageAreaW; countW++)
+        {
+            for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
+            {
+                groupGrid[countW, countH] = 0;
+            }
+        }
 
-        // start group
-        // keep track of current group
-        // take unchecked cell
-        // add to current group
-        // put all unchecked neighbours in a queue
-        // check all cells in the queue until it is empty
-        // change current group
-        // find next unchecked cell
+        // loop the grid
+        int crrGroup = 1;
+        while (!cleanCheck)
+        {
+            cleanCheck = true;
+            for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
+            {
+                for (int countW = 0; countW < storageCreator.storageAreaW; countW++)
+                {
+                    // check if cell is occupied
+                    if (!storageCreator.IsTileVacant(countW, countH))
+                    {
+                        int minGroup = crrGroup;
+                        int newMinGroup = crrGroup;
+
+                        // check neighbours
+                        // check UP, take it's group value if lower
+                        //if (countH+1 <= storageCreator.storageAreaH
+                        //    && !storageCreator.IsTileVacant(countW, countH + 1))
+                        //{
+                        //    if (groupGrid[countW, countH + 1] > 0)
+                        //    {
+                        //        newMinGroup = Mathf.Min(minGroup, groupGrid[countW, countH+1]);
+                        //    }
+                        //}
+                        //// check RIGHT, take it's group value if lower
+                        //if (countW+1 <= storageCreator.storageAreaW
+                        //    && !storageCreator.IsTileVacant(countW+1, countH))
+                        //{
+                        //    if (groupGrid[countW+1, countH] > 0)
+                        //    {
+                        //        newMinGroup = Mathf.Min(minGroup, groupGrid[countW+1, countH]);
+                        //    }
+                        //}
+                        //// check DOWN, take it's group value if lower
+                        if (countH-1 >= 0
+                            && !storageCreator.IsTileVacant(countW, countH-1))
+                        {
+                            if (groupGrid[countW, countH-1] > 0)
+                            {
+                                newMinGroup = Mathf.Min(minGroup, groupGrid[countW, countH-1]);
+                            }
+                        }
+                        // check LEFT, take it's group value if lower
+                        if (countW-1 >= 0
+                            && !storageCreator.IsTileVacant(countW-1, countH))
+                        {
+                            if (groupGrid[countW-1, countH] > 0)
+                            {
+                                newMinGroup = Mathf.Min(minGroup, groupGrid[countW-1, countH]);
+                            }
+                        }
+                        if (newMinGroup != minGroup)
+                        {
+                            cleanCheck = false;
+                        }
+
+                        // assign the celll to a group
+                        groupGrid[countW, countH] = newMinGroup;
+                    }
+                    else
+                    {
+                        // the cell is not occupied
+                        // advance the group count
+                        // move along
+                        crrGroup++;
+                    }
+                }
+            }
+
+            // AFTER THE GRID HAS BEEN CHECKED, SEE IF IT WAS CLEAN (cleanCheck) AND IF NOT - CHECK AGAIN
+            // TODO :: HERE
+
+        }
+
 
     }
 }

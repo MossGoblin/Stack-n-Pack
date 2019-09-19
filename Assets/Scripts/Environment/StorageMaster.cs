@@ -59,5 +59,9 @@ public class StorageMaster : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            crateMaster.BuildGroups();
+        }
     }
 }
