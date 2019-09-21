@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
             if (moved && crateToBePickedUp)
             {
                 GameObject incomingCrate = GetCrateFromCoordinates((int)transform.position.x, (int)transform.position.y);
-                crateOnHold = GetCrateTypeFromName(incomingCrate);
+                crateOnHold = crateController.GetComponent<CrateMaster>().GetCrateTypeFromName(incomingCrate);
                 crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate);
                 Destroy(incomingCrate);
                 int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_W((int)transform.position.x);
@@ -162,22 +162,5 @@ public class PlayerController : MonoBehaviour
             }
         }
         return null;
-    }
-
-    private int GetCrateTypeFromName(GameObject crate)
-    {
-        string crateName = crate.transform.name;
-
-        switch(crateName)
-        {
-            case "crate 01":
-                return 1;
-            case "crate 02":
-                return 2;
-            case "crate 03":
-                return 3;
-            default:
-                return 4;
-        }
     }
 }

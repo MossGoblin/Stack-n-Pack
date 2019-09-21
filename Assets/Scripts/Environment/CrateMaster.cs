@@ -22,6 +22,8 @@ public class CrateMaster : MonoBehaviour
     private bool[,] checkGrid;
     // temporary grid to track group numbers by cell
     private int[,] groupGrid;
+    // current number of groups
+    int groupCount;
 
     // 2 - a list of groups - may contain up to toal area / 2 number of groups
     private List<List<GameObject>> groupList;
@@ -31,6 +33,20 @@ public class CrateMaster : MonoBehaviour
     {
         cratesList = new List<GameObject>();
         groupList = new List<List<GameObject>>();
+        InitGroupGrid();
+        groupCount = 1;
+    }
+
+    private void InitGroupGrid()
+    {
+        groupGrid = new int[storageCreator.storageAreaW, storageCreator.storageAreaH];
+        for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
+        {
+            for (int countW = 0; countW < storageCreator.storageAreaW; countW++)
+            {
+                groupGrid[countW, countH] = 0;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -109,104 +125,174 @@ public class CrateMaster : MonoBehaviour
     public void RegisterCrate(GameObject newCrate)
     {
         cratesList.Add(newCrate);
+        // TODO :: INVOKE GROUP METHODS
+        int registerPositionW = (int)newCrate.transform.position.x;
+        int registerPositionH = (int)newCrate.transform.position.y;
+        AssignCrateToGroup(GetCrateTypeFromName(newCrate), registerPositionW, registerPositionH);
+
     }
+
 
     public void EraseCrate(GameObject newCrate)
     {
         cratesList.Remove(newCrate);
+        // TODO :: REMOVE CRATE FROM GROUP
+        
+        // 01 find the crate in the group list
+        // 02 note down the group number
+        // TODO :: HERE
     }
 
-    public void BuildGroups()
+    private bool AssignCrateToGroup(int crateType, int cratePositionW, int cratePositionH)
     {
-        // NON-RECURSIVE APPROACH
-        // prepare to loop the grip multiple times
-        int loopCount = 0;
-        bool cleanCheck = false;
-        // build groupGrid
-        groupGrid = new int[storageCreator.storageAreaW, storageCreator.storageAreaH];
+        // advance group counter
+
+        // perform neighbour check
+        // collect neighbours
+        int up = 0;
+        int right = 0;
+        int down = 0;
+        int left = 0;
+        int relW = storageCreator.GetRelToAbs_W(cratePositionW);
+        int relH = storageCreator.GetRelToAbs_H(cratePositionH);
+        List<int> adjGroups = new List<int>();
+        List<int> adjGroupList = new List<int>();
+
+        // up
+        if (relH+1 <= storageCreator.storageAreaH)
+        {
+            if (!storageCreator.IsTileVacant(relW, relH + 1))
+            {
+                up = groupGrid[relW, relH + 1];
+                //adjGroups.Add(groupGrid[relW, relH + 1]);
+            }
+        }
+        // right
+        if (relW + 1 <= storageCreator.storageAreaW)
+        {
+            if (!storageCreator.IsTileVacant(relW + 1, relH))
+            {
+                right = groupGrid[relW + 1, relH];
+                //adjGroups.Add(groupGrid[relW + 1, relH]);
+            }
+        }
+        // down
+        if (relH - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(relW, relH - 1))
+            {
+                down = groupGrid[relW, relH - 1];
+                //adjGroups.Add(groupGrid[relW, relH - 1]);
+            }
+        }
+        // left
+        if (relW - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(relW - 1, relH))
+            {
+                left = groupGrid[relW - 1, relH];
+                //adjGroups.Add(groupGrid[relW - 1, relH]);
+            }
+        }
+
+        // neighbours collected; see how many different groups there are among them
+        if (up + right + down + left == 0) // no neighbours
+        {
+            groupGrid[relW, relH] = groupCount++;
+            return true;
+        }
+
+        // build a list of unique group numbers - all above 0
+        if (up > 0 && adjGroupList.IndexOf(up) < 0)
+        {
+            adjGroupList.Add(up);
+        }
+        if (right > 0 && adjGroupList.IndexOf(right) < 0)
+        {
+            adjGroupList.Add(right);
+        }
+        if (down > 0 && adjGroupList.IndexOf(down) < 0)
+        {
+            adjGroupList.Add(down);
+        }
+        if (left > 0 && adjGroupList.IndexOf(left) < 0)
+        {
+            adjGroupList.Add(left);
+        }
+
+        // if there is only one neighbouring group
+        if (adjGroupList.Count == 1)
+        {
+            groupGrid[relW, relH] = adjGroupList[0];
+            return true;
+        }
+        else if (adjGroupList.Count > 1)
+        {
+            // the heavy case
+            // find the smallest group number
+            int minGroupNumber = adjGroupList[0];
+            foreach (int item in adjGroupList)
+            {
+                minGroupNumber = Mathf.Min(minGroupNumber, item);
+            }
+            // assign group number
+            groupGrid[relW, relH] = minGroupNumber;
+            // reassign larger groups
+            foreach (int item in adjGroupList)
+            {
+                if (item != minGroupNumber)
+                {
+                    RessignGroupTo(item, minGroupNumber);
+                }
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    private void RessignGroupTo(int targetGroup, int minGroupNumber)
+    {
         for (int countW = 0; countW < storageCreator.storageAreaW; countW++)
         {
             for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
             {
-                groupGrid[countW, countH] = 0;
-            }
-        }
-
-        // loop the grid
-        int crrGroup = 1;
-        while (!cleanCheck)
-        {
-            cleanCheck = true;
-            for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
-            {
-                for (int countW = 0; countW < storageCreator.storageAreaW; countW++)
+                if (groupGrid[countW, countH] == targetGroup)
                 {
-                    // check if cell is occupied
-                    if (!storageCreator.IsTileVacant(countW, countH))
-                    {
-                        int minGroup = crrGroup;
-                        int newMinGroup = crrGroup;
-
-                        // check neighbours
-                        // check UP, take it's group value if lower
-                        //if (countH+1 <= storageCreator.storageAreaH
-                        //    && !storageCreator.IsTileVacant(countW, countH + 1))
-                        //{
-                        //    if (groupGrid[countW, countH + 1] > 0)
-                        //    {
-                        //        newMinGroup = Mathf.Min(minGroup, groupGrid[countW, countH+1]);
-                        //    }
-                        //}
-                        //// check RIGHT, take it's group value if lower
-                        //if (countW+1 <= storageCreator.storageAreaW
-                        //    && !storageCreator.IsTileVacant(countW+1, countH))
-                        //{
-                        //    if (groupGrid[countW+1, countH] > 0)
-                        //    {
-                        //        newMinGroup = Mathf.Min(minGroup, groupGrid[countW+1, countH]);
-                        //    }
-                        //}
-                        //// check DOWN, take it's group value if lower
-                        if (countH-1 >= 0
-                            && !storageCreator.IsTileVacant(countW, countH-1))
-                        {
-                            if (groupGrid[countW, countH-1] > 0)
-                            {
-                                newMinGroup = Mathf.Min(minGroup, groupGrid[countW, countH-1]);
-                            }
-                        }
-                        // check LEFT, take it's group value if lower
-                        if (countW-1 >= 0
-                            && !storageCreator.IsTileVacant(countW-1, countH))
-                        {
-                            if (groupGrid[countW-1, countH] > 0)
-                            {
-                                newMinGroup = Mathf.Min(minGroup, groupGrid[countW-1, countH]);
-                            }
-                        }
-                        if (newMinGroup != minGroup)
-                        {
-                            cleanCheck = false;
-                        }
-
-                        // assign the celll to a group
-                        groupGrid[countW, countH] = newMinGroup;
-                    }
-                    else
-                    {
-                        // the cell is not occupied
-                        // advance the group count
-                        // move along
-                        crrGroup++;
-                    }
+                    groupGrid[countW, countH] = minGroupNumber;
                 }
             }
-
-            // AFTER THE GRID HAS BEEN CHECKED, SEE IF IT WAS CLEAN (cleanCheck) AND IF NOT - CHECK AGAIN
-            // TODO :: HERE
-
         }
-
-
     }
+
+    private GameObject GetCrateByCoordinates(float positionW, float positionH)
+    {
+        foreach (GameObject crate in cratesList)
+        {
+            if ((crate.transform.position.x == positionW) && (crate.transform.position.y == positionH))
+            {
+                return crate;
+            }
+        }
+        return null;
+    }
+
+
+    public int GetCrateTypeFromName(GameObject crate)
+    {
+        string crateName = crate.transform.name;
+
+        switch (crateName)
+        {
+            case "crate 01":
+                return 1;
+            case "crate 02":
+                return 2;
+            case "crate 03":
+                return 3;
+            default:
+                return 4;
+        }
+    }
+
 }
