@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
         int desiredY = (int)(playerTransform.position.y + directionY);
 
         // 01 check if the space is inside the board
+        // TODO :: PLAYERS BORDER CHECK NOT WORKING
 
         if (((desiredY <= storageCreator.storageAreaEndPointH) &&
              (desiredX <= storageCreator.storageAreaEndPointW) &&
@@ -138,7 +139,7 @@ public class PlayerController : MonoBehaviour
             {
                 GameObject incomingCrate = GetCrateFromCoordinates((int)transform.position.x, (int)transform.position.y);
                 crateOnHold = crateController.GetComponent<CrateMaster>().GetCrateTypeFromName(incomingCrate);
-                crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate);
+                crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate, (int)transform.position.x, (int)transform.position.y);
                 Destroy(incomingCrate);
                 int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_W((int)transform.position.x);
                 int absoluteH = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_H((int)transform.position.y);

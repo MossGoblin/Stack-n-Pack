@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CrateMaster : MonoBehaviour
 {
@@ -25,16 +26,29 @@ public class CrateMaster : MonoBehaviour
     // current number of groups
     int groupCount;
 
-    // 2 - a list of groups - may contain up to toal area / 2 number of groups
-    private List<List<GameObject>> groupList;
+    // 2 - a list of groups
+    private List<bool> groupList;
 
     // Start is called before the first frame update
     void Start()
     {
         cratesList = new List<GameObject>();
-        groupList = new List<List<GameObject>>();
+        groupList = new List<bool>();
         InitGroupGrid();
-        groupCount = 1;
+        groupCount = GetSmallestUnusedGroupNumber();
+    }
+
+    private int GetSmallestUnusedGroupNumber()
+    {
+        if (groupList.IndexOf(false) >= 0)
+        {
+            return groupList.IndexOf(false) + 1;
+        }
+        else
+        {
+            groupList.Add(true);
+            return groupList.Count;
+        }
     }
 
     private void InitGroupGrid()
@@ -125,7 +139,6 @@ public class CrateMaster : MonoBehaviour
     public void RegisterCrate(GameObject newCrate)
     {
         cratesList.Add(newCrate);
-        // TODO :: INVOKE GROUP METHODS
         int registerPositionW = (int)newCrate.transform.position.x;
         int registerPositionH = (int)newCrate.transform.position.y;
         AssignCrateToGroup(GetCrateTypeFromName(newCrate), registerPositionW, registerPositionH);
@@ -133,14 +146,164 @@ public class CrateMaster : MonoBehaviour
     }
 
 
-    public void EraseCrate(GameObject newCrate)
+    public void EraseCrate(GameObject newCrate, int absPosW, int absPosH)
     {
         cratesList.Remove(newCrate);
+
+        // relative coordinates
+        int posW = storageCreator.GetRelToAbs_W(absPosW);
+        int posH = storageCreator.GetRelToAbs_H(absPosH);
+
+        storageCreator.MarkVacancyGrid(posW, posH, true);
+        groupGrid[posW, posH] = 0;
+
         // TODO :: REMOVE CRATE FROM GROUP
-        
-        // 01 find the crate in the group list
-        // 02 note down the group number
+
+        // will have to be recursive *sigh*
+
+        // check if any nbrs
+        // find all nbrs
+        // if any nbrs:
+        // open a Q and put cell in Q
+        // for each nbr of removed crate:
+        // A : make sure it is in Q
+        // A if no nbrs - A over
+        // assign new number
+        // deQ
+
+        // find all nbrs
+        // prep nbr grid -- 0 to 3: up, right, down, left
+        int[] nbrs = new int[4];
+        for (int count = 0; count < 4; count++)
+        {
+            nbrs[count] = -1;
+        }
+        // up
+        if (posH + 1 <= storageCreator.storageAreaH)
+        {
+            if (!storageCreator.IsTileVacant(posW, posH + 1))
+            {
+                nbrs[0] = posW * 100 + posH + 1;
+            }
+        }
+        // right
+        if (posW + 1 <= storageCreator.storageAreaW)
+        {
+            if (!storageCreator.IsTileVacant(posW + 1, posH))
+            {
+                nbrs[1] = (posW + 1) * 100 + posH;
+            }
+        }
+        // down
+        if (posH - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(posW, posH - 1))
+            {
+                nbrs[2] = posW * 100 + posH - 1;
+            }
+        }
+        // left
+        if (posW - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(posW - 1, posH))
+            {
+                nbrs[3] = (posW - 1) * 100 + posH;
+            }
+        }
+        // check if any nbrs
+        if (nbrs.Sum() > -4) // at least 1 nbr
+        {
+            // set up Q
+            Queue<int> startQ = new Queue<int>();
+            for (int count = 0; count < 3; count++)
+            {
+                if (nbrs[count] >= 0)
+                {
+                    startQ.Enqueue(nbrs[count]);
+                }
+            }
+
+            // work through the starting Q
+            while(startQ.Count>0)
+            {
+                Queue<int> checkQ = new Queue<int>();
+                int newGroupNumber = GetSmallestUnusedGroupNumber();
+                int startCell = startQ.Dequeue();
+                checkQ.Enqueue(startCell);
+                WorkNeighboursOf(checkQ, startCell, newGroupNumber);
+            }
+        }
+
+
+        // put cell in Q
+        // for each nbr of removed crate:
+        // A : make sure it is in Q
+        // A if no nbrs - A over
+        // assign new number
+        // deQ
+    }
+
+    private bool WorkNeighboursOf(Queue<int> checkQ, int cell, int newGroupNumber)
+    {
+        // INGRESS
+        // collect all nbrs and EnQ
+        int posH = cell % 100;
+        int posW = (cell - (cell % 100)) / 100;
+        int nbrsNumber = 0;
+        // up
+        if (posH + 1 <= storageCreator.storageAreaH)
+        {
+            if (!storageCreator.IsTileVacant(posW, posH + 1))
+            {
+                checkQ.Enqueue(posW + 100 * (posH+1));
+                nbrsNumber++;
+                WorkNeighboursOf(checkQ, posW + 100 * (posH + 1), newGroupNumber);
+            }
+        }
+        // right
+        if (posW + 1 <= storageCreator.storageAreaW)
+        {
+            if (!storageCreator.IsTileVacant(posW + 1, posH))
+            {
+                checkQ.Enqueue((posW+1) + 100 * posH);
+                nbrsNumber++;
+                WorkNeighboursOf(checkQ, (posW + 1) + 100 * posH, newGroupNumber);
+            }
+        }
+        // down
+        if (posH - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(posW, posH - 1))
+            {
+                checkQ.Enqueue(posW + 100 * (posH-1));
+                nbrsNumber++;
+                WorkNeighboursOf(checkQ, posW + 100 * (posH - 1), newGroupNumber);
+            }
+        }
+        // left
+        if (posW - 1 >= 0)
+        {
+            if (!storageCreator.IsTileVacant(posW - 1, posH))
+            {
+                checkQ.Enqueue((posW-1) + 100 * posH);
+                nbrsNumber++;
+                WorkNeighboursOf(checkQ, (posW - 1) + 100 * posH, newGroupNumber);
+            }
+        }
+        if (nbrsNumber == 0)
+        {
+            // - - -
+            // EGRESS
+            int crrCell = checkQ.Dequeue();
+            int newPosH = crrCell % 100;
+            int newPosW = (crrCell - (crrCell % 100)) / 100;
+            groupGrid[newPosW, newPosH] = newGroupNumber;
+            return true;
+        }
+
         // TODO :: HERE
+
+        return true;
     }
 
     private bool AssignCrateToGroup(int crateType, int cratePositionW, int cratePositionH)
@@ -159,12 +322,11 @@ public class CrateMaster : MonoBehaviour
         List<int> adjGroupList = new List<int>();
 
         // up
-        if (relH+1 <= storageCreator.storageAreaH)
+        if (relH + 1 <= storageCreator.storageAreaH)
         {
             if (!storageCreator.IsTileVacant(relW, relH + 1))
             {
                 up = groupGrid[relW, relH + 1];
-                //adjGroups.Add(groupGrid[relW, relH + 1]);
             }
         }
         // right
@@ -173,7 +335,6 @@ public class CrateMaster : MonoBehaviour
             if (!storageCreator.IsTileVacant(relW + 1, relH))
             {
                 right = groupGrid[relW + 1, relH];
-                //adjGroups.Add(groupGrid[relW + 1, relH]);
             }
         }
         // down
@@ -182,7 +343,6 @@ public class CrateMaster : MonoBehaviour
             if (!storageCreator.IsTileVacant(relW, relH - 1))
             {
                 down = groupGrid[relW, relH - 1];
-                //adjGroups.Add(groupGrid[relW, relH - 1]);
             }
         }
         // left
@@ -191,7 +351,6 @@ public class CrateMaster : MonoBehaviour
             if (!storageCreator.IsTileVacant(relW - 1, relH))
             {
                 left = groupGrid[relW - 1, relH];
-                //adjGroups.Add(groupGrid[relW - 1, relH]);
             }
         }
 
