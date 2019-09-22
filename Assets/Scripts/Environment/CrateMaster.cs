@@ -105,8 +105,8 @@ public class CrateMaster : MonoBehaviour
         RegisterCrate(newCrate);
         newCrate.transform.SetParent(crateHolder);
         newCrate.name = "crate 0" + crateType;
-        int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_W((int)coordW);
-        int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_H((int)coordH);
+        int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)coordW);
+        int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)coordH);
         storageCreator.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
         Debug.Log("crate @ " + coordW + " / " + coordH);
 
@@ -151,8 +151,8 @@ public class CrateMaster : MonoBehaviour
         cratesList.Remove(newCrate);
 
         // relative coordinates
-        int posW = storageCreator.GetRelToAbs_W(absPosW);
-        int posH = storageCreator.GetRelToAbs_H(absPosH);
+        int posW = storageCreator.GetAbsFromRelW(absPosW);
+        int posH = storageCreator.GetAbsFromRelH(absPosH);
 
         storageCreator.MarkVacancyGrid(posW, posH, true);
         groupGrid[posW, posH] = 0;
@@ -316,8 +316,8 @@ public class CrateMaster : MonoBehaviour
         int right = 0;
         int down = 0;
         int left = 0;
-        int relW = storageCreator.GetRelToAbs_W(cratePositionW);
-        int relH = storageCreator.GetRelToAbs_H(cratePositionH);
+        int relW = storageCreator.GetAbsFromRelW(cratePositionW);
+        int relH = storageCreator.GetAbsFromRelH(cratePositionH);
         List<int> adjGroups = new List<int>();
         List<int> adjGroupList = new List<int>();
 

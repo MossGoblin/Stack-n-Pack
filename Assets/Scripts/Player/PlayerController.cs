@@ -82,16 +82,16 @@ public class PlayerController : MonoBehaviour
         bool moved = false;
 
         // check for storage boundaries
-        int desiredX = (int)(playerTransform.position.x + directionX);
-        int desiredY = (int)(playerTransform.position.y + directionY);
+        int desiredW = (int)(playerTransform.position.x + directionX);
+        int desiredH = (int)(playerTransform.position.y + directionY);
 
         // 01 check if the space is inside the board
         // TODO :: PLAYERS BORDER CHECK NOT WORKING
 
-        if (((desiredY <= storageCreator.storageAreaEndPointH) &&
-             (desiredX <= storageCreator.storageAreaEndPointW) &&
-             (desiredY >= storageCreator.storageAreaOriginH) &&
-             (desiredX >= storageCreator.storageAreaOriginW)))
+        if (((desiredH <= storageCreator.storageAreaEndPointH) &&
+             (desiredW <= storageCreator.storageAreaEndPointW) &&
+             (desiredH >= storageCreator.storageAreaOriginH) &&
+             (desiredW >= storageCreator.storageAreaOriginW)))
         {
             // within borders
             withinBorders = true;
@@ -110,7 +110,13 @@ public class PlayerController : MonoBehaviour
         }
 
         // 04 check if there is crate to be picked up
-        if (!(storageCreator.IsTileVacant(desiredX - (int)(storageCreator.storageAreaOriginW), desiredY - (int)(storageCreator.storageAreaOriginH))))
+        //if (!(storageCreator.IsTileVacant(desiredX - (int)(storageCreator.storageAreaOriginW), desiredY - (int)(storageCreator.storageAreaOriginH))))
+        //{
+        //    crateToBePickedUp = true;
+        //}
+        int gridX = storageCreator.GetAbsFromRelW(desiredW);
+        int gridY = storageCreator.GetAbsFromRelH(desiredH);
+        if (withinBorders && !(storageCreator.IsTileVacant(gridX, gridY)))
         {
             crateToBePickedUp = true;
         }
@@ -141,8 +147,8 @@ public class PlayerController : MonoBehaviour
                 crateOnHold = crateController.GetComponent<CrateMaster>().GetCrateTypeFromName(incomingCrate);
                 crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate, (int)transform.position.x, (int)transform.position.y);
                 Destroy(incomingCrate);
-                int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_W((int)transform.position.x);
-                int absoluteH = storageCreator.GetComponent<StorageAreaCreator>().GetRelToAbs_H((int)transform.position.y);
+                int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)transform.position.x);
+                int absoluteH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)transform.position.y);
                 storageCreator.GetComponent<StorageAreaCreator>().MarkVacancyGrid(absoluteW, absoluteH, true);
             }
         }

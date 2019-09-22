@@ -93,9 +93,9 @@ public class StorageAreaCreator : MonoBehaviour
         }
         //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
     }
-    public bool IsTileVacant(int coordW, int coordH)
+    public bool IsTileVacant(int coordX, int coordY)
     {
-        return vacancyGrid[coordW, coordH];
+        return vacancyGrid[coordX, coordY];
     }
 
     public void MarkVacancyGrid(int coordW, int coordH, bool free)
@@ -103,13 +103,23 @@ public class StorageAreaCreator : MonoBehaviour
         vacancyGrid[coordW, coordH] = free;
     }
 
-    public int GetRelToAbs_H(int y)
+    public int GetAbsFromRelW(int relW)
     {
-        return y - storageAreaOriginH;
+        return relW - storageAreaOriginW;
     }
 
-    public int GetRelToAbs_W(int x)
+    public int GetAbsFromRelH(int relH)
     {
-        return x - storageAreaOriginW;
+        return relH - storageAreaOriginH;
     }
+
+    //public int GetAbsFromDeltaW(int x, int currentW)
+    //{
+    //    return currentW + x - storageAreaOriginW;
+    //}
+
+    //public int GetAbsFromDeltaH(int y, int currentH)
+    //{
+    //    return y + currentH - storageAreaOriginH;
+    //}
 }
