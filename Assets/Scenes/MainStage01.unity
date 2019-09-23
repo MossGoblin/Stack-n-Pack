@@ -585,49 +585,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &1223942966
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1223942967}
-  - component: {fileID: 1223942968}
-  m_Layer: 31
-  m_Name: StackMaster
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1223942967
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223942966}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2069170715}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1223942968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223942966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0418832898aa5c45acc7ddc84043598, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1444094604
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,7 +814,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1630043790}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2103205492}
@@ -1091,10 +1048,18 @@ MonoBehaviour:
     type: 3}
   tilesParent: {fileID: 1444094605}
   player: {fileID: 1630043791}
+  crateMaster: {fileID: 1935361847}
   storageAreaOriginW: 0
   storageAreaOriginH: 0
   storageAreaEndPointW: 0
   storageAreaEndPointH: 0
+  defaultTileSprite: {fileID: 21300000, guid: fe68eb86ca68b024cb625c0f5eec2551, type: 3}
+  groupTileSprite0: {fileID: 21300000, guid: 625e42361eb844746a493e8d2b5b6dd0, type: 3}
+  groupTileSprite1: {fileID: 21300000, guid: bbf70d51f240a1548b7a2de6d2d34d19, type: 3}
+  groupTileSprite2: {fileID: 21300000, guid: 24fe1f96e4a7c774898b51575b020756, type: 3}
+  groupTileSprite3: {fileID: 21300000, guid: cb5a297080acfa842b554fa5c6098c8c, type: 3}
+  groupTileSprite4: {fileID: 21300000, guid: a561b8a62e0997c4d8bbf1d83b1004c6, type: 3}
+  groupTileSprite5: {fileID: 21300000, guid: 8d6935d8218125143b5b13b051e8cedf, type: 3}
 --- !u!1 &1935361846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1274,7 +1239,6 @@ Transform:
   - {fileID: 1919975971}
   - {fileID: 1935361847}
   - {fileID: 728281101}
-  - {fileID: 1223942967}
   m_Father: {fileID: 291409049}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

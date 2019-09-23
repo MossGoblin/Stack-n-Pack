@@ -22,7 +22,7 @@ public class CrateMaster : MonoBehaviour
     // 1 - a grid tracking which positions are checked
     private bool[,] checkGrid;
     // temporary grid to track group numbers by cell
-    private int[,] groupGrid;
+    public int[,] groupGrid;
     // current number of groups
     int groupCount;
 
@@ -157,19 +157,7 @@ public class CrateMaster : MonoBehaviour
         storageCreator.MarkVacancyGrid(posW, posH, true);
         groupGrid[posW, posH] = 0;
 
-        // TODO :: REMOVE CRATE FROM GROUP
-
-        // will have to be recursive *sigh*
-
-        // check if any nbrs
-        // find all nbrs
-        // if any nbrs:
-        // open a Q and put cell in Q
-        // for each nbr of removed crate:
-        // A : make sure it is in Q
-        // A if no nbrs - A over
-        // assign new number
-        // deQ
+        // REMOVE CRATE FROM GROUP
 
         // find all nbrs
         // prep nbr grid -- 0 to 3: up, right, down, left
@@ -301,7 +289,6 @@ public class CrateMaster : MonoBehaviour
             return true;
         }
 
-        // TODO :: HERE
 
         return true;
     }

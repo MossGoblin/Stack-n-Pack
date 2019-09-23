@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
         int desiredH = (int)(playerTransform.position.y + directionY);
 
         // 01 check if the space is inside the board
-        // TODO :: PLAYERS BORDER CHECK NOT WORKING
+        // PLAYERS BORDER CHECK NOT WORKING
 
         if (((desiredH <= storageCreator.storageAreaEndPointH) &&
              (desiredW <= storageCreator.storageAreaEndPointW) &&

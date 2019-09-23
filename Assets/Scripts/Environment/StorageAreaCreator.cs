@@ -12,26 +12,89 @@ public class StorageAreaCreator : MonoBehaviour
     [SerializeField] GameObject concreteTile;
     [SerializeField] Transform tilesParent;
     [SerializeField] Transform player;
+    [SerializeField] Transform crateMaster;
     public int storageAreaOriginW;
     public int storageAreaOriginH;
     public int storageAreaEndPointW;
     public int storageAreaEndPointH;
 
-    private bool[,] vacancyGrid;
+    // shaded tile sprites
+    [SerializeField] Sprite defaultTileSprite;
+    [SerializeField] Sprite groupTileSprite0;
+    [SerializeField] Sprite groupTileSprite1;
+    [SerializeField] Sprite groupTileSprite2;
+    [SerializeField] Sprite groupTileSprite3;
+    [SerializeField] Sprite groupTileSprite4;
+    [SerializeField] Sprite groupTileSprite5;
 
+    private bool[,] vacancyGrid;
+    CrateMaster crateController;
 
     void Awake()
     {
         // init vacancy grid
         vacancyGrid = new bool[storageAreaW, storageAreaH];
 
-         for (int countWidth = 0; countWidth < storageAreaW; countWidth++)
+        for (int countWidth = 0; countWidth < storageAreaW; countWidth++)
         {
             for (int countHeight = 0; countHeight < storageAreaH; countHeight++)
             {
                 MarkVacancyGrid(countWidth, countHeight, true);
             }
         }
+    }
+    // Update is called once per frame
+    private void Update()
+    {
+        //RecolorGrid();
+        // TODO :: HERE
+    }
+
+    private void RecolorGrid()
+    {
+        CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
+        for (int countY = 0; countY < storageAreaH; countY++)
+        {
+            for (int countX = 0; countX < storageAreaW; countX++)
+            {
+                    SpriteRenderer tileSpriteRenderer = FindTileAt(countX, countY).GetComponent<SpriteRenderer>();
+                    switch(crateController.groupGrid[countX, countY])
+                    {
+                        case 0:
+                            tileSpriteRenderer.sprite = defaultTileSprite;
+                            break;
+                        case 1:
+                            tileSpriteRenderer.sprite = groupTileSprite1;
+                            break;
+                        case 2:
+                            tileSpriteRenderer.sprite = groupTileSprite2;
+                            break;
+                        case 3:
+                            tileSpriteRenderer.sprite = groupTileSprite3;
+                            break;
+                        case 4:
+                            tileSpriteRenderer.sprite = groupTileSprite4;
+                            break;
+                        case 5:
+                            tileSpriteRenderer.sprite = groupTileSprite5;
+                            break;
+                        default:
+                            tileSpriteRenderer.sprite = groupTileSprite0;
+                            break;
+                    }
+
+            }
+        }
+    }
+
+    private GameObject FindTileAt(int countX, int countY)
+    {
+        GameObject tile = GameObject.Find("crate " + countX + " / " + countY);
+        if (tile != null)
+        {
+            return tile;
+        }
+        return null;
     }
 
     internal bool HasSpace()
@@ -54,8 +117,6 @@ public class StorageAreaCreator : MonoBehaviour
         Debug.Log("Out Of Space!");
         return false;
     }
-
-    // Update is called once per frame
     public bool CreateFloor()
     {
         storageAreaOriginW = (storageAreaW / 2) * -1;
