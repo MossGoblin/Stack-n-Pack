@@ -149,7 +149,7 @@ public class PlayerController : MonoBehaviour
                 Destroy(incomingCrate);
                 int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)transform.position.x);
                 int absoluteH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)transform.position.y);
-                storageCreator.GetComponent<StorageAreaCreator>().MarkVacancyGrid(absoluteW, absoluteH, true);
+                //storageCreator.GetComponent<StorageAreaCreator>().MarkVacancyGrid(absoluteW, absoluteH, true);
             }
         }
 

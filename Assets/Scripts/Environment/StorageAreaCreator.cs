@@ -46,7 +46,7 @@ public class StorageAreaCreator : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        //RecolorGrid();
+        RecolorGrid();
         // TODO :: HERE
     }
 
@@ -89,7 +89,9 @@ public class StorageAreaCreator : MonoBehaviour
 
     private GameObject FindTileAt(int countX, int countY)
     {
-        GameObject tile = GameObject.Find("crate " + countX + " / " + countY);
+        int coordX = countX + storageAreaOriginW;
+        int coordY = countY + storageAreaOriginH;
+        GameObject tile = GameObject.Find("tile " + coordX + " / " + coordY);
         if (tile != null)
         {
             return tile;
@@ -132,7 +134,7 @@ public class StorageAreaCreator : MonoBehaviour
                 float positionY = countH + storageAreaOriginH;
                 GameObject newTile = Instantiate(concreteTile, new Vector3(positionX, positionY), Quaternion.identity);
                 newTile.transform.SetParent(tilesParent);
-                newTile.name = "crate " + positionX + " / " + positionY;
+                newTile.name = "tile " + positionX + " / " + positionY;
                 // Debug.Log("placed a tile at: " + countX + " / " +  countY);
             }
         }
@@ -156,6 +158,7 @@ public class StorageAreaCreator : MonoBehaviour
     }
     public bool IsTileVacant(int coordX, int coordY)
     {
+        //return vacancyGrid[coordX + storageAreaOriginW, coordY + storageAreaOriginH];
         return vacancyGrid[coordX, coordY];
     }
 
