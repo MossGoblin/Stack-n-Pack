@@ -39,6 +39,7 @@ public class CrateMaster : MonoBehaviour
     }
 
     private int GetSmallestUnusedGroupNumber()
+        // TODO :: Smallest Available Group - Needs reworking
     {
         if (groupList.IndexOf(false) >= 0)
         {
@@ -157,139 +158,77 @@ public class CrateMaster : MonoBehaviour
         storageCreator.MarkVacancyGrid(absPosW, absPosH, true);
         groupGrid[absPosW, absPosH] = 0;
 
-        // REMOVE CRATE FROM GROUP
+        // create stack
+        Stack<int> startingStack = new Stack<int>();
 
-        // find all nbrs
-        // prep nbr grid -- 0 to 3: up, right, down, left
-        int[] nbrs = new int[4];
-        for (int count = 0; count < 4; count++)
+        // 01 iterate nbrs
+
+        // TODO : HERE
+
+        // check for any nbrs
+        // NEW ITERATION - TRYG!!
+
+        for (double nbrsAngle = 0; nbrsAngle <= Math.PI * 1.5; nbrsAngle += Math.PI * 0.5)
         {
-            nbrs[count] = -1;
-        }
-        // up
-        if (absPosH + 1 < storageCreator.storageAreaH)
-        {
-            if (!storageCreator.IsTileVacant(absPosW, absPosH + 1))
+            int nbrXCoord = (int)Math.Sin(nbrsAngle);
+            int nbrYCoord = (int)Math.Cos(nbrsAngle);
+
+            // nbr coords
+            int nbrX = absPosW + nbrXCoord;
+            int nbrY = absPosH + nbrYCoord;
+            // if nbr within borders
+            if (IsWithinBorders(nbrX, nbrY))
             {
-                nbrs[0] = absPosW * 100 + absPosH + 1;
-            }
-        }
-        // right
-        if (absPosW + 1 < storageCreator.storageAreaW)
-        {
-            if (!storageCreator.IsTileVacant(absPosW + 1, absPosH))
-            {
-                nbrs[1] = (absPosW + 1) * 100 + absPosH;
-            }
-        }
-        // down
-        if (absPosH - 1 >= 0)
-        {
-            if (!storageCreator.IsTileVacant(absPosW, absPosH - 1))
-            {
-                nbrs[2] = absPosW * 100 + absPosH - 1;
-            }
-        }
-        // left
-        if (absPosW - 1 >= 0)
-        {
-            if (!storageCreator.IsTileVacant(absPosW - 1, absPosH))
-            {
-                nbrs[3] = (absPosW - 1) * 100 + absPosH;
-            }
-        }
-        // check if any nbrs
-        if (nbrs.Sum() > -4) // at least 1 nbr
-        {
-            // set up Q
-            Queue<int> startQ = new Queue<int>();
-            for (int count = 0; count < 4; count++)
-            {
-                if (nbrs[count] >= 0)
+                // if there is a nbr at this position
+                if (!storageCreator.IsTileVacant(nbrX, nbrY))
                 {
-                    startQ.Enqueue(nbrs[count]);
+                    // found at least one nbr
+                    // add nbr to stack
+                    int nbrCoord = nbrY * 100 + nbrX;
+                    startingStack.Push(nbrCoord);
+                    // pick a group number
+                    // send the stack to the processor
+                    int newGroupNumber = GetSmallestUnusedGroupNumber();
+                    WorkNeighboursOf(startingStack, newGroupNumber);
                 }
             }
-
-            // work through the starting Q
-            while(startQ.Count>0)
-            {
-                Queue<int> checkQ = new Queue<int>();
-                int newGroupNumber = GetSmallestUnusedGroupNumber();
-                int startCell = startQ.Dequeue();
-                checkQ.Enqueue(startCell);
-                WorkNeighboursOf(checkQ, newGroupNumber);
-            }
         }
-
-
-        // put cell in Q
-        // for each nbr of removed crate:
-        // A : make sure it is in Q
-        // A if no nbrs - A over
-        // assign new number
-        // deQ
     }
 
-    private bool WorkNeighboursOf(Queue<int> checkQ, int newGroupNumber)
+    private bool WorkNeighboursOf(Stack<int> progressStack, int newGroupNumber)
     {
         // INGRESS
-        // collect all nbrs and EnQ
-        int cell = checkQ.Peek();
-        int posH = cell % 100;
-        int posW = (cell - (cell % 100)) / 100;
-        int nbrsNumber = 0;
-        // up
-        if (posH + 1 < storageCreator.storageAreaH)
+        int crrCrateCode = progressStack.Peek();
+        int posX = crrCrateCode % 100;
+        int posY = (crrCrateCode - (crrCrateCode % 100)) / 100;
+        // find if any unchecked nbrs -- send them for processing
+        for (double nbrsAngle = 0; nbrsAngle <= Math.PI * 1.5; nbrsAngle += Math.PI * 0.5)
         {
-            if (!storageCreator.IsTileVacant(posW, posH + 1))
+            int nbrDeltaX = (int)Math.Sin(nbrsAngle);
+            int nbrDeltaY = (int)Math.Cos(nbrsAngle);
+            // nbr coords
+            int nbrX = posX + nbrDeltaX;
+            int nbrY = posY + nbrDeltaY;
+            // if nbr within borders
+            if (IsWithinBorders(nbrX, nbrY))
             {
-                checkQ.Enqueue(posW + 100 * (posH+1));
-                nbrsNumber++;
-                WorkNeighboursOf(checkQ, newGroupNumber);
+                // if there is a nbr at this position AND it is unchecked
+                if ((!storageCreator.IsTileVacant(nbrX, nbrY)) &&
+                    !progressStack.Contains(nbrY*100+nbrX))
+                {
+                    // there is an unchecked nbr at this position - stack it and send it to the processor
+                    progressStack.Push(nbrY * 100 + nbrX);
+                    WorkNeighboursOf(progressStack, newGroupNumber);
+                }
             }
-        }
-        // right
-        if (posW + 1 < storageCreator.storageAreaW)
-        {
-            if (!storageCreator.IsTileVacant(posW + 1, posH))
-            {
-                checkQ.Enqueue((posW+1) + 100 * posH);
-                nbrsNumber++;
-                WorkNeighboursOf(checkQ, newGroupNumber);
-            }
-        }
-        // down
-        if (posH - 1 >= 0)
-        {
-            if (!storageCreator.IsTileVacant(posW, posH - 1))
-            {
-                checkQ.Enqueue(posW + 100 * (posH-1));
-                nbrsNumber++;
-                WorkNeighboursOf(checkQ, newGroupNumber);
-            }
-        }
-        // left
-        if (posW - 1 >= 0)
-        {
-            if (!storageCreator.IsTileVacant(posW - 1, posH))
-            {
-                checkQ.Enqueue((posW-1) + 100 * posH);
-                nbrsNumber++;
-                WorkNeighboursOf(checkQ, newGroupNumber);
-            }
-        }
-        if (nbrsNumber == 0)
-        {
-            // - - -
-            // EGRESS
-            int crrCell = checkQ.Dequeue();
-            int newPosH = crrCell % 100;
-            int newPosW = (crrCell - (crrCell % 100)) / 100;
-            groupGrid[newPosW, newPosH] = newGroupNumber;
-            return true;
         }
 
+        // if no nbrs are present
+        // EGRESS
+        // mark the crate with the new group
+        // remove the crate from the stack
+        progressStack.Pop();
+        groupGrid[posX, posY] = newGroupNumber;
 
         return true;
     }
@@ -348,7 +287,6 @@ public class CrateMaster : MonoBehaviour
             //groupGrid[relW, relH] = groupCount++;
             groupGrid[relW, relH] = GetSmallestUnusedGroupNumber();
             return true;
-            // TODO :: TEST
         }
 
         // build a list of unique group numbers - all above 0
@@ -442,6 +380,11 @@ public class CrateMaster : MonoBehaviour
             default:
                 return 4;
         }
+    }
+
+    private bool IsWithinBorders(int posX, int posY)
+    {
+        return storageCreator.IsWithinBorders(posX, posY);
     }
 
 }

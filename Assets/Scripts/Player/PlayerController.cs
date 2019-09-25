@@ -85,13 +85,10 @@ public class PlayerController : MonoBehaviour
         int desiredW = (int)(playerTransform.position.x + directionX);
         int desiredH = (int)(playerTransform.position.y + directionY);
 
+        int gridX = storageCreator.GetAbsFromRelW(desiredW);
+        int gridY = storageCreator.GetAbsFromRelH(desiredH);
         // 01 check if the space is inside the board
-        // PLAYERS BORDER CHECK NOT WORKING
-
-        if (((desiredH <= storageCreator.storageAreaEndPointH) &&
-             (desiredW <= storageCreator.storageAreaEndPointW) &&
-             (desiredH >= storageCreator.storageAreaOriginH) &&
-             (desiredW >= storageCreator.storageAreaOriginW)))
+        if (IsWithinBorders(gridX, gridY))
         {
             // within borders
             withinBorders = true;
@@ -114,8 +111,6 @@ public class PlayerController : MonoBehaviour
         //{
         //    crateToBePickedUp = true;
         //}
-        int gridX = storageCreator.GetAbsFromRelW(desiredW);
-        int gridY = storageCreator.GetAbsFromRelH(desiredH);
         if (withinBorders && !(storageCreator.IsTileVacant(gridX, gridY)))
         {
             crateToBePickedUp = true;
@@ -147,9 +142,6 @@ public class PlayerController : MonoBehaviour
                 crateOnHold = crateController.GetComponent<CrateMaster>().GetCrateTypeFromName(incomingCrate);
                 crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate, (int)transform.position.x, (int)transform.position.y);
                 Destroy(incomingCrate);
-                int absoluteW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)transform.position.x);
-                int absoluteH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)transform.position.y);
-                //storageCreator.GetComponent<StorageAreaCreator>().MarkVacancyGrid(absoluteW, absoluteH, true);
             }
         }
 
@@ -169,5 +161,10 @@ public class PlayerController : MonoBehaviour
             }
         }
         return null;
+    }
+
+    private bool IsWithinBorders(int posX, int posY)
+    {
+        return storageCreator.IsWithinBorders(posX, posY);
     }
 }

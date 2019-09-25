@@ -47,7 +47,7 @@ public class StorageAreaCreator : MonoBehaviour
     private void Update()
     {
         RecolorGrid();
-        // TODO :: HERE
+        // TODO :: HERE - CHECK RECOLORING
     }
 
     private void RecolorGrid()
@@ -177,13 +177,13 @@ public class StorageAreaCreator : MonoBehaviour
         return relH - storageAreaOriginH;
     }
 
-    //public int GetAbsFromDeltaW(int x, int currentW)
-    //{
-    //    return currentW + x - storageAreaOriginW;
-    //}
-
-    //public int GetAbsFromDeltaH(int y, int currentH)
-    //{
-    //    return y + currentH - storageAreaOriginH;
-    //}
+    public bool IsWithinBorders(int posX, int posY)
+    {
+        if ((posX >= 0 && posX < storageAreaW)
+            && (posY >= 0 && posY < storageAreaH))
+        {
+            return true;
+        }
+        return false;
+    }
 }
