@@ -30,6 +30,18 @@ public class StorageAreaCreator : MonoBehaviour
     private bool[,] vacancyGrid;
     CrateMaster crateController;
 
+    // group coloring
+    int[] baseRedSteps = new int[] { 0, -1, 0, 0, 1, 0 };
+    float hueChangeFactor = 2f; // 8 by default; value of 1 would make the step duration 255 ticks
+    [SerializeField] GameObject basePaletteTile;
+    Dictionary<int, int> colorChunks;
+    Color[] paletteArray;
+    [SerializeField] float alpha = 0.5f; // alpha goes from 0f to 1f;
+    // temp paletteTile container
+    [SerializeField] GameObject paletteAnchor;
+    // mapping for groups and color indeces
+    public Dictionary<int, int> groupToColorMap;
+
     void Awake()
     {
         // init vacancy grid
@@ -42,49 +54,85 @@ public class StorageAreaCreator : MonoBehaviour
                 MarkVacancyGrid(countWidth, countHeight, true);
             }
         }
+
+        colorChunks = new Dictionary<int, int>();
+        int paletteLength = (256 * 6 / (int)hueChangeFactor);
+        paletteArray = new Color[paletteLength];
+        groupToColorMap = new Dictionary<int, int>();
+
+        BuildColorPalette();
     }
     // Update is called once per frame
     private void Update()
     {
         RecolorGrid();
-        // TODO :: HERE - CHECK RECOLORING
+        // TODO :: CHECK RECOLORING
     }
 
     private void RecolorGrid()
     {
+        // TODO : HERE
         CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
         for (int countY = 0; countY < storageAreaH; countY++)
         {
             for (int countX = 0; countX < storageAreaW; countX++)
             {
-                    SpriteRenderer tileSpriteRenderer = FindTileAt(countX, countY).GetComponent<SpriteRenderer>();
-                    switch(crateController.groupGrid[countX, countY])
-                    {
-                        case 0:
-                            tileSpriteRenderer.sprite = defaultTileSprite;
-                            break;
-                        case 1:
-                            tileSpriteRenderer.sprite = groupTileSprite1;
-                            break;
-                        case 2:
-                            tileSpriteRenderer.sprite = groupTileSprite2;
-                            break;
-                        case 3:
-                            tileSpriteRenderer.sprite = groupTileSprite3;
-                            break;
-                        case 4:
-                            tileSpriteRenderer.sprite = groupTileSprite4;
-                            break;
-                        case 5:
-                            tileSpriteRenderer.sprite = groupTileSprite5;
-                            break;
-                        default:
-                            tileSpriteRenderer.sprite = groupTileSprite0;
-                            break;
-                    }
+                SpriteRenderer tileSpriteRenderer = FindTileAt(countX, countY).GetComponent<SpriteRenderer>();
+                // find if the group exists in the groupToColor map - either assign its color or create a new color
+                Color newColor;
 
+                int tileGroup = crateController.groupGrid[countX, countY];
+
+                // FIRST find if there is no group
+
+                if (tileGroup == 0)
+                {
+                    newColor = new Color(1f, 1f, 1f, 1f);
+                }
+                else if (groupToColorMap.ContainsKey(tileGroup)) // the group has a mapped color
+                {
+                    newColor = paletteArray[groupToColorMap[tileGroup]];
+                }
+                else
+                {
+                    // create new color
+                    int newColorIndex = SetUpNewColor()
+;                   newColor = paletteArray[newColorIndex];
+                    groupToColorMap.Add(tileGroup, newColorIndex);
+                }
+                tileSpriteRenderer.color = newColor;
+            }
+
+        }
+    }
+
+    private int SetUpNewColor() // add new color in colorChunks
+    {
+        // plan
+        // find the largest chunk in colorChunks - LCC
+        int largestChunkKey = 0;
+        int largestChunkValue = 0;
+        foreach (var item in colorChunks)
+        {
+            if (item.Value > largestChunkValue)
+            {
+                largestChunkKey = item.Key;
+                largestChunkValue = item.Value;
             }
         }
+
+        // create new color Chunk - <LCC Key + (LCC value-1)/2, LCC/2>; adjust value of LCC to (LCC-1)/2
+        int newKey = (largestChunkKey + ((largestChunkValue - 1) / 2)) % (paletteArray.Length);
+        int newValue = largestChunkValue / 2 - 1;
+        colorChunks[largestChunkKey] = (largestChunkValue / 2);
+        colorChunks.Add(newKey, newValue);
+        // assign group number to new Key
+        return newKey;
+    }
+
+    private bool RemoveColor() // remove a color from colorChunks
+    {
+        return true;
     }
 
     private GameObject FindTileAt(int countX, int countY)
@@ -186,4 +234,77 @@ public class StorageAreaCreator : MonoBehaviour
         }
         return false;
     }
+
+    private bool BuildColorPalette()
+    {
+
+        // double cycle - the outer loop marks steps; the inner loop is for the duration of the steps
+
+        // set base valued for colors
+        float clrRed = 256;
+        float clrGrn = 0;
+        float clrBlu = 0;
+        int paletteCounter = 0;
+        float maxStepDuration = (256f / hueChangeFactor) - 1;
+
+        for (float stepCounter = 0; stepCounter < 6; stepCounter += 1f) // outer loop 
+        {
+            for (float stepDuration = 0; stepDuration < maxStepDuration; stepDuration += 1) // inner loop
+            {
+                // fill in a palette grid
+                float nrmRed = NormalizeColor(clrRed);
+                float nrmGrn = NormalizeColor(clrGrn);
+                float nrmBlu = NormalizeColor(clrBlu);
+                Color newColor = new Color(nrmRed, nrmGrn, nrmBlu, 1f);
+    
+                PlacePaletteTile(paletteCounter, newColor);
+
+                // fill in the color in the palette
+                paletteArray[paletteCounter] = newColor;
+
+
+                // update colors according to steps and duration
+                clrRed += ((GetStep(0, (int)stepCounter)) * hueChangeFactor);
+                clrGrn += ((GetStep(4, (int)stepCounter)) * hueChangeFactor);
+                clrBlu += ((GetStep(2, (int)stepCounter)) * hueChangeFactor);
+
+
+                paletteCounter++;
+            }
+        }
+        // initiate first large groupStrip - pick a random point in the color array
+        int randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
+        colorChunks.Add(randomStartingColorIndex, paletteArray.Length-1);
+        // map to the first possible group
+        groupToColorMap[1] = randomStartingColorIndex;
+        return true;
+    }
+
+    private int GetStep(int baseColor, int stepNumber) // for baseColor supply 0 for Red, 4 for Green, 2 for Blue
+    {
+        int newStep = baseRedSteps[(stepNumber + baseColor) % 6];
+        return newStep;
+    }
+
+    private float NormalizeColor(float color)
+    {
+
+        float newValue = color / 255f;
+        return newValue;
+    }
+
+    private bool PlacePaletteTile(float deltaX, Color color)
+    {
+        // TODO :: TBD PALETTE TILES
+        // get the palette anchor coordinates
+        float anchorX = GameObject.Find("PaletteAnchor").GetComponent<Transform>().position.x;
+        float anchorY = GameObject.Find("PaletteAnchor").GetComponent<Transform>().position.y;
+
+        float fullDeltaX = deltaX / 100f;
+        GameObject newPaletteTile = Instantiate(basePaletteTile, new Vector3(anchorX + (fullDeltaX), anchorY), Quaternion.identity);
+        newPaletteTile.GetComponent<SpriteRenderer>().color = color;
+        newPaletteTile.GetComponent<Transform>().SetParent(paletteAnchor.GetComponent<Transform>());
+        return true;
+    }
+
 }

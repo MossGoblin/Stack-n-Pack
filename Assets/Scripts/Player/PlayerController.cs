@@ -40,22 +40,22 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            Debug.Log("Up");
+            //Debug.Log("Up");
             MovePlayer(1,0);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            Debug.Log("Left");
+            //Debug.Log("Left");
             MovePlayer(0,-1);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            Debug.Log("Right");
+            //Debug.Log("Right");
             MovePlayer(0,1);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            Debug.Log("Down");
+            //Debug.Log("Down");
             MovePlayer(-1,0);
         }
 
@@ -145,7 +145,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        Debug.Log("moved to: " + playerTransform.position.x + " / " + playerTransform.position.y);
+        //Debug.Log("moved to: " + playerTransform.position.x + " / " + playerTransform.position.y);
     }
 
 

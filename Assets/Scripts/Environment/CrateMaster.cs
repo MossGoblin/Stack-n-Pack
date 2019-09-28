@@ -27,29 +27,29 @@ public class CrateMaster : MonoBehaviour
     int groupCount;
 
     // 2 - a list of groups
-    private List<bool> groupList;
+    private List<int> groupList;
+    private int nextGroupNumber;
 
     // Start is called before the first frame update
     void Start()
     {
         cratesList = new List<GameObject>();
-        groupList = new List<bool>();
+        groupList = new List<int>();
         InitGroupGrid();
-        groupCount = GetSmallestUnusedGroupNumber();
+        nextGroupNumber = 0;
     }
 
     private int GetSmallestUnusedGroupNumber()
-        // TODO :: Smallest Available Group - Needs reworking
+        // TODO :: Smallest Available Group - Reworked
     {
-        if (groupList.IndexOf(false) >= 0)
-        {
-            return groupList.IndexOf(false) + 1;
-        }
-        else
-        {
-            groupList.Add(true);
-            return groupList.Count;
-        }
+
+        // increase nextGroupNumber
+        nextGroupNumber++;
+
+        // add nextGroupNumber to the list
+        groupList.Add(nextGroupNumber);
+
+        return nextGroupNumber;
     }
 
     private void InitGroupGrid()
@@ -94,7 +94,7 @@ public class CrateMaster : MonoBehaviour
 
             bool result = CreateCrateByType(crateType, randomW, randomH);
 
-            Debug.Log("crate @ " + randomW + " / " + randomH);
+            Debug.Log("crate @ " + randomW + " / " + randomH + " in gr " + nextGroupNumber);
         }
 
         return true;
@@ -109,7 +109,7 @@ public class CrateMaster : MonoBehaviour
         int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)coordW);
         int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)coordH);
         storageCreator.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
-        Debug.Log("crate @ " + coordW + " / " + coordH);
+        Debug.Log("crate @ " + coordW + " / " + coordH + " in gr: " + nextGroupNumber);
 
         return true;
     }
@@ -149,21 +149,26 @@ public class CrateMaster : MonoBehaviour
 
     public void EraseCrate(GameObject oldCrate, int posW, int posH)
     {
+
+
         cratesList.Remove(oldCrate);
 
-        // relative coordinates
+        // absolute coordinates
         int absPosW = storageCreator.GetAbsFromRelW(posW);
         int absPosH = storageCreator.GetAbsFromRelH(posH);
 
+        // if there are no nbrs - remove the group from the group list
+        // TODO :: Remove group from group list - removing single crate
+        groupList.Remove(groupGrid[absPosW, absPosH]);
+
         storageCreator.MarkVacancyGrid(absPosW, absPosH, true);
+        storageCreator.groupToColorMap.Remove(groupGrid[absPosW, absPosH]);
         groupGrid[absPosW, absPosH] = 0;
 
         // create stack
         Stack<int> startingStack = new Stack<int>();
 
         // 01 iterate nbrs
-
-        // TODO : HERE
 
         // check for any nbrs
         // NEW ITERATION - TRYG!!
@@ -235,7 +240,6 @@ public class CrateMaster : MonoBehaviour
 
     private bool AssignCrateToGroup(int crateType, int cratePositionW, int cratePositionH)
     {
-        // advance group counter
 
         // perform neighbour check
         // collect neighbours
@@ -284,7 +288,6 @@ public class CrateMaster : MonoBehaviour
         // neighbours collected; see how many different groups there are among them
         if (up + right + down + left == 0) // no neighbours
         {
-            //groupGrid[relW, relH] = groupCount++;
             groupGrid[relW, relH] = GetSmallestUnusedGroupNumber();
             return true;
         }
@@ -335,6 +338,7 @@ public class CrateMaster : MonoBehaviour
 
             return true;
         }
+
         return false;
     }
 
@@ -350,6 +354,8 @@ public class CrateMaster : MonoBehaviour
                 }
             }
         }
+        // TODO :: Remove group from group list - reassign group
+        groupList.Remove(targetGroup);
     }
 
     private GameObject GetCrateByCoordinates(float positionW, float positionH)

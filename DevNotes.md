@@ -10,4 +10,14 @@
             int nbrsYCount = (int)Math.Cos(nbrsAngle);
 = = =
 
-2. rework group number selection and group overall number management
+2. rework group number selection and group overall number management - DONE
+
+        // add nextGroupNumber to the list
+        groupList.Add(nextGroupNumber);
+
+        // increase nextGroupNumber
+        nextGroupNumber++;
+
+= = =
+
+3. implement removing colors from colorChunks (merging chunks) to finish with the in situ highlights
