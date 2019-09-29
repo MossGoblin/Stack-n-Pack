@@ -149,21 +149,23 @@ public class CrateMaster : MonoBehaviour
 
     public void EraseCrate(GameObject oldCrate, int posW, int posH)
     {
-
-
         cratesList.Remove(oldCrate);
-
         // absolute coordinates
         int absPosW = storageCreator.GetAbsFromRelW(posW);
         int absPosH = storageCreator.GetAbsFromRelH(posH);
+
+        int oldGroupNumber = groupGrid[absPosW, absPosH];
 
         // if there are no nbrs - remove the group from the group list
         // TODO :: Remove group from group list - removing single crate
         groupList.Remove(groupGrid[absPosW, absPosH]);
 
+        // mark position in the grid as vacant
         storageCreator.MarkVacancyGrid(absPosW, absPosH, true);
-        storageCreator.groupToColorMap.Remove(groupGrid[absPosW, absPosH]);
+
+        // remove the group index from the group grid
         groupGrid[absPosW, absPosH] = 0;
+
 
         // create stack
         Stack<int> startingStack = new Stack<int>();
@@ -198,6 +200,62 @@ public class CrateMaster : MonoBehaviour
                 }
             }
         }
+
+        // Remove color from colorChunks
+        RemoveColor(oldGroupNumber);
+    }
+
+    private void RemoveColor(int oldGroupNumber) // TODO :: RemoveColor(groupNumber)
+    {
+        // FIRST check if there is only one color!
+        // remove the color associated with the removed group
+        // find the color index in the colorChunks - tbd
+        // find the previous chunk - prev
+        // add tbd.value+1 to prv.value
+        // remove tbd
+        if (storageCreator.colorChunks.Count > 1)
+        {
+            int obsoleteColorIndex = storageCreator.groupToColorMap[oldGroupNumber];
+            int prevColorIndex = FindPrevColorIndex(obsoleteColorIndex);
+            int obsoleteColorChunkSize = storageCreator.colorChunks[obsoleteColorIndex];
+            storageCreator.colorChunks[prevColorIndex] = storageCreator.colorChunks[prevColorIndex] + storageCreator.colorChunks[obsoleteColorIndex] + 1;
+            storageCreator.colorChunks.Remove(obsoleteColorIndex);
+            // un-map the old group from it's color
+            storageCreator.groupToColorMap.Remove(oldGroupNumber);
+        }
+        else // only one group - create new color, remap to default group 1
+        {
+            storageCreator.groupToColorMap.Remove(oldGroupNumber);
+            storageCreator.colorChunks.Clear();
+            // pich a random color
+            int randomStartingColorIndex = UnityEngine.Random.Range(0, storageCreator.paletteArray.Length - 1);
+            storageCreator.colorChunks.Add(randomStartingColorIndex, storageCreator.paletteArray.Length - 1);
+            // map to the first possible group
+            storageCreator.groupToColorMap[1] = randomStartingColorIndex;
+        }
+    }
+
+    private int FindPrevColorIndex(int obsoleteColorIndex)
+    {
+        // iterate through keys in colorChunks; find the largest one that is smaller than obsoleteColorIndex
+        int prevIndex = 0;
+        int largestindex = 0;
+        foreach (var kvp in storageCreator.colorChunks)
+        {
+            if (kvp.Key >= prevIndex && kvp.Key < obsoleteColorIndex)
+            {
+                prevIndex = kvp.Key;
+            }
+            if (kvp.Key > largestindex)
+            {
+                largestindex = kvp.Key;
+            }
+        }
+        if (prevIndex == 0) // if no previous index was found, obsoleteColorIndex was the smallest - return the largest
+        {
+            return largestindex;
+        }
+        return prevIndex;
     }
 
     private bool WorkNeighboursOf(Stack<int> progressStack, int newGroupNumber)
@@ -315,6 +373,7 @@ public class CrateMaster : MonoBehaviour
         {
             groupGrid[relW, relH] = adjGroupList[0];
             return true;
+            // TODO : CHECK FOR ILLEGAL GROUP CREATION
         }
         else if (adjGroupList.Count > 1)
         {
@@ -356,6 +415,8 @@ public class CrateMaster : MonoBehaviour
         }
         // TODO :: Remove group from group list - reassign group
         groupList.Remove(targetGroup);
+        // TODO :: Remove color from dictionary - has this been done ?
+        RemoveColor(targetGroup);
     }
 
     private GameObject GetCrateByCoordinates(float positionW, float positionH)

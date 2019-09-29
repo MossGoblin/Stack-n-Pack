@@ -34,8 +34,8 @@ public class StorageAreaCreator : MonoBehaviour
     int[] baseRedSteps = new int[] { 0, -1, 0, 0, 1, 0 };
     float hueChangeFactor = 2f; // 8 by default; value of 1 would make the step duration 255 ticks
     [SerializeField] GameObject basePaletteTile;
-    Dictionary<int, int> colorChunks;
-    Color[] paletteArray;
+    public Dictionary<int, int> colorChunks;
+    public Color[] paletteArray;
     [SerializeField] float alpha = 0.5f; // alpha goes from 0f to 1f;
     // temp paletteTile container
     [SerializeField] GameObject paletteAnchor;
@@ -66,12 +66,10 @@ public class StorageAreaCreator : MonoBehaviour
     private void Update()
     {
         RecolorGrid();
-        // TODO :: CHECK RECOLORING
     }
 
     private void RecolorGrid()
     {
-        // TODO : HERE
         CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
         for (int countY = 0; countY < storageAreaH; countY++)
         {
@@ -102,7 +100,6 @@ public class StorageAreaCreator : MonoBehaviour
                 }
                 tileSpriteRenderer.color = newColor;
             }
-
         }
     }
 
