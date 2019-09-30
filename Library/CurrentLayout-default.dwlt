@@ -113,7 +113,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 494}
   m_MaxSize: {x: 18008, y: 14044}
   vertical: 1
-  controlID: 629
+  controlID: 9553
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 494}
   m_MaxSize: {x: 18008, y: 14044}
   vertical: 0
-  controlID: 630
+  controlID: 9554
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_MinSize: {x: 202, y: 422}
   m_MaxSize: {x: 4002, y: 8022}
   vertical: 1
-  controlID: 523
+  controlID: 9562
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_MinSize: {x: 234, y: 494}
   m_MaxSize: {x: 10004, y: 14044}
   vertical: 1
-  controlID: 475
+  controlID: 9496
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_MinSize: {x: 277, y: 194}
   m_MaxSize: {x: 4002, y: 8044}
   vertical: 1
-  controlID: 631
+  controlID: 9555
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -420,8 +420,8 @@ MonoBehaviour:
     m_VAllowExceedBaseRangeMin: 1
     m_VAllowExceedBaseRangeMax: 1
     m_ScaleWithWindow: 0
-    m_HSlider: 0
-    m_VSlider: 0
+    m_HSlider: 1
+    m_VSlider: 1
     m_IgnoreScrollWheelUntilClicked: 0
     m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
@@ -434,7 +434,7 @@ MonoBehaviour:
       y: 17
       width: 605
       height: 282
-    m_Scale: {x: 0.3671875, y: 0.3671875}
+    m_Scale: {x: 1, y: 1}
     m_Translation: {x: 302.5, y: 141}
     m_MarginLeft: 0
     m_MarginRight: 0
@@ -442,10 +442,10 @@ MonoBehaviour:
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -823.8298
-      y: -384
-      width: 1647.6595
-      height: 768
+      x: -302.5
+      y: -141
+      width: 605
+      height: 282
     m_MinimalGUI: 1
   m_defaultScale: 0.3671875
   m_TargetTexture: {fileID: 0}
@@ -491,9 +491,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -2.7094464, y: 5.08633, z: -7.988376}
+    m_Target: {x: -2.4692895, y: -0.3127092, z: -9.453027}
     speed: 2
-    m_Value: {x: -2.7094464, y: 5.08633, z: -7.988376}
+    m_Value: {x: -2.4692895, y: -0.3127092, z: -9.453027}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -526,9 +526,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 16.44928
+    m_Target: 25.390354
     speed: 2
-    m_Value: 16.44928
+    m_Value: 25.390354
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -609,9 +609,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 40fbffff
+      m_SelectedIDs: 9e330000
+      m_LastClickedID: 13214
+      m_ExpandedIDs: 6afbffff72330000843300009e330000d8330000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -674,20 +674,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Environment
+    - Assets/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts/Environment
+  - Assets/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\Yolly\Google Drive\Codee\[ GAMESTUFF ]\Unity\StackExchange\StackExchange\Stack-n-Pack
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 51}
-    m_SelectedIDs: c22e0000
-    m_LastClickedID: 11970
-    m_ExpandedIDs: 00000000ea2d00007e2f000080310000f231000000ca9a3b
+    scrollPos: {x: 0, y: 35}
+    m_SelectedIDs: bc2f0000
+    m_LastClickedID: 12220
+    m_ExpandedIDs: 00000000ce2d0000622f000064310000d631000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -715,7 +715,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ea2d00007e2f000080310000f231000000ca9a3b
+    m_ExpandedIDs: 00000000ce2d0000622f000064310000d631000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -767,7 +767,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
+    m_ScrollPosition: {x: 0, y: 172}
     m_GridSize: 64
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 208

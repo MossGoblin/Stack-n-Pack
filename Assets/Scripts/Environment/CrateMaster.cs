@@ -54,6 +54,7 @@ public class CrateMaster : MonoBehaviour
 
     private void InitGroupGrid()
     {
+        // TODO : Fix it - getting the area dimensions before they are updated
         groupGrid = new int[storageCreator.storageAreaW, storageCreator.storageAreaH];
         for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
         {

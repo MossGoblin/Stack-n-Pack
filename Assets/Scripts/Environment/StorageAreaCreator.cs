@@ -42,8 +42,16 @@ public class StorageAreaCreator : MonoBehaviour
     // mapping for groups and color indeces
     public Dictionary<int, int> groupToColorMap;
 
+    //pipework
+    [SerializeField] GameObject pipeHolder;
+    [SerializeField] GameObject basicPipe;
+
     void Awake()
     {
+        // TBR - area size
+        storageAreaW = Mathf.Max(storageAreaW, 7);
+        storageAreaH = Mathf.Max(storageAreaH, 5);
+
         // init vacancy grid
         vacancyGrid = new bool[storageAreaW, storageAreaH];
 
@@ -254,7 +262,7 @@ public class StorageAreaCreator : MonoBehaviour
                 float nrmBlu = NormalizeColor(clrBlu);
                 Color newColor = new Color(nrmRed, nrmGrn, nrmBlu, 1f);
     
-                PlacePaletteTile(paletteCounter, newColor);
+                //PlacePaletteTile(paletteCounter, newColor);
 
                 // fill in the color in the palette
                 paletteArray[paletteCounter] = newColor;
@@ -302,6 +310,34 @@ public class StorageAreaCreator : MonoBehaviour
         newPaletteTile.GetComponent<SpriteRenderer>().color = color;
         newPaletteTile.GetComponent<Transform>().SetParent(paletteAnchor.GetComponent<Transform>());
         return true;
+    }
+
+    public bool PlacePipes()
+    {
+        // TODO : HERE - placing pipes
+        // get the dimensions
+        // pipeholder
+        float pipeLeft = storageAreaOriginW - 0.6f;
+        float pipeRight = storageAreaEndPointW + 0.6f;
+        float pipeDown = storageAreaOriginH + 1;
+        float pipeUp = storageAreaEndPointH - 1;
+        
+
+        GameObject pipeDL = PlaceAPipe(pipeLeft, pipeDown, 1);
+        GameObject pipeUL = PlaceAPipe(pipeLeft, pipeUp, 1);
+        GameObject pipeDR = PlaceAPipe(pipeRight, pipeDown, -1);
+        GameObject pipeRL = PlaceAPipe(pipeRight, pipeUp, -1);
+
+        return true;
+    }
+
+    GameObject PlaceAPipe(float coordX, float coordY, int flip)
+    {
+        Transform pipeHolder = GameObject.Find("Pipes").GetComponent<Transform>();
+        GameObject newPipe = Instantiate(basicPipe, new Vector3(coordX, coordY), Quaternion.identity);
+        newPipe.GetComponent<Transform>().localScale = new Vector3(flip, 1, 1);
+        newPipe.GetComponent<Transform>().SetParent(pipeHolder);
+        return newPipe;
     }
 
 }
