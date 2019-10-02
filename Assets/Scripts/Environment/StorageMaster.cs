@@ -21,7 +21,7 @@ public class StorageMaster : MonoBehaviour
             Debug.Log("Floor created");
         }
 
-
+        areaCreator.PlacePipes();
 
     }
 
@@ -38,7 +38,7 @@ public class StorageMaster : MonoBehaviour
             // check if the hold is empty and create a random crate inside if it is
             if (player.crateOnHold == 0)
             {
-                int randType = (int)Mathf.Round(Random.Range(1, 5));
+                int randType = (int)Mathf.Round(Random.Range(1, 6));
                 player.crateOnHold = randType;
             }
 
@@ -53,7 +53,7 @@ public class StorageMaster : MonoBehaviour
             //    int crateType = 3;
             //    crateMaster.CreateCrateByType(crateType, positionW, positionH);
             //}
-            areaCreator.PlacePipes();
+            //areaCreator.PlacePipes();
         }
 
         if (Input.GetKeyDown(KeyCode.Backspace))

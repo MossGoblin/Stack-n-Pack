@@ -10,11 +10,16 @@ public class CrateMaster : MonoBehaviour
     [SerializeField] GameObject crateTwo;
     [SerializeField] GameObject crateThree;
     [SerializeField] GameObject crateFour;
+    [SerializeField] GameObject crateFive;
     [SerializeField] GameObject genericCrate;
     [SerializeField] StorageAreaCreator storageCreator;
     [SerializeField] Transform crateHolder;
     float positionW;
     float positionH;
+
+    // crate type rarily structures
+    public int[] rarity = new int[] { 30, 25, 20, 15, 10 };
+    public Dictionary<int, int> typeRarityMap = new Dictionary<int, int>();
 
     [SerializeField] public List<GameObject> cratesList; // list of all the crates
     
@@ -37,6 +42,22 @@ public class CrateMaster : MonoBehaviour
         groupList = new List<int>();
         InitGroupGrid();
         nextGroupNumber = 0;
+
+        // init rarity map - map srate type to rarity indeces
+        bool[] chosenIndeces = new bool[6];
+        for (int countType = 0; countType < 6; countType++)
+        {
+            while (typeRarityMap.Count < 6)
+            {
+                int nextIndex = UnityEngine.Random.Range(0, 6);
+                if (!chosenIndeces[nextIndex])
+                {
+                    typeRarityMap.Add(countType, nextIndex);
+                    chosenIndeces[nextIndex] = true;
+                    break;
+                }
+            }
+        }
     }
 
     private int GetSmallestUnusedGroupNumber()
@@ -80,7 +101,7 @@ public class CrateMaster : MonoBehaviour
             int randomW = (int)Mathf.Round(UnityEngine.Random.Range(0, maxW));
             int randomH = (int)Mathf.Round(UnityEngine.Random.Range(0, maxH));
 
-            while (!storageCreator.IsTileAvailableForCrate(randomW, randomH))
+            while (!storageCreator.IsTileAvailableForCrateRel(randomW, randomH))
             {
                 randomW = randomW = (int)Mathf.Round(UnityEngine.Random.Range(0, maxW));
                 randomH = randomH = (int)Mathf.Round(UnityEngine.Random.Range(0, maxH));
@@ -91,7 +112,7 @@ public class CrateMaster : MonoBehaviour
             Debug.Log("found spot @ " + randomW + " / " + randomH);
 
             // Choose random crate type
-            int crateType = UnityEngine.Random.Range(1, 5);
+            int crateType = UnityEngine.Random.Range(1, 6);
 
             bool result = CreateCrateByType(crateType, randomW, randomH);
 
@@ -130,9 +151,13 @@ public class CrateMaster : MonoBehaviour
         {
             crateToSpawn = crateThree;
         }
-        else
+        else if (crateType == 4)
         {
             crateToSpawn = crateFour;
+        }
+        else
+        {
+            crateToSpawn = crateFive;
         }
 
         return crateToSpawn;

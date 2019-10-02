@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class StorageAreaCreator : MonoBehaviour
 {
@@ -19,13 +20,7 @@ public class StorageAreaCreator : MonoBehaviour
     public int storageAreaEndPointH;
 
     // shaded tile sprites
-    [SerializeField] Sprite defaultTileSprite;
-    [SerializeField] Sprite groupTileSprite0;
-    [SerializeField] Sprite groupTileSprite1;
-    [SerializeField] Sprite groupTileSprite2;
-    [SerializeField] Sprite groupTileSprite3;
-    [SerializeField] Sprite groupTileSprite4;
-    [SerializeField] Sprite groupTileSprite5;
+    [SerializeField] Sprite serviceTile;
 
     private bool[,] vacancyGrid;
     CrateMaster crateController;
@@ -70,10 +65,65 @@ public class StorageAreaCreator : MonoBehaviour
 
         BuildColorPalette();
     }
+
     // Update is called once per frame
     private void Update()
     {
+        // highlight groups according to tiles groups
         RecolorGrid();
+
+        // spawn incoming crates
+        SpawnCrates();
+        
+    }
+
+    private void SpawnCrates()
+    {
+        // check if the positions are available
+        int leftX = GetAbsFromRelW(storageAreaOriginW);
+        int rightX = GetAbsFromRelW(storageAreaEndPointW);
+        int downY = GetAbsFromRelH(storageAreaOriginH);
+        int upY = GetAbsFromRelH(storageAreaEndPointH);
+        // TODO :: HERE
+        // pick a random type
+        int crateType = PickACrate();
+        if (IsTileAvailableForCrateRel(leftX, upY))
+        // TODO :: HERE - SOMETHING IS AMISS - It's goes to the crateMaster update, instead of to the CreateCrateByType; to look into...
+        {
+            //bool crateLU = crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
+            crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
+        }
+        if (IsTileAvailableForCrateRel(rightX, upY))
+        {
+            //bool crateRU = crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
+            crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
+        }
+        if (IsTileAvailableForCrateRel(leftX, downY))
+        {
+            //bool crateLD = crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
+            crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
+        }
+        if (IsTileAvailableForCrateRel(rightX, downY))
+        {
+            //bool crateRD = crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
+            crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
+        }
+    }
+
+    private int PickACrate()
+    {
+        CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
+        int rndValue = UnityEngine.Random.Range(0, 100);
+        int tempSum = crateController.rarity[0];
+        for (int count = 1; count < 6; count++)
+        {
+            if (rndValue <= tempSum)
+            {
+                return crateController.typeRarityMap.FirstOrDefault(x => x.Value == count).Key;
+            }
+            tempSum += crateController.rarity[count];
+        }
+        return 0;
     }
 
     private void RecolorGrid()
@@ -86,6 +136,13 @@ public class StorageAreaCreator : MonoBehaviour
                 SpriteRenderer tileSpriteRenderer = FindTileAt(countX, countY).GetComponent<SpriteRenderer>();
                 // find if the group exists in the groupToColor map - either assign its color or create a new color
                 Color newColor;
+
+                // first check for service lane area
+
+                if (countX == 0 || countX == storageAreaW-1 || countY == 0 || countY == storageAreaH-1)
+                {
+                    tileSpriteRenderer.sprite = serviceTile;
+                }
 
                 int tileGroup = crateController.groupGrid[countX, countY];
 
@@ -194,7 +251,7 @@ public class StorageAreaCreator : MonoBehaviour
         return true;
     }
 
-    public bool IsTileAvailableForCrate(int coordW, int coordH)
+    public bool IsTileAvailableForCrateRel(int coordW, int coordH) // input is Relative
     {
         int playerWidth = (int)(player.transform.position.x - storageAreaOriginW);
         int playerHeight = (int)(player.transform.position.y - storageAreaOriginH);
@@ -209,6 +266,22 @@ public class StorageAreaCreator : MonoBehaviour
         }
         //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
     }
+    public bool IsTileAvailableForCrateAbs(int coordW, int coordH) // input is Absolute
+    {
+        int playerWidth = (int)(player.transform.position.x);
+        int playerHeight = (int)(player.transform.position.y);
+        if ((coordW != playerWidth) || (coordH != playerHeight))
+        {
+            bool result = vacancyGrid[coordW, coordH];
+            return vacancyGrid[coordW, coordH];
+        }
+        else
+        {
+            return false;
+        }
+        //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
+    }
+
     public bool IsTileVacant(int coordX, int coordY)
     {
         //return vacancyGrid[coordX + storageAreaOriginW, coordY + storageAreaOriginH];
@@ -314,7 +387,6 @@ public class StorageAreaCreator : MonoBehaviour
 
     public bool PlacePipes()
     {
-        // TODO : HERE - placing pipes
         // get the dimensions
         // pipeholder
         float pipeLeft = storageAreaOriginW - 0.6f;

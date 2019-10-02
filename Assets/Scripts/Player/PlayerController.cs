@@ -80,18 +80,36 @@ public class PlayerController : MonoBehaviour
         bool crateIsReleased = false;
         bool crateToBePickedUp = false;
         bool moved = false;
+        bool withinServiceArea = false;
+
+        // current coordinates in int
+        int currentW = (int)playerTransform.position.x;
+        int currentH = (int)playerTransform.position.y;
+
+        int currentX= storageCreator.GetAbsFromRelW(currentW);
+        int currentY = storageCreator.GetAbsFromRelH(currentH);
 
         // check for storage boundaries
-        int desiredW = (int)(playerTransform.position.x + directionX);
-        int desiredH = (int)(playerTransform.position.y + directionY);
+        int desiredW = (int)(currentW + directionX);
+        int desiredH = (int)(currentH + directionY);
 
         int gridX = storageCreator.GetAbsFromRelW(desiredW);
         int gridY = storageCreator.GetAbsFromRelH(desiredH);
+
         // 01 check if the space is inside the board
         if (IsWithinBorders(gridX, gridY))
         {
             // within borders
             withinBorders = true;
+        }
+
+        // 01.1 - check if in the service area
+        if (currentX == 0 ||
+            currentY == storageCreator.storageAreaW - 1 ||
+            currentX == 0 ||
+            currentY == storageCreator.storageAreaH - 1)
+        {
+            withinServiceArea = true;
         }
 
         // 02 check if there is a crate on hold
@@ -100,8 +118,8 @@ public class PlayerController : MonoBehaviour
             crateToBeReleased = true;
         }
 
-        // 03 check if the crate will be released
-        if (crateToBeReleased && releaseClampFlag)
+        // 03 check if the crate will be released - there is a crate + clamp released + not in the service lane
+        if (crateToBeReleased && releaseClampFlag && !withinServiceArea)
         {
             crateIsReleased = true;
         }
