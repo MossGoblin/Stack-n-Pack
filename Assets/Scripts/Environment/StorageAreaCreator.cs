@@ -64,6 +64,7 @@ public class StorageAreaCreator : MonoBehaviour
         groupToColorMap = new Dictionary<int, int>();
 
         BuildColorPalette();
+        crateController = GameObject.FindObjectOfType<CrateMaster>();
     }
 
     // Update is called once per frame
@@ -74,43 +75,47 @@ public class StorageAreaCreator : MonoBehaviour
 
         // spawn incoming crates
         SpawnCrates();
-        
+
     }
 
     private void SpawnCrates()
     {
         // check if the positions are available
+        // center based positions
+        int leftW = storageAreaOriginW;
+        int rightW = storageAreaEndPointW;
+        int downH = storageAreaOriginH + 1;
+        int upH = storageAreaEndPointH - 1;
+        // origin basec positions
         int leftX = GetAbsFromRelW(storageAreaOriginW);
         int rightX = GetAbsFromRelW(storageAreaEndPointW);
-        int downY = GetAbsFromRelH(storageAreaOriginH);
-        int upY = GetAbsFromRelH(storageAreaEndPointH);
-        // TODO :: HERE
+        int downY = GetAbsFromRelH(storageAreaOriginH) + 1;
+        int upY = GetAbsFromRelH(storageAreaEndPointH) - 1;
         // pick a random type
-        int crateType = PickACrate();
+        int crateType = PickARandomCrate();
         if (IsTileAvailableForCrateRel(leftX, upY))
-        // TODO :: HERE - SOMETHING IS AMISS - It's goes to the crateMaster update, instead of to the CreateCrateByType; to look into...
         {
             //bool crateLU = crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
-            crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
+            crateController.CreateCrateByType(crateType, (float)leftW, (float)upH);
         }
         if (IsTileAvailableForCrateRel(rightX, upY))
         {
             //bool crateRU = crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
-            crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
+            crateController.CreateCrateByType(crateType, (float)rightW, (float)upH);
         }
         if (IsTileAvailableForCrateRel(leftX, downY))
         {
             //bool crateLD = crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
-            crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
+            crateController.CreateCrateByType(crateType, (float)leftW, (float)downH);
         }
         if (IsTileAvailableForCrateRel(rightX, downY))
         {
             //bool crateRD = crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
-            crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
+            crateController.CreateCrateByType(crateType, (float)rightW, (float)downH);
         }
     }
 
-    private int PickACrate()
+    private int PickARandomCrate()
     {
         CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
         int rndValue = UnityEngine.Random.Range(0, 100);
@@ -128,6 +133,7 @@ public class StorageAreaCreator : MonoBehaviour
 
     private void RecolorGrid()
     {
+        // TODO :: HERE 02 - do not color the service lane!
         CrateMaster crateController = crateMaster.GetComponent<CrateMaster>();
         for (int countY = 0; countY < storageAreaH; countY++)
         {

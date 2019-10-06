@@ -61,7 +61,6 @@ public class CrateMaster : MonoBehaviour
     }
 
     private int GetSmallestUnusedGroupNumber()
-        // TODO :: Smallest Available Group - Reworked
     {
 
         // increase nextGroupNumber
@@ -75,7 +74,6 @@ public class CrateMaster : MonoBehaviour
 
     private void InitGroupGrid()
     {
-        // TODO : Fix it - getting the area dimensions before they are updated
         groupGrid = new int[storageCreator.storageAreaW, storageCreator.storageAreaH];
         for (int countH = 0; countH < storageCreator.storageAreaH; countH++)
         {
@@ -124,10 +122,11 @@ public class CrateMaster : MonoBehaviour
 
     public bool CreateCrateByType(int crateType, float coordW, float coordH)
     {
+
         GameObject newCrate = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity);
-        RegisterCrate(newCrate);
-        newCrate.transform.SetParent(crateHolder);
         newCrate.name = "crate 0" + crateType;
+        newCrate.transform.SetParent(crateHolder);
+        RegisterCrate(newCrate);
         int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)coordW);
         int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)coordH);
         storageCreator.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
@@ -231,7 +230,7 @@ public class CrateMaster : MonoBehaviour
         RemoveColor(oldGroupNumber);
     }
 
-    private void RemoveColor(int oldGroupNumber) // TODO :: RemoveColor(groupNumber)
+    private void RemoveColor(int oldGroupNumber)
     {
         // FIRST check if there is only one color!
         // remove the color associated with the removed group
@@ -324,55 +323,55 @@ public class CrateMaster : MonoBehaviour
 
     private bool AssignCrateToGroup(int crateType, int cratePositionW, int cratePositionH)
     {
-
+        // TODO :: HERE 01 - do not assign primary crates (from service lane) to groups
         // perform neighbour check
         // collect neighbours
         int up = 0;
         int right = 0;
         int down = 0;
         int left = 0;
-        int relW = storageCreator.GetAbsFromRelW(cratePositionW);
-        int relH = storageCreator.GetAbsFromRelH(cratePositionH);
+        int absX = storageCreator.GetAbsFromRelW(cratePositionW);
+        int absY = storageCreator.GetAbsFromRelH(cratePositionH);
         List<int> adjGroups = new List<int>();
         List<int> adjGroupList = new List<int>();
 
         // up
-        if (relH + 1 < storageCreator.storageAreaH)
+        if (absY + 1 < storageCreator.storageAreaH)
         {
-            if (!storageCreator.IsTileVacant(relW, relH + 1))
+            if (!storageCreator.IsTileVacant(absX, absY + 1))
             {
-                up = groupGrid[relW, relH + 1];
+                up = groupGrid[absX, absY + 1];
             }
         }
         // right
-        if (relW + 1 < storageCreator.storageAreaW)
+        if (absX + 1 < storageCreator.storageAreaW)
         {
-            if (!storageCreator.IsTileVacant(relW + 1, relH))
+            if (!storageCreator.IsTileVacant(absX + 1, absY))
             {
-                right = groupGrid[relW + 1, relH];
+                right = groupGrid[absX + 1, absY];
             }
         }
         // down
-        if (relH - 1 >= 0)
+        if (absY - 1 >= 0)
         {
-            if (!storageCreator.IsTileVacant(relW, relH - 1))
+            if (!storageCreator.IsTileVacant(absX, absY - 1))
             {
-                down = groupGrid[relW, relH - 1];
+                down = groupGrid[absX, absY - 1];
             }
         }
         // left
-        if (relW - 1 >= 0)
+        if (absX - 1 >= 0)
         {
-            if (!storageCreator.IsTileVacant(relW - 1, relH))
+            if (!storageCreator.IsTileVacant(absX - 1, absY))
             {
-                left = groupGrid[relW - 1, relH];
+                left = groupGrid[absX - 1, absY];
             }
         }
 
         // neighbours collected; see how many different groups there are among them
         if (up + right + down + left == 0) // no neighbours
         {
-            groupGrid[relW, relH] = GetSmallestUnusedGroupNumber();
+            groupGrid[absX, absY] = GetSmallestUnusedGroupNumber();
             return true;
         }
 
@@ -397,7 +396,7 @@ public class CrateMaster : MonoBehaviour
         // if there is only one neighbouring group
         if (adjGroupList.Count == 1)
         {
-            groupGrid[relW, relH] = adjGroupList[0];
+            groupGrid[absX, absY] = adjGroupList[0];
             return true;
             // TODO : CHECK FOR ILLEGAL GROUP CREATION
         }
@@ -411,7 +410,7 @@ public class CrateMaster : MonoBehaviour
                 minGroupNumber = Mathf.Min(minGroupNumber, item);
             }
             // assign group number
-            groupGrid[relW, relH] = minGroupNumber;
+            groupGrid[absX, absY] = minGroupNumber;
             // reassign larger groups
             foreach (int item in adjGroupList)
             {
@@ -441,7 +440,6 @@ public class CrateMaster : MonoBehaviour
         }
         // TODO :: Remove group from group list - reassign group
         groupList.Remove(targetGroup);
-        // TODO :: Remove color from dictionary - has this been done ?
         RemoveColor(targetGroup);
     }
 
@@ -473,7 +471,7 @@ public class CrateMaster : MonoBehaviour
             default:
                 return 4;
         }
-    }
+        }
 
     private bool IsWithinBorders(int posX, int posY)
     {
