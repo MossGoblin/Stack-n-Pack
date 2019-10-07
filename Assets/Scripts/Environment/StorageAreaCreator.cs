@@ -74,11 +74,11 @@ public class StorageAreaCreator : MonoBehaviour
         RecolorGrid();
 
         // spawn incoming crates
-        SpawnCrates();
+        SpawnIncomingCrates();
 
     }
 
-    private void SpawnCrates()
+    private void SpawnIncomingCrates()
     {
         // check if the positions are available
         // center based positions
@@ -145,7 +145,10 @@ public class StorageAreaCreator : MonoBehaviour
 
                 // first check for service lane area
 
-                if (countX == 0 || countX == storageAreaW-1 || countY == 0 || countY == storageAreaH-1)
+                if (countX == 0 || 
+                    countX == storageAreaW - 1 || 
+                    countY == 0 || 
+                    countY == storageAreaH - 1)
                 {
                     tileSpriteRenderer.sprite = serviceTile;
                 }
@@ -154,9 +157,10 @@ public class StorageAreaCreator : MonoBehaviour
 
                 // FIRST find if there is no group
 
+                newColor = new Color(1f, 1f, 1f, 1f);
+
                 if (tileGroup == 0)
                 {
-                    newColor = new Color(1f, 1f, 1f, 1f);
                 }
                 else if (groupToColorMap.ContainsKey(tileGroup)) // the group has a mapped color
                 {
@@ -164,10 +168,16 @@ public class StorageAreaCreator : MonoBehaviour
                 }
                 else
                 {
+                    if (countX != 0 && 
+                        countX != storageAreaW - 1 && 
+                        countY != 0 && 
+                        countY != storageAreaH - 1) // if not in the service lane
+                    {
                     // create new color
                     int newColorIndex = SetUpNewColor()
 ;                   newColor = paletteArray[newColorIndex];
                     groupToColorMap.Add(tileGroup, newColorIndex);
+                    }
                 }
                 tileSpriteRenderer.color = newColor;
             }
@@ -235,6 +245,19 @@ public class StorageAreaCreator : MonoBehaviour
         Debug.Log("Out Of Space!");
         return false;
     }
+
+    internal bool NotInServiceLane(int nbrX, int nbrY)
+    {
+        if (nbrX > storageAreaOriginW &&
+            nbrX < storageAreaEndPointW &&
+            nbrY > storageAreaOriginH &&
+            nbrY < storageAreaEndPointH)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public bool CreateFloor()
     {
         storageAreaOriginW = (storageAreaW / 2) * -1;
@@ -417,5 +440,4 @@ public class StorageAreaCreator : MonoBehaviour
         newPipe.GetComponent<Transform>().SetParent(pipeHolder);
         return newPipe;
     }
-
 }

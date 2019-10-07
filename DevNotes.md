@@ -41,7 +41,7 @@ rules:
 
 = = =
 
-6. proper crate spawning
+6. proper crate spawning - DONE
 in the begining assign crate types to probability indeces to assure that the most common type is different each time
 assign probabilities to type; deliver through pipes
 types:
@@ -51,6 +51,11 @@ types:
 4 - 15
 5 - 10
 
+TODO : exclude the service lane crates from groups and highlighting - DONE (unless an edge case can break it)
+
+= = =
+
+X. Change the way crates come into play - outside of the pipes, then picked up eith an Enter
 
 = = =
 

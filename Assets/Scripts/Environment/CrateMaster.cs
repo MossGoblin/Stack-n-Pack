@@ -122,7 +122,6 @@ public class CrateMaster : MonoBehaviour
 
     public bool CreateCrateByType(int crateType, float coordW, float coordH)
     {
-
         GameObject newCrate = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity);
         newCrate.name = "crate 0" + crateType;
         newCrate.transform.SetParent(crateHolder);
@@ -167,8 +166,10 @@ public class CrateMaster : MonoBehaviour
         cratesList.Add(newCrate);
         int registerPositionW = (int)newCrate.transform.position.x;
         int registerPositionH = (int)newCrate.transform.position.y;
-        AssignCrateToGroup(GetCrateTypeFromName(newCrate), registerPositionW, registerPositionH);
-
+        if (storageCreator.NotInServiceLane(registerPositionW, registerPositionH))
+        {
+            AssignCrateToGroup(GetCrateTypeFromName(newCrate), registerPositionW, registerPositionH);
+        }
     }
 
 
@@ -209,7 +210,7 @@ public class CrateMaster : MonoBehaviour
             int nbrX = absPosW + nbrXCoord;
             int nbrY = absPosH + nbrYCoord;
             // if nbr within borders
-            if (IsWithinBorders(nbrX, nbrY))
+            if (IsWithinBorders(nbrX, nbrY) && NotInServiceLane(nbrX, nbrY))
             {
                 // if there is a nbr at this position
                 if (!storageCreator.IsTileVacant(nbrX, nbrY))
@@ -226,8 +227,16 @@ public class CrateMaster : MonoBehaviour
             }
         }
 
-        // Remove color from colorChunks
-        RemoveColor(oldGroupNumber);
+        // Remove color from colorChunks if the crate was not in the service lane
+        if (storageCreator.NotInServiceLane(posW, posH))
+        {
+            RemoveColor(oldGroupNumber);
+        }
+    }
+
+    private bool NotInServiceLane(int nbrX, int nbrY)
+    {
+        return storageCreator.NotInServiceLane(nbrX, nbrY);
     }
 
     private void RemoveColor(int oldGroupNumber)
@@ -238,6 +247,8 @@ public class CrateMaster : MonoBehaviour
         // find the previous chunk - prev
         // add tbd.value+1 to prv.value
         // remove tbd
+
+        // rempve color only if the crate is not in the service lane
         if (storageCreator.colorChunks.Count > 1)
         {
             int obsoleteColorIndex = storageCreator.groupToColorMap[oldGroupNumber];
@@ -336,7 +347,7 @@ public class CrateMaster : MonoBehaviour
         List<int> adjGroupList = new List<int>();
 
         // up
-        if (absY + 1 < storageCreator.storageAreaH)
+        if (absY + 1 < storageCreator.storageAreaH - 1) 
         {
             if (!storageCreator.IsTileVacant(absX, absY + 1))
             {
@@ -344,7 +355,7 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // right
-        if (absX + 1 < storageCreator.storageAreaW)
+        if (absX + 1 < storageCreator.storageAreaW - 1)
         {
             if (!storageCreator.IsTileVacant(absX + 1, absY))
             {
@@ -352,7 +363,7 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // down
-        if (absY - 1 >= 0)
+        if (absY - 1 >= 1)
         {
             if (!storageCreator.IsTileVacant(absX, absY - 1))
             {
@@ -360,7 +371,7 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // left
-        if (absX - 1 >= 0)
+        if (absX - 1 >= 1)
         {
             if (!storageCreator.IsTileVacant(absX - 1, absY))
             {

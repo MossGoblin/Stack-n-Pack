@@ -36,12 +36,11 @@ public class StorageMaster : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             // check if the hold is empty and create a random crate inside if it is
-            if (player.crateOnHold == 0)
-            {
-                int randType = (int)Mathf.Round(Random.Range(1, 6));
-                player.crateOnHold = randType;
-            }
-
+            //if (player.crateOnHold == 0)
+            //{
+            //    int randType = (int)Mathf.Round(Random.Range(1, 6));
+            //    player.crateOnHold = randType;
+            //}
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -59,7 +58,6 @@ public class StorageMaster : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             //crateMaster.BuildGroups();
-
         }
     }
 }
