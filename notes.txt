@@ -29,3 +29,5 @@
 [incremental] service lane is added; TODO : skip assigning crates from the service lane to the groups; remove highligting of crates in the service lane
 
 [incremental] removed group assignment and highlight assignment for the crates in the service lane
+
+[midcode] building group content indeces

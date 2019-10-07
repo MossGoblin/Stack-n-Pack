@@ -35,6 +35,11 @@ public class CrateMaster : MonoBehaviour
     private List<int> groupList;
     private int nextGroupNumber;
 
+
+    // group content
+    Dictionary<int, int> groupContent;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +62,44 @@ public class CrateMaster : MonoBehaviour
                     break;
                 }
             }
+        }
+
+        groupContent = new Dictionary<int, int>();
+
+    }
+
+    public void AssessCrateGroups()
+    {
+        // group by group
+        for (int groupCount = 0; groupCount < groupList.Count; groupCount++)
+        {
+            // get group number
+            int currentGroup = groupList[groupCount];
+            // prep the group index
+            int groupIndex = 0;
+
+            // iterate group members
+            for (int countX = 0; countX < storageCreator.storageAreaEndPointW; countX++)
+            {
+                for (int countY = 0; countY < storageCreator.storageAreaEndPointH; countY++)
+                {
+                    if (groupGrid[countX, countY] == currentGroup)
+                    {
+                        // get the crate type
+                        int countXRel = storageCreator.GetRelFromAbsW(countX);
+                        int countYRel = storageCreator.GetRelFromAbsH(countY);
+                        GameObject crate = GetCrateByCoordinates(countXRel, countYRel);
+
+                        int crateType = GetCrateTypeFromName(crate);
+
+                        // add the current type to the group index
+                        groupIndex += rarity[crateType] * 10;
+                        // TODO :: HERE -- building croup contents
+
+                    }
+                }
+            }
+            groupContent.Add(currentGroup, groupIndex);
         }
     }
 
@@ -87,6 +130,8 @@ public class CrateMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // assess crate groups
+        AssessCrateGroups();
     }
 
     public bool SpawnCrateAtRandomPsition(int number)

@@ -37,9 +37,10 @@ public class StorageAreaCreator : MonoBehaviour
     // mapping for groups and color indeces
     public Dictionary<int, int> groupToColorMap;
 
-    //pipework
+    // pipework
     [SerializeField] GameObject pipeHolder;
     [SerializeField] GameObject basicPipe;
+
 
     void Awake()
     {
@@ -75,8 +76,8 @@ public class StorageAreaCreator : MonoBehaviour
 
         // spawn incoming crates
         SpawnIncomingCrates();
-
     }
+
 
     private void SpawnIncomingCrates()
     {
@@ -330,6 +331,16 @@ public class StorageAreaCreator : MonoBehaviour
     public int GetAbsFromRelH(int relH)
     {
         return relH - storageAreaOriginH;
+    }
+
+    public int GetRelFromAbsW(int relW)
+    {
+        return relW + storageAreaOriginW;
+    }
+
+    public int GetRelFromAbsH(int relH)
+    {
+        return relH + storageAreaOriginH;
     }
 
     public bool IsWithinBorders(int posX, int posY)

@@ -777,8 +777,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floorTile: 0
-  storageAreaW: 17
-  storageAreaH: 11
+  storageAreaW: 7
+  storageAreaH: 5
   concreteTile: {fileID: 6497766969401098699, guid: 851e1d609f4821042a709dcb364895a7,
     type: 3}
   tilesParent: {fileID: 1444094605}
