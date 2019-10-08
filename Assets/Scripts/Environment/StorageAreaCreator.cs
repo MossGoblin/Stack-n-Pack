@@ -41,12 +41,15 @@ public class StorageAreaCreator : MonoBehaviour
     [SerializeField] GameObject pipeHolder;
     [SerializeField] GameObject basicPipe;
 
+    // minimum size of grid - TEMP
+    int storageMinW = 7;
+    int storageMinH = 5;
 
     void Awake()
     {
-        // TBR - area size
-        storageAreaW = Mathf.Max(storageAreaW, 7);
-        storageAreaH = Mathf.Max(storageAreaH, 5);
+        // TODO :: TEMP - area size
+        storageAreaW = Mathf.Max(storageAreaW, storageMinW);
+        storageAreaH = Mathf.Max(storageAreaH, storageMinH);
 
         // init vacancy grid
         vacancyGrid = new bool[storageAreaW, storageAreaH];
@@ -145,14 +148,17 @@ public class StorageAreaCreator : MonoBehaviour
                 Color newColor;
 
                 // first check for service lane area
-
-                if (countX == 0 || 
-                    countX == storageAreaW - 1 || 
-                    countY == 0 || 
-                    countY == storageAreaH - 1)
+                if (!NotInServiceLane(GetRelFromAbsW(countX), GetRelFromAbsH(countY)))
                 {
                     tileSpriteRenderer.sprite = serviceTile;
                 }
+
+                //if (countX == 0 || 
+                //    countX == storageAreaW - 1 || 
+                //    countY == 0 || 
+                //    countY == storageAreaH - 1)
+                //{
+                //}
 
                 int tileGroup = crateController.groupGrid[countX, countY];
 

@@ -105,8 +105,8 @@ public class PlayerController : MonoBehaviour
 
         // 01.1 - check if in the service area
         if (currentX == 0 ||
-            currentY == storageCreator.storageAreaW - 1 ||
-            currentX == 0 ||
+            currentX == storageCreator.storageAreaW - 1 ||
+            currentY == 0 ||
             currentY == storageCreator.storageAreaH - 1)
         {
             withinServiceArea = true;

@@ -31,3 +31,5 @@
 [incremental] removed group assignment and highlight assignment for the crates in the service lane
 
 [midcode] building group content indeces
+
+[incremental] group content indices built; should immediately move to the alternative pick-up system, otherwise too much trouble is coming (for no gain)

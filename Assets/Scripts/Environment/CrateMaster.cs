@@ -37,7 +37,7 @@ public class CrateMaster : MonoBehaviour
 
 
     // group content
-    Dictionary<int, int> groupContent;
+    Dictionary<int, string> groupContent;
 
 
     // Start is called before the first frame update
@@ -63,10 +63,34 @@ public class CrateMaster : MonoBehaviour
                 }
             }
         }
-
-        groupContent = new Dictionary<int, int>();
-
+        groupContent = new Dictionary<int, string>();
     }
+
+    // Update is called once per frame
+    void Update()
+    {
+        AssessCrateGroups();
+
+        if (Input.GetKeyDown(KeyCode.Return)) // temp group content report
+        {
+            foreach (var group in groupContent)
+            {
+                Debug.Log(group.Key + ": " + group.Value);
+            }
+        }
+
+
+        // TODO :: temp groupList report
+        if (Input.GetKeyDown(KeyCode.KeypadEnter)) // temp group content report
+        {
+            Debug.Log("== groupcount ==");
+            foreach (var group in groupList)
+            {
+                Debug.Log(group.ToString());
+            }
+        }
+    }
+
 
     public void AssessCrateGroups()
     {
@@ -76,12 +100,26 @@ public class CrateMaster : MonoBehaviour
             // get group number
             int currentGroup = groupList[groupCount];
             // prep the group index
-            int groupIndex = 0;
+            string groupIndexString = "";
+
+            // clear group members
+            if (!groupList.Contains(currentGroup))
+            {
+                groupContent.Remove(currentGroup);
+            }
+            // TODO :: HERE -- building croup contents
+
+            // clear group content history
+            if (!groupContent.ContainsKey(currentGroup))
+            {
+                groupContent.Add(currentGroup, "");
+            }
+            groupContent[currentGroup] = "";
 
             // iterate group members
-            for (int countX = 0; countX < storageCreator.storageAreaEndPointW; countX++)
+            for (int countY = 1; countY < storageCreator.storageAreaH - 1; countY++)
             {
-                for (int countY = 0; countY < storageCreator.storageAreaEndPointH; countY++)
+                for (int countX = 1; countX < storageCreator.storageAreaW - 1; countX++)
                 {
                     if (groupGrid[countX, countY] == currentGroup)
                     {
@@ -90,16 +128,28 @@ public class CrateMaster : MonoBehaviour
                         int countYRel = storageCreator.GetRelFromAbsH(countY);
                         GameObject crate = GetCrateByCoordinates(countXRel, countYRel);
 
-                        int crateType = GetCrateTypeFromName(crate);
+                        float crateType = (float)GetCrateTypeFromName(crate);
 
                         // add the current type to the group index
-                        groupIndex += rarity[crateType] * 10;
-                        // TODO :: HERE -- building croup contents
+                        int groupIndex = (int)Mathf.Pow(10, crateType - 1);
 
+                        int currentIndex = 0;
+                        if (groupContent.ContainsKey(currentGroup))
+                        {
+                            if (groupContent[currentGroup] != "")
+                            {
+                                currentIndex = int.Parse(groupContent[currentGroup]);
+                            }
+                        }
+
+                        currentIndex += groupIndex;
+                        groupIndexString = currentIndex.ToString();
+
+                        groupContent[currentGroup] = groupIndexString;
+                        //Debug.Log("group: " + currentGroup + " => " + groupIndexString);
                     }
                 }
             }
-            groupContent.Add(currentGroup, groupIndex);
         }
     }
 
@@ -127,13 +177,6 @@ public class CrateMaster : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // assess crate groups
-        AssessCrateGroups();
-    }
-
     public bool SpawnCrateAtRandomPsition(int number)
     {
         for (int count = 0; count < number; count++)
@@ -159,7 +202,7 @@ public class CrateMaster : MonoBehaviour
 
             bool result = CreateCrateByType(crateType, randomW, randomH);
 
-            Debug.Log("crate @ " + randomW + " / " + randomH + " in gr " + nextGroupNumber);
+            //Debug.Log("crate @ " + randomW + " / " + randomH + " in gr " + nextGroupNumber);
         }
 
         return true;
@@ -174,7 +217,7 @@ public class CrateMaster : MonoBehaviour
         int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)coordW);
         int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)coordH);
         storageCreator.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
-        Debug.Log("crate @ " + coordW + " / " + coordH + " in gr: " + nextGroupNumber);
+        //Debug.Log("crate @ " + coordW + " / " + coordH + " in gr: " + nextGroupNumber);
 
         return true;
     }
@@ -524,8 +567,10 @@ public class CrateMaster : MonoBehaviour
                 return 2;
             case "crate 03":
                 return 3;
-            default:
+            case "crate 04":
                 return 4;
+            default:
+                return 5;
         }
         }
 
