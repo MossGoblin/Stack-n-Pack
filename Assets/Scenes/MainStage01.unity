@@ -364,7 +364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 728281101}
   m_Layer: 31
-  m_Name: Pipes
+  m_Name: Factories
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -474,7 +474,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937183570}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 5, z: 0}
+  m_LocalPosition: {x: -4, y: 8.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -777,8 +777,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floorTile: 0
-  storageAreaW: 11
-  storageAreaH: 7
+  storageAreaW: 17
+  storageAreaH: 11
   concreteTile: {fileID: 6497766969401098699, guid: 851e1d609f4821042a709dcb364895a7,
     type: 3}
   tilesParent: {fileID: 1444094605}
@@ -794,9 +794,10 @@ MonoBehaviour:
   paletteArray: []
   alpha: 0.5
   paletteAnchor: {fileID: 937183570}
-  pipeHolder: {fileID: 0}
-  basicPipe: {fileID: 8461991953095291553, guid: 765a9e656ca01fb469154a5c35339eb4,
+  factoryHolder: {fileID: 728281100}
+  basicFactory: {fileID: 8461991953095291553, guid: 765a9e656ca01fb469154a5c35339eb4,
     type: 3}
+  factoryMap: 
 --- !u!1 &1935361846
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,21 +841,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7ae7e207272e848afd4044ca6a69ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crateOne: {fileID: 8184697610998277849, guid: e71234725dd45b14988600248ddfa642,
+  crateOne: {fileID: 2567674722872741577, guid: 6cc3f1b8a5d43f24987ef3e62a48bf5a,
     type: 3}
-  crateTwo: {fileID: 2182788690557629307, guid: 79a35b784bf046341b5c8dab57925c3c,
+  crateTwo: {fileID: 8184697610998277849, guid: e71234725dd45b14988600248ddfa642,
     type: 3}
-  crateThree: {fileID: 490295914094016137, guid: 6a5e720521912864bab477e1dcc1b0d4,
+  crateThree: {fileID: 2182788690557629307, guid: 79a35b784bf046341b5c8dab57925c3c,
     type: 3}
-  crateFour: {fileID: 7143883264991802979, guid: 41abdce918937624fa5c03bfde18fe3a,
+  crateFour: {fileID: 490295914094016137, guid: 6a5e720521912864bab477e1dcc1b0d4,
     type: 3}
-  crateFive: {fileID: 8902962622919193272, guid: c77bfd4826548234a8b4bf1d2f31bda0,
+  crateFive: {fileID: 7143883264991802979, guid: 41abdce918937624fa5c03bfde18fe3a,
     type: 3}
-  genericCrate: {fileID: 2567674722872741577, guid: 6cc3f1b8a5d43f24987ef3e62a48bf5a,
+  crateSix: {fileID: 8902962622919193272, guid: c77bfd4826548234a8b4bf1d2f31bda0,
     type: 3}
   storageCreator: {fileID: 1919975972}
   crateHolder: {fileID: 65127046}
   rarity: 1e00000019000000140000000f0000000a000000
+  numberOfRarities: 0
   cratesList: []
 --- !u!1 &1968122360
 GameObject:
@@ -947,6 +949,7 @@ MonoBehaviour:
   crateTwo: {fileID: 21300000, guid: 91ab4be7109a8db43b010a550ba7c144, type: 3}
   crateThree: {fileID: 21300000, guid: 762aa85905f8cb94d95d5192fcf015e1, type: 3}
   crateFour: {fileID: 21300000, guid: 3939db85b302672469dcafece29019f4, type: 3}
+  crateFive: {fileID: 21300000, guid: 9ded420b935ca60408c1021e6305435b, type: 3}
   player: {fileID: 1630043790}
 --- !u!1 &2069170714
 GameObject:
@@ -1096,3 +1099,4 @@ MonoBehaviour:
   spriteTwo: {fileID: 21300000, guid: 7204e993c650ec3438b0d8e8267141ef, type: 3}
   spriteThree: {fileID: 21300000, guid: 84a0381f44c49564caa7dbe83f881820, type: 3}
   spriteFour: {fileID: 21300000, guid: 0668704fb1fd58a4b9b353732632870a, type: 3}
+  spriteFive: {fileID: 21300000, guid: a697f7c0fc4f58940b8b57556fe67489, type: 3}

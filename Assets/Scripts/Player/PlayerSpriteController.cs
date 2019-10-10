@@ -10,6 +10,7 @@ public class PlayerSpriteController : MonoBehaviour
     [SerializeField] Sprite spriteTwo;
     [SerializeField] Sprite spriteThree;
     [SerializeField] Sprite spriteFour;
+    [SerializeField] Sprite spriteFive;
 
     int activeCrateOnHold;
     SpriteRenderer activeSprite;
@@ -38,6 +39,9 @@ public class PlayerSpriteController : MonoBehaviour
                 break;
             case 4:
                 activeSprite.sprite = spriteFour;
+                break;
+            case 5:
+                activeSprite.sprite = spriteFive;
                 break;
             default:
                 activeSprite.sprite = spriteEmpty;

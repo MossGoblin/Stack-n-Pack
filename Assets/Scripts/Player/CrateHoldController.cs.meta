@@ -3,7 +3,13 @@ guid: 67a3b5038efaa8542bb48c5af4b82890
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - crateEmpty: {instanceID: 0}
+  - crateOne: {instanceID: 0}
+  - crateTwo: {instanceID: 0}
+  - crateThree: {instanceID: 0}
+  - crateFour: {instanceID: 0}
+  - player: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

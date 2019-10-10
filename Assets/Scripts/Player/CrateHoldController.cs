@@ -11,6 +11,7 @@ public class CrateHoldController : MonoBehaviour
     [SerializeField] Sprite crateTwo;
     [SerializeField] Sprite crateThree;
     [SerializeField] Sprite crateFour;
+    [SerializeField] Sprite crateFive;
 
     [SerializeField] GameObject player;
 
@@ -47,6 +48,10 @@ public class CrateHoldController : MonoBehaviour
         else if (crateOnHold == 4)
         {
             cargoImage.sprite = crateFour;
+        }
+        else if (crateOnHold == 5)
+        {
+            cargoImage.sprite = crateFive;
         }
     }
 }

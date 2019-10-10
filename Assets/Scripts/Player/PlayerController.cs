@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -66,6 +67,37 @@ public class PlayerController : MonoBehaviour
         else
         {
             releaseClampFlag = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return)) // pick up new crate
+        {
+            // TODO :: HERE - pick up new crate - CRATE TYPE ON HOLD DOES NOT MATCH CRATE DELIVERED
+            // First check if no crate on hold
+            if (crateOnHold == 0)
+            {
+
+                // check if on the proper space
+                float posX = playerTransform.position.x;
+                float posY = playerTransform.position.y;
+                if (posX == storageCreator.storageAreaOriginW && posY == storageCreator.storageAreaOriginH + 1) // bottom left
+                {
+                    crateOnHold = storageCreator.factoryMap[0];
+                }
+                else if (posX == storageCreator.storageAreaOriginW && posY == storageCreator.storageAreaEndPointH - 1) // bottom right
+                {
+                    crateOnHold = storageCreator.factoryMap[1];
+                }
+                else if (posX == storageCreator.storageAreaEndPointW && posY == storageCreator.storageAreaOriginH + 1) // top left
+                {
+                    crateOnHold = storageCreator.factoryMap[2];
+                }
+                else if (posX == storageCreator.storageAreaEndPointW && posY == storageCreator.storageAreaEndPointH - 1) // top right
+                {
+                    crateOnHold = storageCreator.factoryMap[3];
+                }
+
+                // TODO :: HERE If a new crate is picked up - reset the factory
+            }
         }
 
         return true;

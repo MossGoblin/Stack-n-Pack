@@ -21,8 +21,6 @@ public class StorageMaster : MonoBehaviour
             Debug.Log("Floor created");
         }
 
-        areaCreator.PlacePipes();
-
     }
 
     // Update is called once per frame
@@ -52,7 +50,7 @@ public class StorageMaster : MonoBehaviour
             //    int crateType = 3;
             //    crateMaster.CreateCrateByType(crateType, positionW, positionH);
             //}
-            //areaCreator.PlacePipes();
+            //areaCreator.PlaceFactories();
         }
 
         if (Input.GetKeyDown(KeyCode.Backspace))

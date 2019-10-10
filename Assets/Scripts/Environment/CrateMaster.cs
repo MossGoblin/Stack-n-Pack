@@ -11,15 +11,16 @@ public class CrateMaster : MonoBehaviour
     [SerializeField] GameObject crateThree;
     [SerializeField] GameObject crateFour;
     [SerializeField] GameObject crateFive;
-    [SerializeField] GameObject genericCrate;
+    [SerializeField] GameObject crateSix;
     [SerializeField] StorageAreaCreator storageCreator;
     [SerializeField] Transform crateHolder;
     float positionW;
     float positionH;
 
-    // crate type rarily structures
+    // crate type rarity structures
     public int[] rarity = new int[] { 30, 25, 20, 15, 10 };
     public Dictionary<int, int> typeRarityMap = new Dictionary<int, int>();
+    public int numberOfRarities;
 
     [SerializeField] public List<GameObject> cratesList; // list of all the crates
     
@@ -39,7 +40,42 @@ public class CrateMaster : MonoBehaviour
     // group content
     Dictionary<int, string> groupContent;
 
+    private void Awake()
+    {
 
+        // NEW VERSION - WILL USE FIXED RARITY MAP
+        numberOfRarities = rarity.Count();
+        for (int typeCount = 0; typeCount < numberOfRarities; typeCount++)
+        {
+            typeRarityMap.Add(typeCount, typeCount); // POI - typeCount under suspision
+        }
+
+        // OLD CODE
+        //// build rarity map
+        //numberOfRarities = rarity.Count();
+        //bool[] chosenIndeces = new bool[numberOfRarities];
+        //// the most common type is always 01
+        //typeRarityMap.Add(1, 0);
+        //chosenIndeces[0] = true;
+        //chosenIndeces[numberOfRarities] = true;
+
+        //for (int countType = 1; countType < numberOfRarities-2; countType++)
+        //{
+        //    while (typeRarityMap.Count < numberOfRarities-2)
+        //    {
+        //        int nextIndex = UnityEngine.Random.Range(0, numberOfRarities);
+        //        if (!chosenIndeces[nextIndex])
+        //        {
+        //            typeRarityMap.Add(countType, nextIndex);
+        //            chosenIndeces[nextIndex] = true;
+        //            break;
+        //        }
+        //    }
+        //}
+        //// the most rare type is always 06
+        //typeRarityMap.Add(4, numberOfRarities);
+
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -49,20 +85,7 @@ public class CrateMaster : MonoBehaviour
         nextGroupNumber = 0;
 
         // init rarity map - map srate type to rarity indeces
-        bool[] chosenIndeces = new bool[6];
-        for (int countType = 0; countType < 6; countType++)
-        {
-            while (typeRarityMap.Count < 6)
-            {
-                int nextIndex = UnityEngine.Random.Range(0, 6);
-                if (!chosenIndeces[nextIndex])
-                {
-                    typeRarityMap.Add(countType, nextIndex);
-                    chosenIndeces[nextIndex] = true;
-                    break;
-                }
-            }
-        }
+
         groupContent = new Dictionary<int, string>();
     }
 
@@ -71,16 +94,16 @@ public class CrateMaster : MonoBehaviour
     {
         AssessCrateGroups();
 
-        if (Input.GetKeyDown(KeyCode.Return)) // temp group content report
-        {
-            foreach (var group in groupContent)
-            {
-                Debug.Log(group.Key + ": " + group.Value);
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.Return)) // temp group content report
+        //{
+        //    foreach (var group in groupContent)
+        //    {
+        //        Debug.Log(group.Key + ": " + group.Value);
+        //    }
+        //}
 
 
-        // TODO :: temp groupList report
+        // TODO :: TBD temp groupList report
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) // temp group content report
         {
             Debug.Log("== groupcount ==");
@@ -210,9 +233,8 @@ public class CrateMaster : MonoBehaviour
 
     public bool CreateCrateByType(int crateType, float coordW, float coordH)
     {
-        GameObject newCrate = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity);
+        GameObject newCrate = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity, crateHolder);
         newCrate.name = "crate 0" + crateType;
-        newCrate.transform.SetParent(crateHolder);
         RegisterCrate(newCrate);
         int coordAbsW = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelW((int)coordW);
         int coordAbsH = storageCreator.GetComponent<StorageAreaCreator>().GetAbsFromRelH((int)coordH);

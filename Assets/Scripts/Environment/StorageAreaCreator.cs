@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
 public class StorageAreaCreator : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -37,9 +36,11 @@ public class StorageAreaCreator : MonoBehaviour
     // mapping for groups and color indeces
     public Dictionary<int, int> groupToColorMap;
 
-    // pipework
-    [SerializeField] GameObject pipeHolder;
-    [SerializeField] GameObject basicPipe;
+    // factorywork
+    [SerializeField] GameObject factoryHolder;
+    [SerializeField] GameObject basicFactory;
+    public Dictionary<int, GameObject> factoryList;
+    public List<int> factoryMap;
 
     // minimum size of grid - TEMP
     int storageMinW = 7;
@@ -47,9 +48,17 @@ public class StorageAreaCreator : MonoBehaviour
 
     void Awake()
     {
+        factoryList = new Dictionary<int, GameObject>();
+        factoryMap = new List<int>();
+
         // TODO :: TEMP - area size
         storageAreaW = Mathf.Max(storageAreaW, storageMinW);
         storageAreaH = Mathf.Max(storageAreaH, storageMinH);
+
+        storageAreaOriginW = (storageAreaW / 2) * -1;
+        storageAreaOriginH = (storageAreaH / 2) * -1;
+        storageAreaEndPointW = storageAreaW + storageAreaOriginW - 1;
+        storageAreaEndPointH = storageAreaH + storageAreaOriginH - 1;
 
         // init vacancy grid
         vacancyGrid = new bool[storageAreaW, storageAreaH];
@@ -69,6 +78,15 @@ public class StorageAreaCreator : MonoBehaviour
 
         BuildColorPalette();
         crateController = GameObject.FindObjectOfType<CrateMaster>();
+
+    }
+
+    private void Start()
+    {
+        PlaceFactories();
+
+        // spawn incoming crates
+        InitializeFactoryColors();
     }
 
     // Update is called once per frame
@@ -77,46 +95,67 @@ public class StorageAreaCreator : MonoBehaviour
         // highlight groups according to tiles groups
         RecolorGrid();
 
-        // spawn incoming crates
-        SpawnIncomingCrates();
     }
 
 
-    private void SpawnIncomingCrates()
+    private void InitializeFactoryColors()
     {
-        // check if the positions are available
-        // center based positions
-        int leftW = storageAreaOriginW;
-        int rightW = storageAreaEndPointW;
-        int downH = storageAreaOriginH + 1;
-        int upH = storageAreaEndPointH - 1;
-        // origin basec positions
-        int leftX = GetAbsFromRelW(storageAreaOriginW);
-        int rightX = GetAbsFromRelW(storageAreaEndPointW);
-        int downY = GetAbsFromRelH(storageAreaOriginH) + 1;
-        int upY = GetAbsFromRelH(storageAreaEndPointH) - 1;
-        // pick a random type
-        int crateType = PickARandomCrate();
-        if (IsTileAvailableForCrateRel(leftX, upY))
+        // build factory colors
+        Color[] colorPool = new Color[]
+            {
+                new Color(0.5f, 0.4f, 0.0f, 1f),
+                new Color(1, 1, 0, 1),
+                new Color(1, 0, 0, 1),
+                new Color(0, 1, 0, 1),
+                new Color(0, 0, 1, 1),
+                new Color(1, 0, 1, 1)
+            };
+
+        // NEW VERSION
+
+        for (int factCount = 0; factCount < 4; factCount++)
         {
-            //bool crateLU = crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
-            crateController.CreateCrateByType(crateType, (float)leftW, (float)upH);
+            int rndNumber = (int)UnityEngine.Random.Range(0, crateController.numberOfRarities);
+            int randomType = crateController.typeRarityMap[rndNumber];
+            factoryMap.Add(rndNumber);
+            factoryList[factCount].GetComponent<SpriteRenderer>().color = colorPool[randomType];
         }
-        if (IsTileAvailableForCrateRel(rightX, upY))
-        {
-            //bool crateRU = crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
-            crateController.CreateCrateByType(crateType, (float)rightW, (float)upH);
-        }
-        if (IsTileAvailableForCrateRel(leftX, downY))
-        {
-            //bool crateLD = crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
-            crateController.CreateCrateByType(crateType, (float)leftW, (float)downH);
-        }
-        if (IsTileAvailableForCrateRel(rightX, downY))
-        {
-            //bool crateRD = crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
-            crateController.CreateCrateByType(crateType, (float)rightW, (float)downH);
-        }
+
+        // OLD VERSION
+        //// check if the positions are available
+        //// center based positions
+        //int leftW = storageAreaOriginW;
+        //int rightW = storageAreaEndPointW;
+        //int downH = storageAreaOriginH + 1;
+        //int upH = storageAreaEndPointH - 1;
+        //// origin basec positions
+        //int leftX = GetAbsFromRelW(storageAreaOriginW);
+        //int rightX = GetAbsFromRelW(storageAreaEndPointW);
+        //int downY = GetAbsFromRelH(storageAreaOriginH) + 1;
+        //int upY = GetAbsFromRelH(storageAreaEndPointH) - 1;
+        //// pick a random type
+        //int crateType = PickARandomCrate();
+        //if (IsTileAvailableForCrateRel(leftX, upY))
+        //{
+        //    //bool crateLU = crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
+        //    crateController.CreateCrateByType(crateType, (float)leftW, (float)upH);
+        //}
+        //if (IsTileAvailableForCrateRel(rightX, upY))
+        //{
+        //    //bool crateRU = crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
+        //    crateController.CreateCrateByType(crateType, (float)rightW, (float)upH);
+        //}
+        //if (IsTileAvailableForCrateRel(leftX, downY))
+        //{
+        //    //bool crateLD = crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
+        //    crateController.CreateCrateByType(crateType, (float)leftW, (float)downH);
+        //}
+        //if (IsTileAvailableForCrateRel(rightX, downY))
+        //{
+        //    //bool crateRD = crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
+        //    crateController.CreateCrateByType(crateType, (float)rightW, (float)downH);
+        //}
+
     }
 
     private int PickARandomCrate()
@@ -175,11 +214,15 @@ public class StorageAreaCreator : MonoBehaviour
                 }
                 else
                 {
-                    if (countX != 0 && 
-                        countX != storageAreaW - 1 && 
-                        countY != 0 && 
-                        countY != storageAreaH - 1) // if not in the service lane
+                    if (NotInServiceLane(countX, countY))
                     {
+
+                    //}
+                    //if (countX != 0 && 
+                    //    countX != storageAreaW - 1 && 
+                    //    countY != 0 && 
+                    //    countY != storageAreaH - 1) // if not in the service lane
+                    //{
                     // create new color
                     int newColorIndex = SetUpNewColor()
 ;                   newColor = paletteArray[newColorIndex];
@@ -267,10 +310,6 @@ public class StorageAreaCreator : MonoBehaviour
 
     public bool CreateFloor()
     {
-        storageAreaOriginW = (storageAreaW / 2) * -1;
-        storageAreaOriginH = (storageAreaH / 2) * -1;
-        storageAreaEndPointW = storageAreaW + storageAreaOriginW - 1;
-        storageAreaEndPointH = storageAreaH + storageAreaOriginH - 1;
 
         for (int countH = 0; countH < storageAreaH; countH++)
         {
@@ -278,8 +317,7 @@ public class StorageAreaCreator : MonoBehaviour
             {
                 float positionX = countW + storageAreaOriginW;
                 float positionY = countH + storageAreaOriginH;
-                GameObject newTile = Instantiate(concreteTile, new Vector3(positionX, positionY), Quaternion.identity);
-                newTile.transform.SetParent(tilesParent);
+                GameObject newTile = Instantiate(concreteTile, new Vector3(positionX, positionY), Quaternion.identity, tilesParent);
                 newTile.name = "tile " + positionX + " / " + positionY;
                 // Debug.Log("placed a tile at: " + countX + " / " +  countY);
             }
@@ -380,7 +418,7 @@ public class StorageAreaCreator : MonoBehaviour
                 float nrmGrn = NormalizeColor(clrGrn);
                 float nrmBlu = NormalizeColor(clrBlu);
                 Color newColor = new Color(nrmRed, nrmGrn, nrmBlu, 1f);
-    
+
                 //PlacePaletteTile(paletteCounter, newColor);
 
                 // fill in the color in the palette
@@ -391,7 +429,6 @@ public class StorageAreaCreator : MonoBehaviour
                 clrRed += ((GetStep(0, (int)stepCounter)) * hueChangeFactor);
                 clrGrn += ((GetStep(4, (int)stepCounter)) * hueChangeFactor);
                 clrBlu += ((GetStep(2, (int)stepCounter)) * hueChangeFactor);
-
 
                 paletteCounter++;
             }
@@ -425,36 +462,38 @@ public class StorageAreaCreator : MonoBehaviour
         float anchorY = GameObject.Find("PaletteAnchor").GetComponent<Transform>().position.y;
 
         float fullDeltaX = deltaX / 100f;
-        GameObject newPaletteTile = Instantiate(basePaletteTile, new Vector3(anchorX + (fullDeltaX), anchorY), Quaternion.identity);
+        GameObject newPaletteTile = Instantiate(basePaletteTile, new Vector3(anchorX + (fullDeltaX), anchorY), Quaternion.identity, paletteAnchor.GetComponent<Transform>());
         newPaletteTile.GetComponent<SpriteRenderer>().color = color;
-        newPaletteTile.GetComponent<Transform>().SetParent(paletteAnchor.GetComponent<Transform>());
         return true;
     }
 
-    public bool PlacePipes()
+    public bool PlaceFactories()
     {
         // get the dimensions
-        // pipeholder
-        float pipeLeft = storageAreaOriginW - 0.6f;
-        float pipeRight = storageAreaEndPointW + 0.6f;
-        float pipeDown = storageAreaOriginH + 1;
-        float pipeUp = storageAreaEndPointH - 1;
+        // factoryholder
+        float factoryLeft = storageAreaOriginW - 0.8f;
+        float factoryRight = storageAreaEndPointW + 0.8f;
+        float factoryBottom = storageAreaOriginH + 1.2f;
+        float factoryTop = storageAreaEndPointH - 0.8f;
         
 
-        GameObject pipeDL = PlaceAPipe(pipeLeft, pipeDown, 1);
-        GameObject pipeUL = PlaceAPipe(pipeLeft, pipeUp, 1);
-        GameObject pipeDR = PlaceAPipe(pipeRight, pipeDown, -1);
-        GameObject pipeRL = PlaceAPipe(pipeRight, pipeUp, -1);
+        GameObject factoryBL = PlaceAFactory(factoryLeft, factoryBottom, 1);
+        GameObject factoryTL = PlaceAFactory(factoryLeft, factoryTop, 1);
+        GameObject factoryBR = PlaceAFactory(factoryRight, factoryBottom, -1);
+        GameObject factoryTR = PlaceAFactory(factoryRight, factoryTop, -1);
+        factoryList.Add(0, factoryBL);
+        factoryList.Add(1, factoryBR);
+        factoryList.Add(2, factoryTL);
+        factoryList.Add(3, factoryTR);
 
         return true;
     }
 
-    GameObject PlaceAPipe(float coordX, float coordY, int flip)
+    GameObject PlaceAFactory(float coordX, float coordY, int flip)
     {
-        Transform pipeHolder = GameObject.Find("Pipes").GetComponent<Transform>();
-        GameObject newPipe = Instantiate(basicPipe, new Vector3(coordX, coordY), Quaternion.identity);
-        newPipe.GetComponent<Transform>().localScale = new Vector3(flip, 1, 1);
-        newPipe.GetComponent<Transform>().SetParent(pipeHolder);
-        return newPipe;
+        Transform factoryHolder = GameObject.Find("Factories").GetComponent<Transform>();
+        GameObject newFactory = Instantiate(basicFactory, new Vector3(coordX, coordY), Quaternion.identity, factoryHolder);
+        newFactory.GetComponent<Transform>().localScale = new Vector3(flip, 1, 1);
+        return newFactory;
     }
 }
