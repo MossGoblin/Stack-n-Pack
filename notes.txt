@@ -35,3 +35,5 @@
 [incremental] group content indices built; should immediately move to the alternative pick-up system, otherwise too much trouble is coming (for no gain)
 
 [rework] almost reworked the ne wcrates spawning - problems with picked crate type and picking positions
+
+[rework] started building the Crate class to perform the Crate/Group/Order (hereafter CGO) conversion
