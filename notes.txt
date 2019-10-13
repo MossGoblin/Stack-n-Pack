@@ -37,3 +37,5 @@
 [rework] almost reworked the ne wcrates spawning - problems with picked crate type and picking positions
 
 [rework] started building the Crate class to perform the Crate/Group/Order (hereafter CGO) conversion
+
+[rework, UnderConstruction] halfway through Objectification; no compilation errors, now going through the code to rework a bunh of methods that still don't know things have changed...

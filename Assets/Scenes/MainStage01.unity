@@ -120,36 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &65127045
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 65127046}
-  m_Layer: 31
-  m_Name: CrateHolder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &65127046
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65127045}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2069170715}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &189252060
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,6 +236,10 @@ Transform:
   m_LocalPosition: {x: 0, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1919975971}
+  - {fileID: 1444094605}
+  - {fileID: 728281101}
+  - {fileID: 1935361847}
   - {fileID: 1630043791}
   - {fileID: 2069170715}
   m_Father: {fileID: 0}
@@ -377,11 +351,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 728281100}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2069170715}
+  m_Father: {fileID: 291409049}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &924685846
@@ -507,8 +481,8 @@ Transform:
   m_LocalPosition: {x: -2.1276226, y: -0.5787668, z: -1.1956788}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2069170715}
-  m_RootOrder: 4
+  m_Father: {fileID: 291409049}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1528861502
 GameObject:
@@ -695,7 +669,7 @@ GameObject:
   - component: {fileID: 1630043791}
   - component: {fileID: 1630043793}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -714,7 +688,7 @@ Transform:
   m_Children:
   - {fileID: 2103205492}
   m_Father: {fileID: 291409049}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1630043793
 MonoBehaviour:
@@ -730,8 +704,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crateOnHold: 0
   incomingCrate: {fileID: 0}
-  crateController: {fileID: 1935361846}
-  storageCreator: {fileID: 1919975972}
+  crateMaster: {fileID: 0}
+  storageMaster: {fileID: 0}
   releaseClampFlag: 0
 --- !u!1 &1919975970
 GameObject:
@@ -744,7 +718,7 @@ GameObject:
   - component: {fileID: 1919975971}
   - component: {fileID: 1919975972}
   m_Layer: 31
-  m_Name: StorageCreator
+  m_Name: StorageMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -757,11 +731,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1919975970}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2069170715}
+  m_Father: {fileID: 291409049}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1919975972
@@ -773,7 +747,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1919975970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3b857350c0ca0e428ea1ad66f959759, type: 3}
+  m_Script: {fileID: 11500000, guid: 7bacd4a063ff8a549b594d49534609f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   floorTile: 0
@@ -783,7 +757,7 @@ MonoBehaviour:
     type: 3}
   tilesParent: {fileID: 1444094605}
   player: {fileID: 1630043791}
-  crateMaster: {fileID: 1935361847}
+  crateMasterTransform: {fileID: 0}
   storageAreaOriginW: 0
   storageAreaOriginH: 0
   storageAreaEndPointW: 0
@@ -822,12 +796,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935361846}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2069170715}
-  m_RootOrder: 1
+  m_Father: {fileID: 291409049}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1935361848
 MonoBehaviour:
@@ -853,8 +827,6 @@ MonoBehaviour:
     type: 3}
   crateSix: {fileID: 8902962622919193272, guid: c77bfd4826548234a8b4bf1d2f31bda0,
     type: 3}
-  storageCreator: {fileID: 1919975972}
-  crateHolder: {fileID: 65127046}
   rarity: 1e00000019000000140000000f0000000a000000
   numberOfRarities: 0
   cratesList: []
@@ -962,7 +934,7 @@ GameObject:
   - component: {fileID: 2069170715}
   - component: {fileID: 2069170716}
   m_Layer: 31
-  m_Name: StorageMaster
+  m_Name: AreaMaster
   m_TagString: Background
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -978,14 +950,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1919975971}
-  - {fileID: 1935361847}
-  - {fileID: 728281101}
-  - {fileID: 65127046}
-  - {fileID: 1444094605}
+  m_Children: []
   m_Father: {fileID: 291409049}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2069170716
 MonoBehaviour:
@@ -999,7 +966,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2b3541e24ac6094e875635cfe6db69b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1630043793}
   initialRandomSpawnNumber: 0
 --- !u!1 &2103205491
 GameObject:

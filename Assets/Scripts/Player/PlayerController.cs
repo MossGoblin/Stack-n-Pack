@@ -15,16 +15,19 @@ public class PlayerController : MonoBehaviour
     private Transform playerTransform;
 
     // Crate controller ref
-    [SerializeField] GameObject crateController;
+    [SerializeField] CrateController crateMaster;
 
     // storage area master link
-    [SerializeField] StorageAreaCreator storageCreator;
+    [SerializeField] StorageController storageMaster;
 
     // release trigger
     public bool releaseClampFlag;
     // Start is called before the first frame update
     void Start()
     {
+        // build refs
+        crateMaster = FindObjectOfType<CrateController>();
+        storageMaster = FindObjectOfType<StorageController>();
         playerTransform = GetComponentInParent<Transform>();
         releaseClampFlag = false;
         crateOnHold = 0;
@@ -71,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return)) // pick up new crate
         {
-            // TODO :: HERE - pick up new crate - CRATE TYPE ON HOLD DOES NOT MATCH CRATE DELIVERED
+            // TODO :: BUG - pick up new crate - CRATE TYPE ON HOLD DOES NOT MATCH CRATE DELIVERED
             // First check if no crate on hold
             if (crateOnHold == 0)
             {
@@ -79,21 +82,21 @@ public class PlayerController : MonoBehaviour
                 // check if on the proper space
                 float posX = playerTransform.position.x;
                 float posY = playerTransform.position.y;
-                if (posX == storageCreator.storageAreaOriginW && posY == storageCreator.storageAreaOriginH + 1) // bottom left
+                if (posX == storageMaster.storageAreaOriginW && posY == storageMaster.storageAreaOriginH + 1) // bottom left
                 {
-                    crateOnHold = storageCreator.factoryMap[0];
+                    crateOnHold = storageMaster.factoryMap[0];
                 }
-                else if (posX == storageCreator.storageAreaOriginW && posY == storageCreator.storageAreaEndPointH - 1) // bottom right
+                else if (posX == storageMaster.storageAreaOriginW && posY == storageMaster.storageAreaEndPointH - 1) // bottom right
                 {
-                    crateOnHold = storageCreator.factoryMap[1];
+                    crateOnHold = storageMaster.factoryMap[1];
                 }
-                else if (posX == storageCreator.storageAreaEndPointW && posY == storageCreator.storageAreaOriginH + 1) // top left
+                else if (posX == storageMaster.storageAreaEndPointW && posY == storageMaster.storageAreaOriginH + 1) // top left
                 {
-                    crateOnHold = storageCreator.factoryMap[2];
+                    crateOnHold = storageMaster.factoryMap[2];
                 }
-                else if (posX == storageCreator.storageAreaEndPointW && posY == storageCreator.storageAreaEndPointH - 1) // top right
+                else if (posX == storageMaster.storageAreaEndPointW && posY == storageMaster.storageAreaEndPointH - 1) // top right
                 {
-                    crateOnHold = storageCreator.factoryMap[3];
+                    crateOnHold = storageMaster.factoryMap[3];
                 }
 
                 // TODO :: HERE If a new crate is picked up - reset the factory
@@ -118,15 +121,15 @@ public class PlayerController : MonoBehaviour
         int currentW = (int)playerTransform.position.x;
         int currentH = (int)playerTransform.position.y;
 
-        int currentX= storageCreator.GetAbsFromRelW(currentW);
-        int currentY = storageCreator.GetAbsFromRelH(currentH);
+        int currentX= storageMaster.GetAbsFromRelW(currentW);
+        int currentY = storageMaster.GetAbsFromRelH(currentH);
 
         // check for storage boundaries
         int desiredW = (int)(currentW + directionX);
         int desiredH = (int)(currentH + directionY);
 
-        int gridX = storageCreator.GetAbsFromRelW(desiredW);
-        int gridY = storageCreator.GetAbsFromRelH(desiredH);
+        int gridX = storageMaster.GetAbsFromRelW(desiredW);
+        int gridY = storageMaster.GetAbsFromRelH(desiredH);
 
         // 01 check if the space is inside the board
         if (IsWithinBorders(gridX, gridY))
@@ -137,9 +140,9 @@ public class PlayerController : MonoBehaviour
 
         // 01.1 - check if in the service area
         if (currentX == 0 ||
-            currentX == storageCreator.storageAreaW - 1 ||
+            currentX == storageMaster.storageAreaW - 1 ||
             currentY == 0 ||
-            currentY == storageCreator.storageAreaH - 1)
+            currentY == storageMaster.storageAreaH - 1)
         {
             withinServiceArea = true;
         }
@@ -161,7 +164,7 @@ public class PlayerController : MonoBehaviour
         //{
         //    crateToBePickedUp = true;
         //}
-        if (withinBorders && !(storageCreator.IsTileVacant(gridX, gridY)))
+        if (withinBorders && !(storageMaster.IsTileVacant(gridX, gridY)))
         {
             crateToBePickedUp = true;
         }
@@ -173,7 +176,7 @@ public class PlayerController : MonoBehaviour
             // 05.1 dump old crate if any
             if (crateIsReleased)
             {
-                crateController.GetComponent<CrateMaster>().CreateCrateByType(crateOnHold, transform.position.x, transform.position.y);
+                crateMaster.GetComponent<CrateController>().SpawnCrateByType(crateOnHold, transform.position.x, transform.position.y);
                 crateOnHold = 0;
             }
 
@@ -188,10 +191,15 @@ public class PlayerController : MonoBehaviour
             // 05.03 pick up new crate if any
             if (moved && crateToBePickedUp)
             {
-                GameObject incomingCrate = GetCrateFromCoordinates((int)transform.position.x, (int)transform.position.y);
-                crateOnHold = crateController.GetComponent<CrateMaster>().GetCrateTypeFromName(incomingCrate);
-                crateController.GetComponent<CrateMaster>().EraseCrate(incomingCrate, (int)transform.position.x, (int)transform.position.y);
-                Destroy(incomingCrate);
+                GameObject incomingCrateGO = GetCrateFromCoordinates((int)transform.position.x, (int)transform.position.y);
+                Crate incomingCrate = crateMaster.crateGrid[(int)transform.position.x, (int)transform.position.y];
+                crateOnHold = incomingCrate.GetCrateType();
+                // TODO : Erase function to be objectified
+                crateMaster.GetComponent<CrateController>().EraseCrate(incomingCrate);
+                //crateMaster.GetComponent<CrateController>().EraseCrate(incomingCrateGO, (int)transform.position.x, (int)transform.position.y);
+                Destroy(incomingCrateGO);
+                // TODO :: Destoy CRATE
+                incomingCrate = null;
             }
         }
 
@@ -202,7 +210,7 @@ public class PlayerController : MonoBehaviour
 
     private GameObject GetCrateFromCoordinates(int coordW, int coordH)
     {
-        foreach (GameObject currentCrate in crateController.GetComponent<CrateMaster>().cratesList)
+        foreach (GameObject currentCrate in crateMaster.GetComponent<CrateController>().cratesList)
         {
             Transform crrCrateTransform = currentCrate.transform;
             if ((crrCrateTransform.position.x == coordW) && (crrCrateTransform.position.y == coordH))
@@ -215,6 +223,6 @@ public class PlayerController : MonoBehaviour
 
     private bool IsWithinBorders(int posX, int posY)
     {
-        return storageCreator.IsWithinBorders(posX, posY);
+        return storageMaster.IsWithinBorders(posX, posY);
     }
 }

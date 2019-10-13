@@ -86,5 +86,10 @@ X. Change the way crates come into play - outside of the pipes, then picked up e
 		4-5 blocks per color
 		16-20 blocks total
 
-- calculate order hash, same system as for the groups from 7.		
+- calculate order hash, same system as for the groups from 7.	
+
+= = =
+
+Objectification TASKS:
+ -- remove Vacancy Grid	
 	
