@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{347E5E0E-F75D-65A0-69D2-6EFE127FBCCC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -69,6 +68,7 @@
     <Compile Include="Assets\Scripts\Environment\CrateController.cs" />
     <Compile Include="Assets\Scripts\Environment\Group.cs" />
     <Compile Include="Assets\Scripts\Environment\GroupController.cs" />
+    <Compile Include="Assets\Scripts\Environment\Order.cs" />
     <Compile Include="Assets\Scripts\Environment\OrderController.cs" />
     <Compile Include="Assets\Scripts\Environment\StorageController.cs" />
     <Compile Include="Assets\Scripts\Player\ClampController.cs" />

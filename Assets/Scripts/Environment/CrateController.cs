@@ -6,12 +6,13 @@ using System.Linq;
 
 public class CrateController : MonoBehaviour
 {
-    [SerializeField] GameObject crateOne;
-    [SerializeField] GameObject crateTwo;
-    [SerializeField] GameObject crateThree;
-    [SerializeField] GameObject crateFour;
-    [SerializeField] GameObject crateFive;
-    [SerializeField] GameObject crateSix;
+    [SerializeField] GameObject[] crates;
+    //[SerializeField] GameObject crates[0];
+    //[SerializeField] GameObject crates[1];
+    //[SerializeField] GameObject crates[2];
+    //[SerializeField] GameObject crates[3];
+    //[SerializeField] GameObject crates[4];
+    //[SerializeField] GameObject crates[5];
     StorageController storageController;
     Transform crateHolderTransform;
     float positionW;
@@ -19,11 +20,8 @@ public class CrateController : MonoBehaviour
 
     // crate type rarity structures
     public int[] rarity = new int[] { 30, 25, 20, 15, 10 };
-    public Dictionary<int, int> typeRarityMap = new Dictionary<int, int>();
     public int numberOfRarities;
 
-    [SerializeField] public List<GameObject> cratesList; // list of all the crates
-    
     // stack structures
     // 1 - a grid tracking which positions are checked
     private bool[,] checkGrid;
@@ -42,22 +40,17 @@ public class CrateController : MonoBehaviour
 
     private void Awake()
     {
+        numberOfRarities = rarity.Length;
 
-        // NEW VERSION - WILL USE FIXED RARITY MAP
-        numberOfRarities = rarity.Count();
-        for (int typeCount = 0; typeCount < numberOfRarities; typeCount++)
-        {
-            typeRarityMap.Add(typeCount, typeCount); // POI - typeCount under suspision
-        }
     }
     // Start is called before the first frame update
     void Start()
     {
+
         // build refs
         storageController = GameObject.FindObjectOfType<StorageController>();
         crateHolderTransform = GameObject.FindObjectOfType<CrateController>().transform;
-
-        cratesList = new List<GameObject>();
+        
         groupList = new List<int>();
         InitGroupGrid();
         nextGroupNumber = 0;
@@ -81,7 +74,7 @@ public class CrateController : MonoBehaviour
         //}
 
 
-        // TODO :: TBD temp groupList report
+        // TODO :: DEV temp groupList report
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) // temp group content report
         {
             Debug.Log("== groupcount ==");
@@ -95,6 +88,10 @@ public class CrateController : MonoBehaviour
 
     public void AssessCrateGroups()
     {
+        // if there are any groups at all (FOR DEBIGING PURPOSES)
+        if (groupList.Count > 0)
+        {
+
         // group by group
         for (int groupCount = 0; groupCount < groupList.Count; groupCount++)
         {
@@ -121,7 +118,7 @@ public class CrateController : MonoBehaviour
             {
                 for (int countX = 1; countX < storageController.storageAreaW - 1; countX++)
                 {
-                    if (crateGrid[countX, countY].Group == currentGroup)
+                    if (crateGrid[countX, countY] != null &&  crateGrid[countX, countY].Group == currentGroup)
                     {
                         // get the crate type
 
@@ -150,6 +147,24 @@ public class CrateController : MonoBehaviour
                 }
             }
         }
+
+        }
+
+    }
+
+    internal int GetRandomType()
+    {
+        int rndNumber = (int)UnityEngine.Random.Range(0, 100);
+        int cumulative = rarity[0];
+        for (int count = 0; count < numberOfRarities; count++)
+        {
+            if (rndNumber <= cumulative)
+            {
+                return (count + 1);
+            }
+            cumulative += rarity[count + 1];
+        }
+        return 0;
     }
 
     private int GetSmallestUnusedGroupNumber()
@@ -201,7 +216,6 @@ public class CrateController : MonoBehaviour
 
             bool result = SpawnCrateByType(crateType, randomW, randomH);
 
-            //Debug.Log("crate @ " + randomW + " / " + randomH + " in gr " + nextGroupNumber);
         }
 
         return true;
@@ -213,11 +227,7 @@ public class CrateController : MonoBehaviour
         GameObject newCrateGO = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity, crateHolderTransform);
         // create crate OBJ
         Crate newCrate = new Crate(newCrateGO, (int)coordW, (int)coordH, crateType, crateGrid);
-        newCrateGO.name = "crate 0" + crateType;
-        RegisterCrate(newCrateGO, newCrate);
-        int coordAbsW = storageController.GetComponent<StorageController>().GetAbsFromRelW((int)coordW);
-        int coordAbsH = storageController.GetComponent<StorageController>().GetAbsFromRelH((int)coordH);
-        storageController.MarkVacancyGrid((int)coordAbsW, (int)coordAbsH, false);
+        RegisterCrate(newCrate);
         //Debug.Log("crate @ " + coordW + " / " + coordH + " in gr: " + nextGroupNumber);
 
         return true;
@@ -226,64 +236,41 @@ public class CrateController : MonoBehaviour
     public GameObject NewCrateByType(int crateType)
     {
         GameObject crateToSpawn;
-        if (crateType == 1)
-        {
-            crateToSpawn = crateOne;
-        }
-        else if (crateType == 2)
-        {
-            crateToSpawn = crateTwo;
-        }
-        else if (crateType == 3)
-        {
-            crateToSpawn = crateThree;
-        }
-        else if (crateType == 4)
-        {
-            crateToSpawn = crateFour;
-        }
-        else
-        {
-            crateToSpawn = crateFive;
-        }
+        crateToSpawn = crates[crateType];
+        crateToSpawn.name = "crate 0" + crateType;
 
         return crateToSpawn;
     }
 
-    public void RegisterCrate(GameObject newCrateGO, Crate newCrate)  // TODO :: Objectify - first sweep done
+    public void RegisterCrate(Crate newCrate)  // TODO :: Objectify - first sweep done
     {
-        cratesList.Add(newCrateGO);
-        int registerPositionW = (int)newCrateGO.transform.position.x;
-        int registerPositionH = (int)newCrateGO.transform.position.y;
-        if (storageController.NotInServiceLane(registerPositionW, registerPositionH))
+        int registerPositionX = (int)newCrate.GetGridPosition()[0];
+        int registerPositionY = (int)newCrate.GetGridPosition()[1];
+        if (storageController.NotInServiceLaneGrid(registerPositionX, registerPositionY))
         {
-            AssignCrateToGroup(GetCrateTypeFromName(newCrate), newCrate);
+            AssignCrateToGroup(newCrate);
         }
-        crateGrid[registerPositionW, registerPositionH] = newCrate;
+        crateGrid[registerPositionX, registerPositionY] = newCrate;
     }
 
 
-    public void EraseCrate(Crate oldCrate) // TODO :: Objectify
+    public void EraseCrate(Crate oldCrate) // TODO :: Objectify - first sweep done
     {
         GameObject oldCrateGO = oldCrate.SelfGO;
-        cratesList.Remove(oldCrateGO);
-        int posW = (int)oldCrate.GetPosition()[0];
-        int posH = (int)oldCrate.GetPosition()[1];
+        int positionW = (int)oldCrate.GetWorldPosition()[0];
+        int positionH = (int)oldCrate.GetWorldPosition()[1];
         // absolute coordinates
-        int absPosW = storageController.GetAbsFromRelW(posW);
-        int absPosH = storageController.GetAbsFromRelH(posH);
+        int positionX = oldCrate.GetGridPosition()[0];
+        int positionY = oldCrate.GetGridPosition()[1];
 
-        int oldGroupNumber = crateGrid[absPosW, absPosH].Group;
+        int oldGroupNumber = oldCrate.Group;
 
         // if there are no nbrs - remove the group from the group list
         // Remove group from group list - removing single crate
-        groupList.Remove(crateGrid[absPosW, absPosH].Group);
-
-        // mark position in the grid as vacant
-        storageController.MarkVacancyGrid(absPosW, absPosH, true);
+        groupList.Remove(crateGrid[positionX, positionY].Group);
 
         // remove the group index from the group grid
-        crateGrid[absPosW, absPosH] = null;
+        crateGrid[positionX, positionY] = null;
 
 
         // create stack
@@ -300,13 +287,13 @@ public class CrateController : MonoBehaviour
             int nbrYCoord = (int)Math.Cos(nbrsAngle);
 
             // nbr coords
-            int nbrX = absPosW + nbrXCoord;
-            int nbrY = absPosH + nbrYCoord;
+            int nbrX = positionX + nbrXCoord;
+            int nbrY = positionY + nbrYCoord;
             // if nbr within borders
             if (IsWithinBorders(nbrX, nbrY) && NotInServiceLane(nbrX, nbrY))
             {
                 // if there is a nbr at this position
-                if (!storageController.IsTileVacant(nbrX, nbrY))
+                if (!storageController.IsTileEmpty(nbrX, nbrY))
                 {
                     // found at least one nbr
                     // add nbr to stack
@@ -321,7 +308,7 @@ public class CrateController : MonoBehaviour
         }
 
         // Remove color from colorChunks if the crate was not in the service lane
-        if (storageController.NotInServiceLane(posW, posH))
+        if (storageController.NotInServiceLaneWorld(positionW, positionH))
         {
             RemoveColor(oldGroupNumber);
         }
@@ -329,7 +316,7 @@ public class CrateController : MonoBehaviour
 
     private bool NotInServiceLane(int nbrX, int nbrY)
     {
-        return storageController.NotInServiceLane(nbrX, nbrY);
+        return storageController.NotInServiceLaneWorld(nbrX, nbrY);
     }
 
     private void RemoveColor(int oldGroupNumber)
@@ -405,7 +392,7 @@ public class CrateController : MonoBehaviour
             if (IsWithinBorders(nbrX, nbrY))
             {
                 // if there is a nbr at this position AND it is unchecked
-                if ((!storageController.IsTileVacant(nbrX, nbrY)) &&
+                if ((!storageController.IsTileEmpty(nbrX, nbrY)) &&
                     !progressStack.Contains(nbrY*100+nbrX))
                 {
                     // there is an unchecked nbr at this position - stack it and send it to the processor
@@ -425,80 +412,37 @@ public class CrateController : MonoBehaviour
         return true;
     }
 
-    private bool AssignCrateToGroup(int crateType, Crate crate)  // TODO :: Objectify - first sweep done
+    private bool AssignCrateToGroup(Crate crate)  // TODO :: Objectify - first sweep done
     {
         // perform neighbour check
         // collect neighbours
-        Crate topNbr = null;
-        Crate rightNbr = null;
-        Crate bottomNbr = null;
-        Crate leftNbr = null;
-        int absX = (int)crate.PosX; // absolute X
-        int absY = (int)crate.PosY; // absolute Y
+        int absX = (int)crate.GetGridPosition()[0]; // absolute X
+        int absY = (int)crate.GetGridPosition()[1]; // absolute Y
         List<Crate> adjGroups = new List<Crate>();
         List<Crate> adjGroupList = new List<Crate>();
 
         // top -- right -- bottom -- left
 
-        // top
-        Crate[] nbrs = crate.GetNbrs(crateGrid);
-
-
-        if (absY + 1 < storageController.storageAreaH - 1) 
-        {
-            if (!storageController.IsTileVacant(absX, absY + 1))
-            {
-                topNbr = nbrs[0];
-            }
-        }
-        // right
-        if (absX + 1 < storageController.storageAreaW - 1)
-        {
-            if (!storageController.IsTileVacant(absX + 1, absY))
-            {
-                topNbr = nbrs[1];
-            }
-        }
-        // bottom
-        if (absY - 1 >= 1)
-        {
-            if (!storageController.IsTileVacant(absX, absY - 1))
-            {
-                topNbr = nbrs[2];
-            }
-        }
-        // left
-        if (absX - 1 >= 1)
-        {
-            if (!storageController.IsTileVacant(absX - 1, absY))
-            {
-                topNbr = nbrs[3];
-            }
-        }
+        Crate[] nbrs = crate.GetNbrs();
+        Crate topNbr = nbrs[0];
+        Crate rightNbr = nbrs[1];
+        Crate bottomNbr = nbrs[2];
+        Crate leftNbr = nbrs[3];
 
         // neighbours collected; see how many different groups there are among them
-        if (topNbr.Group + rightNbr.Group + bottomNbr.Group + leftNbr.Group == 0) // no neighbours
+        if (topNbr == null && rightNbr == null && bottomNbr == null && leftNbr == null) // no neighbours
         {
-            crateGrid[absX, absY].Group = GetSmallestUnusedGroupNumber();
+            crate.Group = GetSmallestUnusedGroupNumber();
             return true;
         }
 
         // build a list of unique group numbers - all above 0
-        if (topNbr.Group > 0 && adjGroupList.IndexOf(topNbr) < 0)
+        for (int count = 0; count < 4; count++)
         {
-            adjGroupList.Add(topNbr);
-        }
-        if (rightNbr.Group > 0 && adjGroupList.IndexOf(rightNbr) < 0)
-        {
-            adjGroupList.Add(rightNbr);
-        }
-        if (bottomNbr.Group > 0 && adjGroupList.IndexOf(bottomNbr) < 0)
-        {
-            adjGroupList.Add(bottomNbr);
-        }
-        if (leftNbr.Group > 0 && adjGroupList.IndexOf(leftNbr) < 0)
-        {
-            adjGroupList.Add(leftNbr);
+            if (nbrs[count] != null && nbrs[count].Group > 0 && adjGroupList.IndexOf(nbrs[count]) < 0)
+            {
+                adjGroupList.Add(nbrs[count]);
+            }
         }
 
         // if there is only one neighbouring group
@@ -550,24 +494,6 @@ public class CrateController : MonoBehaviour
         // Remove group from group list - reassign group
         groupList.Remove(targetGroup);
         RemoveColor(targetGroup);
-    }
-
-    private GameObject GetCrateGOByCoordinates(float positionW, float positionH)
-    {
-        foreach (GameObject crate in cratesList)
-        {
-            if ((crate.transform.position.x == positionW) && (crate.transform.position.y == positionH))
-            {
-                return crate;
-            }
-        }
-        return null;
-    }
-
-
-    public int GetCrateTypeFromName(Crate crate)
-    {
-        return crate.GetCrateType();
     }
 
     private bool IsWithinBorders(int posX, int posY)

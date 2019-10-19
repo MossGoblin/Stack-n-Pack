@@ -13,9 +13,6 @@ public class Crate
     public GameObject SelfGO { get; set; }
     public int Group { get; set; }
 
-    public float PosX { get; set; }
-    public float PosY { get; set; }
-
     public Crate(GameObject crateGO, int posX, int posY, int type, Crate[,] grid)
     {
         SelfGO = crateGO;
@@ -34,9 +31,16 @@ public class Crate
     }
 
     // get coordinates method - vector 3
-    public float[] GetPosition()
+    public float[] GetWorldPosition()
     {
         return new float[2] { positionX, positionY };
+    }
+
+    public int[] GetGridPosition()
+    {
+        int gridPositionX = positionX + (grid.GetLength(0) / 2);
+        int gridPositionY = positionY + (grid.GetLength(1) / 2);
+        return new int[2] { gridPositionX, gridPositionY };
     }
 
     // set coordinates
@@ -48,17 +52,18 @@ public class Crate
 
 
     // get nbrs - Crate[]
-    public List<Crate> GetNbrs() // Is List okay as a return?
+    public Crate[] GetNbrs() // Is List okay as a return? - NO, NEED INPLICIT MAPPING!!
     {
         // prepare crate nbr grid to return
-        List<Crate> crateNbrList = new List<Crate>();
+        Crate[] crateNbrList = new Crate[4];
         // for each direction
+        int counter = 0;
         for (float theta = 0; theta <= Mathf.PI * 3 / 2; theta += Mathf.PI / 2) // top -- right -- bottom -- left
         {
             int stepY = (int)Mathf.Cos(theta);
             int stepX = (int)Mathf.Sin(theta);
-            int nbrPosX = positionX + stepX;
-            int nbrPosY = positionY + stepY;
+            int nbrPosX = (positionX + stepX) - (grid.GetLength(0) / 2);
+            int nbrPosY = (positionY + stepY) - (grid.GetLength(1) / 2);
             // check if out of borsers
             if (!IsWithinBorders(nbrPosX, 0) &&
                 (!IsWithinBorders(nbrPosY, 1)))
@@ -66,13 +71,16 @@ public class Crate
                 break;
             }
 
+            crateNbrList[counter] = null;
             // check if vacant
-            if (grid[nbrPosX, nbrPosY] == null)
+            if (grid[nbrPosX, nbrPosY] != null)
             {
                 // Get the nbr crate at this position and add it to the nbr list
-                crateNbrList.Add(grid[nbrPosX, nbrPosY]);
+                crateNbrList[counter] = grid[nbrPosX, nbrPosY];
             }
-            // TODO :: HERE Crate Class
+
+            // TODO :: HERE Crate Class (what was that comment about?)
+            counter++;
         }
         return crateNbrList;
     }

@@ -21,7 +21,6 @@ public class StorageController : MonoBehaviour
     // shaded tile sprites
     [SerializeField] Sprite serviceTile;
 
-    private bool[,] vacancyGrid;
     CrateController crateController;
 
     // group coloring
@@ -64,16 +63,6 @@ public class StorageController : MonoBehaviour
         storageAreaEndPointH = storageAreaH + storageAreaOriginH - 1;
 
         // init vacancy grid
-        vacancyGrid = new bool[storageAreaW, storageAreaH];
-
-        for (int countWidth = 0; countWidth < storageAreaW; countWidth++)
-        {
-            for (int countHeight = 0; countHeight < storageAreaH; countHeight++)
-            {
-                MarkVacancyGrid(countWidth, countHeight, true);
-            }
-        }
-
         colorChunks = new Dictionary<int, int>();
         int paletteLength = (256 * 6 / (int)hueChangeFactor);
         paletteArray = new Color[paletteLength];
@@ -120,9 +109,8 @@ public class StorageController : MonoBehaviour
 
         for (int factCount = 0; factCount < 4; factCount++)
         {
-            int rndNumber = (int)UnityEngine.Random.Range(0, crateController.numberOfRarities);
-            int randomType = crateController.typeRarityMap[rndNumber];
-            factoryMap.Add(rndNumber);
+            int randomType = crateController.GetRandomType();
+            factoryMap.Add(randomType);
             factoryList[factCount].GetComponent<SpriteRenderer>().color = colorPool[randomType];
         }
 
@@ -163,22 +151,6 @@ public class StorageController : MonoBehaviour
 
     }
 
-    private int PickARandomCrate()
-    {
-        CrateController crateController = crateMasterTransform.GetComponent<CrateController>();
-        int rndValue = UnityEngine.Random.Range(0, 100);
-        int tempSum = crateController.rarity[0];
-        for (int count = 1; count < 6; count++)
-        {
-            if (rndValue <= tempSum)
-            {
-                return crateController.typeRarityMap.FirstOrDefault(x => x.Value == count).Key;
-            }
-            tempSum += crateController.rarity[count];
-        }
-        return 0;
-    }
-
     private void RecolorGrid()
     {
         CrateController crateController = crateMasterTransform.GetComponent<CrateController>();
@@ -191,7 +163,7 @@ public class StorageController : MonoBehaviour
                 Color newColor;
 
                 // first check for service lane area
-                if (!NotInServiceLane(GetRelFromAbsW(countX), GetRelFromAbsH(countY)))
+                if (!NotInServiceLaneWorld(GetRelFromAbsW(countX), GetRelFromAbsH(countY)))
                 {
                     tileSpriteRenderer.sprite = serviceTile;
                 }
@@ -202,8 +174,11 @@ public class StorageController : MonoBehaviour
                 //    countY == storageAreaH - 1)
                 //{
                 //}
-
-                int tileGroup = crateController.crateGrid[countX, countY].Group;
+                int tileGroup = 0;
+                if (crateController.crateGrid[countX, countY] != null)
+                {
+                    tileGroup = crateController.crateGrid[countX, countY].Group;
+                }
 
                 // FIRST find if there is no group
 
@@ -218,18 +193,11 @@ public class StorageController : MonoBehaviour
                 }
                 else
                 {
-                    if (NotInServiceLane(countX, countY))
+                    if (NotInServiceLaneWorld(countX, countY))
                     {
 
-                    //}
-                    //if (countX != 0 && 
-                    //    countX != storageAreaW - 1 && 
-                    //    countY != 0 && 
-                    //    countY != storageAreaH - 1) // if not in the service lane
-                    //{
-                    // create new color
-                    int newColorIndex = SetUpNewColor()
-;                   newColor = paletteArray[newColorIndex];
+                    int newColorIndex = SetUpNewColor();
+                    newColor = paletteArray[newColorIndex];
                     groupToColorMap.Add(tileGroup, newColorIndex);
                     }
                 }
@@ -286,7 +254,7 @@ public class StorageController : MonoBehaviour
         {
             for (int countY = 0; countY < storageAreaH; countY++)
             {
-                if (vacancyGrid[countX, countY])
+                if (crateController.crateGrid[countX, countY] == null)
                 {
                     numberOfSpaces++;
                 }
@@ -300,12 +268,24 @@ public class StorageController : MonoBehaviour
         return false;
     }
 
-    internal bool NotInServiceLane(int nbrX, int nbrY)
+    internal bool NotInServiceLaneWorld(int posW, int posH)
     {
-        if (nbrX > storageAreaOriginW &&
-            nbrX < storageAreaEndPointW &&
-            nbrY > storageAreaOriginH &&
-            nbrY < storageAreaEndPointH)
+        if (posW > storageAreaOriginW &&
+            posW < storageAreaEndPointW &&
+            posH > storageAreaOriginH &&
+            posH < storageAreaEndPointH)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    internal bool NotInServiceLaneGrid(int posX, int posY)
+    {
+        if (posX > 0 &&
+            posX < storageAreaW &&
+            posY > 0 &&
+            posY < storageAreaH)
         {
             return true;
         }
@@ -335,43 +315,21 @@ public class StorageController : MonoBehaviour
         int playerHeight = (int)(player.transform.position.y - storageAreaOriginH);
         if ((coordW != playerWidth) || (coordH != playerHeight))
         {
-            bool result = vacancyGrid[coordW, coordH];
-            return vacancyGrid[coordW, coordH];
+            return (crateController.crateGrid[coordW, coordH] == null);
         }
         else
         {
             return false;
         }
-        //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
-    }
-    public bool IsTileAvailableForCrateAbs(int coordW, int coordH) // input is Absolute
-    {
-        int playerWidth = (int)(player.transform.position.x);
-        int playerHeight = (int)(player.transform.position.y);
-        if ((coordW != playerWidth) || (coordH != playerHeight))
-        {
-            bool result = vacancyGrid[coordW, coordH];
-            return vacancyGrid[coordW, coordH];
-        }
-        else
-        {
-            return false;
-        }
-        //Debug.Log("[" + coordW + " / " + coordH + "] : " + vacancyGrid[coordW, coordH]);
     }
 
-    public bool IsTileVacant(int coordX, int coordY) // TODO :: Objectify - done
+    public bool IsTileEmpty(int coordX, int coordY) // TODO :: Objectify - done
     {
-        if (crateController.crateGrid[coordX, coordY] != null)
+        if (IsWithinBorders(coordX, coordY) && (crateController.crateGrid[coordX, coordY] == null))
         {
             return true;
         }
         return false;
-    }
-
-    public void MarkVacancyGrid(int coordW, int coordH, bool free) // TBD : TO BE REMOVED, vacany gris os OBSOLETE
-    {
-        vacancyGrid[coordW, coordH] = free;
     }
 
     public int GetAbsFromRelW(int relW)

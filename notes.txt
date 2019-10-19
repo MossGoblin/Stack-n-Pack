@@ -39,3 +39,7 @@
 [rework] started building the Crate class to perform the Crate/Group/Order (hereafter CGO) conversion
 
 [rework, UnderConstruction] halfway through Objectification; no compilation errors, now going through the code to rework a bunh of methods that still don't know things have changed...
+
+[rework, incremental] building the group/group controller classes
+
+[rework, incremental] propagating objectification; broke the group colour assignment and the type that has been handed down from the factories
