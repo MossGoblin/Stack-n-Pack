@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     // storage area master link
     [SerializeField] StorageController storageMaster;
 
+    // factory coordinates
+    List<int> factoryCoordinates;
+
     // release trigger
     public bool releaseClampFlag;
     // Start is called before the first frame update
@@ -32,6 +35,13 @@ public class PlayerController : MonoBehaviour
         releaseClampFlag = false;
         crateOnHold = 0;
         incomingCrate = null;
+
+        // Initiate factory coordinates list
+        factoryCoordinates = new List<int>();
+        factoryCoordinates.Add(100); // bottom left; y = 1, x = 0
+        factoryCoordinates.Add((storageMaster.storageHight - 1) * 100); // top left; y = storage area hight - 1, x = 0
+        factoryCoordinates.Add((storageMaster.storageHight - 1) * 100 + (storageMaster.storageWidth - 1)); // top right; y = storage area hight - 1, x = storage area width
+        factoryCoordinates.Add(100 + storageMaster.storageWidth - 1); // bottom right; y = 1, x = storage area width
     }
 
     // Update is called once per frame
@@ -74,33 +84,60 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return)) // pick up new crate
         {
-            // First check if no crate on hold
-            if (crateOnHold == 0)
-            {
-
-                // check if on the proper space
-                float posX = playerTransform.position.x;
-                float posY = playerTransform.position.y;
-                if (posX == storageMaster.storageAreaOriginW && posY == storageMaster.storageAreaOriginH + 1) // bottom left
-                {
-                    crateOnHold = storageMaster.factoryMap[0];
-                }
-                else if (posX == storageMaster.storageAreaOriginW && posY == storageMaster.storageAreaEndPointH - 1) // bottom right
-                {
-                    crateOnHold = storageMaster.factoryMap[1];
-                }
-                else if (posX == storageMaster.storageAreaEndPointW && posY == storageMaster.storageAreaOriginH + 1) // top left
-                {
-                    crateOnHold = storageMaster.factoryMap[2];
-                }
-                else if (posX == storageMaster.storageAreaEndPointW && posY == storageMaster.storageAreaEndPointH - 1) // top right
-                {
-                    crateOnHold = storageMaster.factoryMap[3];
-                }
-            }
+            int posX = storageMaster.GetGridFromWorld_X((int)playerTransform.position.x);
+            int posY = storageMaster.GetGridFromWorld_Y((int)playerTransform.position.y);
+            int playerAddress = posY * 100 + posX;
+            crateOnHold = LoadCrateFromFactory(playerAddress);
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Returns the type number from a factory that matches the player grid address
+    /// </summary>
+    /// <param name="playerAddress">Player address = y(grid)*100 + x(grid)</param>
+    /// <returns></returns>
+    private int LoadCrateFromFactory(int playerAddress)
+    {
+        int factoryNumber = 0;
+        // First check if no crate on hold
+        if (crateOnHold == 0)
+        {
+            // check if on the proper space
+            // get the factory number by the player address
+            if (!factoryCoordinates.Contains(playerAddress))
+            {
+                Debug.Log("Player not in a position to load a crate");
+                return 0;
+            }
+            factoryNumber = factoryCoordinates.IndexOf(playerAddress);
+        }
+
+        int result = storageMaster.factoryMap[factoryNumber];
+
+        // reset factory content
+        int randomType = crateMaster.GetRandomType();
+        storageMaster.factoryMap[factoryNumber] = randomType;
+
+        // rcolor factory
+        RecolorFactory(factoryNumber);
+
+        return result;
+    }
+
+    private void RecolorFactory(int factoryNumber)
+    {
+        Color[] colorPool = new Color[]
+            {
+                new Color(0.5f, 0.4f, 0.0f, 1f),
+                new Color(1, 1, 0, 1),
+                new Color(1, 0, 0, 1),
+                new Color(0, 1, 0, 1),
+                new Color(0, 0, 1, 1),
+                new Color(1, 0, 1, 1)
+            };
+        storageMaster.factoryList[factoryNumber].GetComponent<SpriteRenderer>().color = colorPool[storageMaster.factoryMap[factoryNumber]];
     }
 
     void MovePlayer(float directionY, float directionX)
@@ -117,14 +154,14 @@ public class PlayerController : MonoBehaviour
         int currentW = (int)playerTransform.position.x; // world view
         int currentH = (int)playerTransform.position.y; // world view
 
-        int currentX= storageMaster.GetAbsFromRelW(currentW); // grid view
-        int currentY = storageMaster.GetAbsFromRelH(currentH); // grid view
+        int currentX= storageMaster.GetGridFromWorld_X(currentW); // grid view
+        int currentY = storageMaster.GetGridFromWorld_Y(currentH); // grid view
 
         int destinationW = (int)(currentW + directionX); // world view
         int destinationH = (int)(currentH + directionY); // world view
 
-        int destinationX = storageMaster.GetAbsFromRelW(destinationW); // grid view
-        int destinationY = storageMaster.GetAbsFromRelH(destinationH); // grid view
+        int destinationX = storageMaster.GetGridFromWorld_X(destinationW); // grid view
+        int destinationY = storageMaster.GetGridFromWorld_Y(destinationH); // grid view
 
         // 01 check if the DESTINATION space is inside the board
         if (IsWithinBorders(destinationX, destinationY))
@@ -135,9 +172,9 @@ public class PlayerController : MonoBehaviour
 
         // 01.1 - check if CURRENT space is in the service area
         if (currentX == 0 ||
-            currentX == storageMaster.storageAreaW - 1 ||
+            currentX == storageMaster.storageWidth - 1 ||
             currentY == 0 ||
-            currentY == storageMaster.storageAreaH - 1)
+            currentY == storageMaster.storageHight - 1)
         {
             withinServiceArea = true;
         }

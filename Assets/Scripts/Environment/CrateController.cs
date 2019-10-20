@@ -7,12 +7,7 @@ using System.Linq;
 public class CrateController : MonoBehaviour
 {
     [SerializeField] GameObject[] crates;
-    //[SerializeField] GameObject crates[0];
-    //[SerializeField] GameObject crates[1];
-    //[SerializeField] GameObject crates[2];
-    //[SerializeField] GameObject crates[3];
-    //[SerializeField] GameObject crates[4];
-    //[SerializeField] GameObject crates[5];
+
     StorageController storageController;
     Transform crateHolderTransform;
     float positionW;
@@ -114,9 +109,9 @@ public class CrateController : MonoBehaviour
             groupContent[currentGroup] = "";
 
             // iterate group members
-            for (int countY = 1; countY < storageController.storageAreaH - 1; countY++)
+            for (int countY = 1; countY < storageController.storageHight - 1; countY++)
             {
-                for (int countX = 1; countX < storageController.storageAreaW - 1; countX++)
+                for (int countX = 1; countX < storageController.storageWidth - 1; countX++)
                 {
                     if (crateGrid[countX, countY] != null &&  crateGrid[countX, countY].Group == currentGroup)
                     {
@@ -152,6 +147,10 @@ public class CrateController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Returns a random crate type (int), selected with accordance of the rarity distribution
+    /// </summary>
+    /// <returns>int</returns>
     internal int GetRandomType()
     {
         int rndNumber = (int)UnityEngine.Random.Range(0, 100);
@@ -181,10 +180,10 @@ public class CrateController : MonoBehaviour
 
     private void InitGroupGrid()
     {
-        crateGrid = new Crate[storageController.storageAreaW, storageController.storageAreaH];
-        for (int countH = 0; countH < storageController.storageAreaH; countH++)
+        crateGrid = new Crate[storageController.storageWidth, storageController.storageHight];
+        for (int countH = 0; countH < storageController.storageHight; countH++)
         {
-            for (int countW = 0; countW < storageController.storageAreaW; countW++)
+            for (int countW = 0; countW < storageController.storageWidth; countW++)
             {
                 crateGrid[countW, countH] = null;
             }
@@ -196,8 +195,8 @@ public class CrateController : MonoBehaviour
         for (int count = 0; count < number; count++)
         {
             // find random coordinates
-            float maxW = storageController.storageAreaW-1;
-            float maxH = storageController.storageAreaH-1;
+            float maxW = storageController.storageWidth-1;
+            float maxH = storageController.storageHight-1;
             int randomW = (int)Mathf.Round(UnityEngine.Random.Range(0, maxW));
             int randomH = (int)Mathf.Round(UnityEngine.Random.Range(0, maxH));
 
@@ -221,10 +220,17 @@ public class CrateController : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Creates a crate object and game object of a given type and spawns the game object at the given coordinates
+    /// </summary>
+    /// <param name="crateType">type to be used to create the objects</param>
+    /// <param name="coordW">horizontal position (world)</param>
+    /// <param name="coordH">vertical position (world)</param>
+    /// <returns></returns>
     public bool SpawnCrateByType(int crateType, float coordW, float coordH)
     {
         // create crate GO
-        GameObject newCrateGO = Instantiate(NewCrateByType(crateType), new Vector3(coordW, coordH), Quaternion.identity, crateHolderTransform);
+        GameObject newCrateGO = Instantiate(CrateGOTypeByTypeNumber(crateType), new Vector3(coordW, coordH), Quaternion.identity, crateHolderTransform);
         // create crate OBJ
         Crate newCrate = new Crate(newCrateGO, (int)coordW, (int)coordH, crateType, crateGrid);
         RegisterCrate(newCrate);
@@ -233,7 +239,7 @@ public class CrateController : MonoBehaviour
         return true;
     }
 
-    public GameObject NewCrateByType(int crateType)
+    public GameObject CrateGOTypeByTypeNumber(int crateType)
     {
         GameObject crateToSpawn;
         crateToSpawn = crates[crateType];
@@ -480,9 +486,9 @@ public class CrateController : MonoBehaviour
 
     private void RessignGroupTo(int targetGroup, int minGroupNumber)
     {
-        for (int countW = 0; countW < storageController.storageAreaW; countW++)
+        for (int countW = 0; countW < storageController.storageWidth; countW++)
         {
-            for (int countH = 0; countH < storageController.storageAreaH; countH++)
+            for (int countH = 0; countH < storageController.storageHight; countH++)
             {
                 if (crateGrid[countW, countH].Group == targetGroup)
                 {

@@ -7,8 +7,8 @@ public class StorageController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] SpriteTileMode floorTile;
-    [SerializeField] public int storageAreaW;
-    [SerializeField] public int storageAreaH;
+    [SerializeField] public int storageWidth;
+    [SerializeField] public int storageHight;
     [SerializeField] GameObject concreteTile;
     [SerializeField] Transform tilesParent;
     [SerializeField] Transform player;
@@ -21,7 +21,7 @@ public class StorageController : MonoBehaviour
     // shaded tile sprites
     [SerializeField] Sprite serviceTile;
 
-    CrateController crateController;
+    CrateController crateMaster;
 
     // group coloring
     int[] baseRedSteps = new int[] { 0, -1, 0, 0, 1, 0 };
@@ -48,19 +48,19 @@ public class StorageController : MonoBehaviour
     void Awake()
     {
         // build refs
-        crateController = GameObject.FindObjectOfType<CrateController>();
+        crateMaster = GameObject.FindObjectOfType<CrateController>();
 
         factoryList = new Dictionary<int, GameObject>();
         factoryMap = new List<int>();
 
         // TEMP - area size
-        storageAreaW = Mathf.Max(storageAreaW, storageMinW);
-        storageAreaH = Mathf.Max(storageAreaH, storageMinH);
+        storageWidth = Mathf.Max(storageWidth, storageMinW);
+        storageHight = Mathf.Max(storageHight, storageMinH);
 
-        storageAreaOriginW = (storageAreaW / 2) * -1;
-        storageAreaOriginH = (storageAreaH / 2) * -1;
-        storageAreaEndPointW = storageAreaW + storageAreaOriginW - 1;
-        storageAreaEndPointH = storageAreaH + storageAreaOriginH - 1;
+        storageAreaOriginW = (storageWidth / 2) * -1;
+        storageAreaOriginH = (storageHight / 2) * -1;
+        storageAreaEndPointW = storageWidth + storageAreaOriginW - 1;
+        storageAreaEndPointH = storageHight + storageAreaOriginH - 1;
 
         // init vacancy grid
         colorChunks = new Dictionary<int, int>();
@@ -74,13 +74,13 @@ public class StorageController : MonoBehaviour
     private void Start()
     {
         // build refs
-        crateController = FindObjectOfType<CrateController>();
-        crateMasterTransform = crateController.GetComponent<Transform>();
+        crateMaster = FindObjectOfType<CrateController>();
+        crateMasterTransform = crateMaster.GetComponent<Transform>();
 
         PlaceFactories();
 
         // spawn incoming crates
-        InitializeFactoryColors();
+        InitializeFactoryContent();
     }
 
     // Update is called once per frame
@@ -88,11 +88,12 @@ public class StorageController : MonoBehaviour
     {
         // highlight groups according to tiles groups
         RecolorGrid();
-
     }
 
-
-    private void InitializeFactoryColors()
+    /// <summary>
+    /// Initialize the content of the four factories
+    /// </summary>
+    private void InitializeFactoryContent()
     {
         // build factory colors
         Color[] colorPool = new Color[]
@@ -105,75 +106,31 @@ public class StorageController : MonoBehaviour
                 new Color(1, 0, 1, 1)
             };
 
-        // NEW VERSION
-
         for (int factCount = 0; factCount < 4; factCount++)
         {
-            int randomType = crateController.GetRandomType();
+            int randomType = crateMaster.GetRandomType();
             factoryMap.Add(randomType);
             factoryList[factCount].GetComponent<SpriteRenderer>().color = colorPool[randomType];
         }
-
-        // OLD VERSION
-        //// check if the positions are available
-        //// center based positions
-        //int leftW = storageAreaOriginW;
-        //int rightW = storageAreaEndPointW;
-        //int downH = storageAreaOriginH + 1;
-        //int upH = storageAreaEndPointH - 1;
-        //// origin basec positions
-        //int leftX = GetAbsFromRelW(storageAreaOriginW);
-        //int rightX = GetAbsFromRelW(storageAreaEndPointW);
-        //int downY = GetAbsFromRelH(storageAreaOriginH) + 1;
-        //int upY = GetAbsFromRelH(storageAreaEndPointH) - 1;
-        //// pick a random type
-        //int crateType = PickARandomCrate();
-        //if (IsTileAvailableForCrateRel(leftX, upY))
-        //{
-        //    //bool crateLU = crateController.CreateCrateByType(crateType, (float)leftX, (float)upY);
-        //    crateController.CreateCrateByType(crateType, (float)leftW, (float)upH);
-        //}
-        //if (IsTileAvailableForCrateRel(rightX, upY))
-        //{
-        //    //bool crateRU = crateController.CreateCrateByType(crateType, (float)rightX, (float)upY);
-        //    crateController.CreateCrateByType(crateType, (float)rightW, (float)upH);
-        //}
-        //if (IsTileAvailableForCrateRel(leftX, downY))
-        //{
-        //    //bool crateLD = crateController.CreateCrateByType(crateType, (float)leftX, (float)downY);
-        //    crateController.CreateCrateByType(crateType, (float)leftW, (float)downH);
-        //}
-        //if (IsTileAvailableForCrateRel(rightX, downY))
-        //{
-        //    //bool crateRD = crateController.CreateCrateByType(crateType, (float)rightX, (float)downY);
-        //    crateController.CreateCrateByType(crateType, (float)rightW, (float)downH);
-        //}
-
     }
 
     private void RecolorGrid()
     {
         CrateController crateController = crateMasterTransform.GetComponent<CrateController>();
-        for (int countY = 0; countY < storageAreaH; countY++)
+        for (int countY = 0; countY < storageHight; countY++)
         {
-            for (int countX = 0; countX < storageAreaW; countX++)
+            for (int countX = 0; countX < storageWidth; countX++)
             {
                 SpriteRenderer tileSpriteRenderer = FindTileAt(countX, countY).GetComponent<SpriteRenderer>();
                 // find if the group exists in the groupToColor map - either assign its color or create a new color
                 Color newColor;
 
                 // first check for service lane area
-                if (!NotInServiceLaneWorld(GetRelFromAbsW(countX), GetRelFromAbsH(countY)))
+                if (!NotInServiceLaneWorld(GetWorldFromGrid_X(countX), GetWorldFromGrid_Y(countY)))
                 {
                     tileSpriteRenderer.sprite = serviceTile;
                 }
 
-                //if (countX == 0 || 
-                //    countX == storageAreaW - 1 || 
-                //    countY == 0 || 
-                //    countY == storageAreaH - 1)
-                //{
-                //}
                 int tileGroup = 0;
                 if (crateController.crateGrid[countX, countY] != null)
                 {
@@ -250,11 +207,11 @@ public class StorageController : MonoBehaviour
     internal bool HasSpace()
     {
         int numberOfSpaces = 0;
-        for (int countX = 0; countX < storageAreaW; countX++)
+        for (int countX = 0; countX < storageWidth; countX++)
         {
-            for (int countY = 0; countY < storageAreaH; countY++)
+            for (int countY = 0; countY < storageHight; countY++)
             {
-                if (crateController.crateGrid[countX, countY] == null)
+                if (crateMaster.crateGrid[countX, countY] == null)
                 {
                     numberOfSpaces++;
                 }
@@ -283,9 +240,9 @@ public class StorageController : MonoBehaviour
     internal bool NotInServiceLaneGrid(int posX, int posY)
     {
         if (posX > 0 &&
-            posX < storageAreaW &&
+            posX < storageWidth &&
             posY > 0 &&
-            posY < storageAreaH)
+            posY < storageHight)
         {
             return true;
         }
@@ -295,9 +252,9 @@ public class StorageController : MonoBehaviour
     public bool CreateFloor()
     {
 
-        for (int countH = 0; countH < storageAreaH; countH++)
+        for (int countH = 0; countH < storageHight; countH++)
         {
-            for (int countW = 0; countW < storageAreaW; countW++)
+            for (int countW = 0; countW < storageWidth; countW++)
             {
                 float positionX = countW + storageAreaOriginW;
                 float positionY = countH + storageAreaOriginH;
@@ -315,7 +272,7 @@ public class StorageController : MonoBehaviour
         int playerHeight = (int)(player.transform.position.y - storageAreaOriginH);
         if ((coordW != playerWidth) || (coordH != playerHeight))
         {
-            return (crateController.crateGrid[coordW, coordH] == null);
+            return (crateMaster.crateGrid[coordW, coordH] == null);
         }
         else
         {
@@ -325,37 +282,47 @@ public class StorageController : MonoBehaviour
 
     public bool IsTileEmpty(int coordX, int coordY) // TODO :: Objectify - done
     {
-        if (IsWithinBorders(coordX, coordY) && (crateController.crateGrid[coordX, coordY] == null))
+        if (IsWithinBorders(coordX, coordY) && (crateMaster.crateGrid[coordX, coordY] == null))
         {
             return true;
         }
         return false;
     }
 
-    public int GetAbsFromRelW(int relW)
+    /// <summary>
+    /// Converts World to Grid horizontal coordinate
+    /// </summary>
+    /// <param name="relW">horizontal position in a world view</param>
+    /// <returns></returns>
+    public int GetGridFromWorld_X(int relW)
     {
         return relW - storageAreaOriginW;
     }
 
-    public int GetAbsFromRelH(int relH)
+    /// <summary>
+    /// Converts World to Grid vertical coordinate
+    /// </summary>
+    /// <param name="relH">vertical position in a world view</param>
+    /// <returns></returns>
+    public int GetGridFromWorld_Y(int relH)
     {
         return relH - storageAreaOriginH;
     }
 
-    public int GetRelFromAbsW(int relW)
+    public int GetWorldFromGrid_X(int relW)
     {
         return relW + storageAreaOriginW;
     }
 
-    public int GetRelFromAbsH(int relH)
+    public int GetWorldFromGrid_Y(int relH)
     {
         return relH + storageAreaOriginH;
     }
 
     public bool IsWithinBorders(int posX, int posY)
     {
-        if ((posX >= 0 && posX < storageAreaW)
-            && (posY >= 0 && posY < storageAreaH))
+        if ((posX >= 0 && posX < storageWidth)
+            && (posY >= 0 && posY < storageHight))
         {
             return true;
         }
