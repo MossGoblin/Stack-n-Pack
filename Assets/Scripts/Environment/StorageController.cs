@@ -36,10 +36,8 @@ public class StorageController : MonoBehaviour
     public Dictionary<int, int> groupToColorMap;
 
     // factorywork
-    [SerializeField] GameObject factoryHolder;
-    [SerializeField] GameObject basicFactory;
-    public Dictionary<int, GameObject> factoryList;
-    public List<int> factoryMap;
+    [SerializeField] GameObject factoryPrefab;
+    public Factory[] factoryList;
 
     // minimum size of grid - TEMP
     int storageMinW = 7;
@@ -50,8 +48,11 @@ public class StorageController : MonoBehaviour
         // build refs
         crateMaster = GameObject.FindObjectOfType<CrateController>();
 
-        factoryList = new Dictionary<int, GameObject>();
-        factoryMap = new List<int>();
+        factoryList = new Factory[4];
+        for (int count = 0; count < 4; count++)
+        {
+            factoryList[count] = null;
+        }
 
         // TEMP - area size
         storageWidth = Mathf.Max(storageWidth, storageMinW);
@@ -78,9 +79,6 @@ public class StorageController : MonoBehaviour
         crateMasterTransform = crateMaster.GetComponent<Transform>();
 
         PlaceFactories();
-
-        // spawn incoming crates
-        InitializeFactoryContent();
     }
 
     // Update is called once per frame
@@ -93,26 +91,6 @@ public class StorageController : MonoBehaviour
     /// <summary>
     /// Initialize the content of the four factories
     /// </summary>
-    private void InitializeFactoryContent()
-    {
-        // build factory colors
-        Color[] colorPool = new Color[]
-            {
-                new Color(0.5f, 0.4f, 0.0f, 1f),
-                new Color(1, 1, 0, 1),
-                new Color(1, 0, 0, 1),
-                new Color(0, 1, 0, 1),
-                new Color(0, 0, 1, 1),
-                new Color(1, 0, 1, 1)
-            };
-
-        for (int factCount = 0; factCount < 4; factCount++)
-        {
-            int randomType = crateMaster.GetRandomType();
-            factoryMap.Add(randomType);
-            factoryList[factCount].GetComponent<SpriteRenderer>().color = colorPool[randomType];
-        }
-    }
 
     private void RecolorGrid()
     {
@@ -403,29 +381,37 @@ public class StorageController : MonoBehaviour
     {
         // get the dimensions
         // factoryholder
-        float factoryLeft = storageAreaOriginW - 0.8f;
-        float factoryRight = storageAreaEndPointW + 0.8f;
-        float factoryBottom = storageAreaOriginH + 1.2f;
-        float factoryTop = storageAreaEndPointH - 0.8f;
-        
-
-        GameObject factoryBL = PlaceAFactory(factoryLeft, factoryBottom, 1);
-        GameObject factoryTL = PlaceAFactory(factoryLeft, factoryTop, 1);
-        GameObject factoryBR = PlaceAFactory(factoryRight, factoryBottom, -1);
-        GameObject factoryTR = PlaceAFactory(factoryRight, factoryTop, -1);
-        factoryList.Add(0, factoryBL);
-        factoryList.Add(1, factoryBR);
-        factoryList.Add(2, factoryTL);
-        factoryList.Add(3, factoryTR);
+        float[] factoryPosWorldX = new float[2] { storageAreaOriginW - 0.8f, storageAreaEndPointW + 0.8f };
+        float[] factoryPosWorldY = new float[2] { storageAreaEndPointH - 0.8f, storageAreaOriginH + 1.2f };
+        //float factoryLeft = storageAreaOriginW - 0.8f;
+        //float factoryRight = storageAreaEndPointW + 0.8f;
+        //float factoryBottom = storageAreaOriginH + 1.2f;
+        //float factoryTop = storageAreaEndPointH - 0.8f;
+        int flip = 1;
+        int count = 0;
+        Transform factoryHolder = GameObject.Find("Factories").GetComponent<Transform>();
+        for (int countX = 0; countX < 2; countX++)
+        {
+            for (int countY = 0; countY < 2; countY++)
+            {
+                if (countX == 1)
+                {
+                    flip = -1;
+                }
+                else
+                {
+                    flip = 1;
+                }
+                float factPosX = factoryPosWorldX[countX];
+                float factPosY = factoryPosWorldY[countY];
+                GameObject newFactoryGO = Instantiate(factoryPrefab, new Vector3(factPosX, factPosY), Quaternion.identity, factoryHolder);
+                newFactoryGO.GetComponent<Transform>().localScale = new Vector3(flip, 1, 1);
+                Factory newFactoryOBJ = new Factory(factPosX, factPosY, newFactoryGO, crateMaster);
+                factoryList[count] = newFactoryOBJ;
+                count++;
+            }
+        }
 
         return true;
-    }
-
-    GameObject PlaceAFactory(float coordX, float coordY, int flip)
-    {
-        Transform factoryHolder = GameObject.Find("Factories").GetComponent<Transform>();
-        GameObject newFactory = Instantiate(basicFactory, new Vector3(coordX, coordY), Quaternion.identity, factoryHolder);
-        newFactory.GetComponent<Transform>().localScale = new Vector3(flip, 1, 1);
-        return newFactory;
     }
 }

@@ -757,7 +757,7 @@ MonoBehaviour:
     type: 3}
   tilesParent: {fileID: 1444094605}
   player: {fileID: 1630043791}
-  crateMasterTransform: {fileID: 0}
+  crateMasterTransform: {fileID: 1935361847}
   storageAreaOriginW: 0
   storageAreaOriginH: 0
   storageAreaEndPointW: 0
@@ -768,10 +768,8 @@ MonoBehaviour:
   paletteArray: []
   alpha: 0.5
   paletteAnchor: {fileID: 937183570}
-  factoryHolder: {fileID: 728281100}
-  basicFactory: {fileID: 8461991953095291553, guid: 765a9e656ca01fb469154a5c35339eb4,
+  factoryPrefab: {fileID: 8461991953095291553, guid: 765a9e656ca01fb469154a5c35339eb4,
     type: 3}
-  factoryMap: 
 --- !u!1 &1935361846
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,11 +908,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a3b5038efaa8542bb48c5af4b82890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crateEmpty: {fileID: 21300000, guid: b09a42027258621458ebcf92c99f18f2, type: 3}
-  crateOne: {fileID: 21300000, guid: c781434d805593d4dbba23b422544784, type: 3}
-  crateTwo: {fileID: 21300000, guid: 91ab4be7109a8db43b010a550ba7c144, type: 3}
-  crateThree: {fileID: 21300000, guid: 762aa85905f8cb94d95d5192fcf015e1, type: 3}
-  crateFour: {fileID: 21300000, guid: 3939db85b302672469dcafece29019f4, type: 3}
+  crateEmpty: {fileID: 21300000, guid: 801ef818b4fb3f74185f2db2b6005665, type: 3}
+  crateOne: {fileID: 21300000, guid: 566e59e8843888141b9765805cfbd1b1, type: 3}
+  crateTwo: {fileID: 21300000, guid: 5f2fbcd3006147b42b2ee0301cee98c1, type: 3}
+  crateThree: {fileID: 21300000, guid: c92eba4699333a049bc0dc06c0643e64, type: 3}
+  crateFour: {fileID: 21300000, guid: 6e4d71f28dfd5914e85fa0d64daf7f26, type: 3}
   crateFive: {fileID: 21300000, guid: 9ded420b935ca60408c1021e6305435b, type: 3}
   player: {fileID: 1630043790}
 --- !u!1 &2069170714

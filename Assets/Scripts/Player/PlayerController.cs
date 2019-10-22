@@ -21,7 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] StorageController storageMaster;
 
     // factory coordinates
-    List<int> factoryCoordinates;
+    List<int> factoryPosX;
+    List<int> factoryPosY;
 
     // release trigger
     public bool releaseClampFlag;
@@ -37,11 +38,16 @@ public class PlayerController : MonoBehaviour
         incomingCrate = null;
 
         // Initiate factory coordinates list
-        factoryCoordinates = new List<int>();
-        factoryCoordinates.Add(100); // bottom left; y = 1, x = 0
-        factoryCoordinates.Add((storageMaster.storageHight - 1) * 100); // top left; y = storage area hight - 1, x = 0
-        factoryCoordinates.Add((storageMaster.storageHight - 1) * 100 + (storageMaster.storageWidth - 1)); // top right; y = storage area hight - 1, x = storage area width
-        factoryCoordinates.Add(100 + storageMaster.storageWidth - 1); // bottom right; y = 1, x = storage area width
+        //facroCoordOLD = new List<int>();
+        //facroCoordOLD.Add(100); // bottom left; y = 1, x = 0
+        //facroCoordOLD.Add((storageMaster.storageHight - 2) * 100); // top left; y = storage area hight - 1, x = 0
+        //facroCoordOLD.Add((storageMaster.storageHight - 2) * 100 + (storageMaster.storageWidth - 1)); // top right; y = storage area hight - 1, x = storage area width
+        //facroCoordOLD.Add(100 + storageMaster.storageWidth - 1); // bottom right; y = 1, x = storage area width
+        factoryPosX = new List<int>();
+        factoryPosY = new List<int>();
+        factoryPosX.AddRange(new int[] { 0, 0, storageMaster.storageWidth - 1, storageMaster.storageWidth - 1 });
+        factoryPosY.AddRange(new int[] { 1, storageMaster.storageHight - 2, storageMaster.storageHight - 2, 1 });
+
     }
 
     // Update is called once per frame
@@ -49,7 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         ManageInput();
     }
-
+    
     public bool ManageInput()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -86,8 +92,8 @@ public class PlayerController : MonoBehaviour
         {
             int posX = storageMaster.GetGridFromWorld_X((int)playerTransform.position.x);
             int posY = storageMaster.GetGridFromWorld_Y((int)playerTransform.position.y);
-            int playerAddress = posY * 100 + posX;
-            crateOnHold = LoadCrateFromFactory(playerAddress);
+            //int playerAddress = posY * 100 + posX;
+            crateOnHold = LoadCrateFromFactory(posX, posY);
         }
 
         return true;
@@ -98,7 +104,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     /// <param name="playerAddress">Player address = y(grid)*100 + x(grid)</param>
     /// <returns></returns>
-    private int LoadCrateFromFactory(int playerAddress)
+    private int LoadCrateFromFactory(int posX, int posY)
     {
         int factoryNumber = 0;
         // First check if no crate on hold
@@ -106,40 +112,36 @@ public class PlayerController : MonoBehaviour
         {
             // check if on the proper space
             // get the factory number by the player address
-            if (!factoryCoordinates.Contains(playerAddress))
+            // iterate factory positions
+            for (int count = 0; count < 4; count++)
             {
-                Debug.Log("Player not in a position to load a crate");
-                return 0;
+                if ((posX == factoryPosX[count]) && (posY == factoryPosY[count]))
+                {
+                    return storageMaster.factoryList[count].Content;
+                }
+                count++;
             }
-            factoryNumber = factoryCoordinates.IndexOf(playerAddress);
+            if (factoryNumber == 0)
+            {
+                Debug.Log("Player not in a loading position!");
+            }
+            return 0;
         }
 
-        int result = storageMaster.factoryMap[factoryNumber];
+        int result = storageMaster.factoryList[factoryNumber].Content;
 
         // reset factory content
         int randomType = crateMaster.GetRandomType();
-        storageMaster.factoryMap[factoryNumber] = randomType;
-
-        // rcolor factory
-        RecolorFactory(factoryNumber);
+        storageMaster.factoryList[factoryNumber].SetContent(randomType);
 
         return result;
     }
 
-    private void RecolorFactory(int factoryNumber)
-    {
-        Color[] colorPool = new Color[]
-            {
-                new Color(0.5f, 0.4f, 0.0f, 1f),
-                new Color(1, 1, 0, 1),
-                new Color(1, 0, 0, 1),
-                new Color(0, 1, 0, 1),
-                new Color(0, 0, 1, 1),
-                new Color(1, 0, 1, 1)
-            };
-        storageMaster.factoryList[factoryNumber].GetComponent<SpriteRenderer>().color = colorPool[storageMaster.factoryMap[factoryNumber]];
-    }
-
+    /// <summary>
+    /// Moves a player to a adjacent position in the storage space
+    /// </summary>
+    /// <param name="directionY">Vertical adjacency</param>
+    /// <param name="directionX">Horizontal adjacency</param>
     void MovePlayer(float directionY, float directionX)
     {
         // validation flags
@@ -233,12 +235,23 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Return a crate OBJ from given grid coordinates
+    /// </summary>
+    /// <param name="coordX">X grid position</param>
+    /// <param name="coordY">Y grid position</param>
+    /// <returns></returns>
     private Crate GetCrateFromCoordinates(int coordX, int coordY)
     {
         return crateMaster.crateGrid[coordX, coordY];
     }
 
+    /// <summary>
+    /// Check whether a position is within the borders of the grid
+    /// </summary>
+    /// <param name="posX"></param>
+    /// <param name="posY"></param>
+    /// <returns></returns>
     private bool IsWithinBorders(int posX, int posY)
     {
         return storageMaster.IsWithinBorders(posX, posY);

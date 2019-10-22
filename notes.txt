@@ -45,3 +45,5 @@
 [rework, incremental] propagating objectification; broke the group colour assignment and the type that has been handed down from the factories
 
 [rework, incremental] almost fixed factory work; broke some crate type conversion (will fix after headache)
+
+[rework, incremental] off-by-one-on-multiple-levels :)

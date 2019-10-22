@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\Environment\AreaController.cs" />
     <Compile Include="Assets\Scripts\Environment\Crate.cs" />
     <Compile Include="Assets\Scripts\Environment\CrateController.cs" />
+    <Compile Include="Assets\Scripts\Environment\Factory.cs" />
     <Compile Include="Assets\Scripts\Environment\Group.cs" />
     <Compile Include="Assets\Scripts\Environment\GroupController.cs" />
     <Compile Include="Assets\Scripts\Environment\Order.cs" />
