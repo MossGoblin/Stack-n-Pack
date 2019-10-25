@@ -47,3 +47,5 @@
 [rework, incremental] almost fixed factory work; broke some crate type conversion (will fix after headache)
 
 [rework, incremental] off-by-one-on-multiple-levels :)
+
+[rework, incremental] major rebuild finally in progress
