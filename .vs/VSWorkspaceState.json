@@ -2,9 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\Assets",
-    "\\Assets\\Scripts",
-    "\\Assets\\Scripts\\Environment"
+    "\\Assets\\Scripts"
   ],
-  "SelectedNode": "\\Assets\\Scripts\\Environment\\CrateController.cs",
   "PreviewInSolutionExplorer": false
 }
