@@ -53,3 +53,5 @@
 [rework, incremental] almost done with the storage space (something is fishy in prefab-land)
 
 [rebuilding, incremental] color functionality is back, bit trying to entangle the classes in-code leads to timing problems within Unity
+
+[rebuilding, incremental] test crate placement fixed; need registration and re-coloring according to content
