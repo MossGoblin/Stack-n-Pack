@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ba0ab9e3623993f4b94cd911deb99aa6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - clampSpriteClosed: {fileID: 21300000, guid: dfb913d4b135bc244a4d86668b635555,
+      type: 3}
+  - clampSpriteOpen: {fileID: 21300000, guid: 5a1c1c1e591e6b64099d44e14912a888, type: 3}
+  - player: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
