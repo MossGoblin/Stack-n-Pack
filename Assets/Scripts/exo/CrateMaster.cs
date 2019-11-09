@@ -10,7 +10,6 @@ public class CrateMaster : MonoBehaviour
     int[] baseRedSteps = new int[] { 0, -1, 0, 0, 1, 0 };
     float hueChangeFactor = 8f; // 2 by default; value of 1 would make the step duration 255 ticks
     public Dictionary<int, int> colorChunks;
-    public Dictionary<int, int> groupToColorMap; // mapping for groups and color indeces - TO BE RESOLVED VIA GroupMaster
     public List<Crate> crateList;
 
     public Color[] colorPool = new Color[]
@@ -39,7 +38,6 @@ public class CrateMaster : MonoBehaviour
         colorChunks = new Dictionary<int, int>();
         int paletteLength = (256 * 6 / (int)hueChangeFactor);
         paletteArray = new Color[paletteLength];
-        groupToColorMap = new Dictionary<int, int>();
 
         BuildColorPalette();
     }
@@ -107,8 +105,7 @@ public class CrateMaster : MonoBehaviour
         // initiate first large groupStrip - pick a random point in the color array
         int randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
         colorChunks.Add(randomStartingColorIndex, paletteArray.Length - 1);
-        // map to the first possible group
-        groupToColorMap[1] = randomStartingColorIndex;
+
         return true;
     }
 
@@ -133,5 +130,30 @@ public class CrateMaster : MonoBehaviour
         //testCrate.SetGroup(1); // TEMP GROUP 1
         groupMaster.AssignCrateToNewGroup(newCrate);
         gridRef.storageGrid[pos.posX, pos.posY] = newCrate;
+    }
+
+    // Pick a new color from the palette
+    public int GetNewColor()
+    {
+        // iterate chunks
+        int largestChunk = 0;
+        int largestChunkIndex = 0;
+        foreach(var chunkPair in colorChunks)
+        {
+            if (chunkPair.Value > largestChunk)
+            {
+                largestChunkIndex = chunkPair.Key;
+                largestChunk = chunkPair.Value;
+            }
+        }
+
+        // pick the middle of the chink as new index
+        int newColorIndex = (largestChunk / 2) + largestChunkIndex + 1;
+        // cut the old chunk in half
+        colorChunks[largestChunkIndex] = largestChunk / 2;
+        // register the new color in the chunk dict
+        colorChunks.Add(newColorIndex, largestChunk / 2);
+
+        return newColorIndex;
     }
 }

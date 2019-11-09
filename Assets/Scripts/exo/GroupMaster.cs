@@ -47,7 +47,8 @@ public class GroupMaster : MonoBehaviour
             case 0: // no nbrs
                 lastCreatedGroup++;
                 crate.SetGroup(lastCreatedGroup);
-                Group newGroup = new Group(crate, lastCreatedGroup);
+                Group newGroup = new Group(crate, lastCreatedGroup); // TODO : NEW GROUP
+                groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
             break;
             case 1: // 1 nbr
                 // find nbr and assign its group to crate
@@ -164,7 +165,7 @@ public class GroupMaster : MonoBehaviour
         return null;
     }
 
-    private Group GetGroupByIndex(int index)
+    public Group GetGroupByIndex(int index)
     {
         foreach (Group group in groupList)
         {

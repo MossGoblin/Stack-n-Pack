@@ -55,10 +55,13 @@ public class Conductor : MonoBehaviour
             if (gridRef.storageGrid[posX, posY] != null)
             {
                 // TODO
-                tile.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV();
+                int groupIndex = gridRef.storageGrid[posX, posY].Group;
+                int colorIndex = groupMaster.groupToColorMap[groupMaster.GetGroupByIndex(groupIndex)];
+                tile.GetComponent<SpriteRenderer>().color = crateMaster.paletteArray[colorIndex];
             }
             else
             {
+                // TODO :: Fix default tile color
                 tile.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
