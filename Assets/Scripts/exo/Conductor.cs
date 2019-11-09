@@ -56,7 +56,8 @@ public class Conductor : MonoBehaviour
             {
                 // TODO
                 int groupIndex = gridRef.storageGrid[posX, posY].Group;
-                int colorIndex = groupMaster.groupToColorMap[groupMaster.GetGroupByIndex(groupIndex)];
+                Group group = groupMaster.GetGroupByIndex(groupIndex);
+                int colorIndex = groupMaster.groupToColorMap[group];
                 tile.GetComponent<SpriteRenderer>().color = crateMaster.paletteArray[colorIndex];
             }
             else

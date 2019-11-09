@@ -61,3 +61,5 @@
 [rebuilding] brought back the player content UI; clamps appear to be working (they can not work, all they can do is appear to work)
 
 [rebuilding, reimplementing] halfway through group highlighting
+
+[rework, rebuild] almost brought group coloring back

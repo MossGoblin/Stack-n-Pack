@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
         // going through the motions
         // are we releasing crate?
-        if (positionViableForRelease && Content != 0)
+        if (clampsOpen && positionViableForRelease && Content != 0)
         {
             // release crate:
             // create crate

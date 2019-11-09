@@ -48,6 +48,7 @@ public class GroupMaster : MonoBehaviour
                 lastCreatedGroup++;
                 crate.SetGroup(lastCreatedGroup);
                 Group newGroup = new Group(crate, lastCreatedGroup); // TODO : NEW GROUP
+                groupList.Add(newGroup);
                 groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
             break;
             case 1: // 1 nbr
