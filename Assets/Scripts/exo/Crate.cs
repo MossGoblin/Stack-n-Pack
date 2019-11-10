@@ -26,6 +26,7 @@ public class Crate
         RegisterCrate();
     }
 
+
     private void RegisterCrate()
     {
         gridRef.storageGrid[PositionX_Grid, PositionY_Grid] = this;
@@ -72,4 +73,5 @@ public class Crate
     {
         return new int[,] { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } }; // relative grid coordinates for the neighbours of a cell - top to left;
     }
+
 }

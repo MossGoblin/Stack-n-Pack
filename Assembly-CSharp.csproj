@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\exo\Crate.cs" />
     <Compile Include="Assets\Scripts\exo\CrateMaster.cs" />
     <Compile Include="Assets\Scripts\exo\Factory.cs" />
+    <Compile Include="Assets\Scripts\exo\GridSupport.cs" />
     <Compile Include="Assets\Scripts\exo\Group.cs" />
     <Compile Include="Assets\Scripts\exo\GroupMaster.cs" />
     <Compile Include="Assets\Scripts\exo\Order.cs" />

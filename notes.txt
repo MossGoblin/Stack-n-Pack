@@ -63,3 +63,5 @@
 [rebuilding, reimplementing] halfway through group highlighting
 
 [rework, rebuild] almost brought group coloring back
+
+[rebuild] TODO : remove group-to-color mapping when removing a group

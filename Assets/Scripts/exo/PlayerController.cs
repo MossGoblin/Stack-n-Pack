@@ -110,15 +110,23 @@ public class PlayerController : MonoBehaviour
         // are we picking up a crate
         if (Content == 0 && newContent != 0)
         {
-            // move player
             // pick up crate
+            // - get crate from position
+            Crate crateToBePickedUp = gridRef.storageGrid[newPos.newX, newPos.newY];
+            // - update player content
+            Content = crateToBePickedUp.Content;
+            // - remove crate from grid and list
+            crateMaster.RemoveCrate(crateToBePickedUp);
+            // -- remove crate grom group
+            master.groupMaster.RemoveCrateFromGroup(crateToBePickedUp);
         }
 
-
-        // TODO : TEMP Move Player
+        // move player
         Vector3 newPosition = new Vector3(newPos.newX, newPos.newY);
         transform.position = newPosition;
+
         // TODO :: Temp return
         return true;
     }
+
 }

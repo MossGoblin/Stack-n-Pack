@@ -38,6 +38,7 @@ public class CrateMaster : MonoBehaviour
         colorChunks = new Dictionary<int, int>();
         int paletteLength = (256 * 6 / (int)hueChangeFactor);
         paletteArray = new Color[paletteLength];
+        crateList = new List<Crate>();
 
         BuildColorPalette();
     }
@@ -129,9 +130,9 @@ public class CrateMaster : MonoBehaviour
         GameObject newCrateGO = Instantiate(cratePrefab, new Vector3(pos.posX, pos.posY, 0), Quaternion.identity, crateHolder);
         Crate newCrate = new Crate(pos.posX, pos.posY, master, type);
         newCrate.SetUpGO(newCrateGO);
-        //testCrate.SetGroup(1); // TEMP GROUP 1
-        groupMaster.AssignCrateToNewGroup(newCrate);
+        crateList.Add(newCrate);
         gridRef.storageGrid[pos.posX, pos.posY] = newCrate;
+        groupMaster.AssignCrateToNewGroup(newCrate);
     }
 
     // Pick a new color from the palette
@@ -150,16 +151,24 @@ public class CrateMaster : MonoBehaviour
         }
 
         // pick the middle of the chink as new index
-        int newColorIndex = (largestChunk / 2) + largestChunkIndex + 1;
-        if (newColorIndex > paletteArray.Length)
-        {
-            newColorIndex -= paletteArray.Length; // loop if larger than the palette length
-        }
+        int newColorIndex = ((largestChunk / 2) + largestChunkIndex + 1) % paletteArray.Length; // make sure the color index loops
+        //if (newColorIndex > paletteArray.Length)
+        //{
+        //    newColorIndex -= paletteArray.Length; // loop if larger than the palette length
+        //}
         // cut the old chunk in half
         colorChunks[largestChunkIndex] = largestChunk / 2;
         // register the new color in the chunk dict
         colorChunks.Add(newColorIndex, largestChunk / 2);
 
         return newColorIndex;
+    }
+
+    public void RemoveCrate(Crate crate)
+    {
+        crateList.Remove(crate);
+        gridRef.storageGrid[crate.PositionX_Grid, crate.PositionY_Grid] = null;
+        GameObject crateGO = crate.CrateGO;
+        GameObject.Destroy(crateGO);
     }
 }

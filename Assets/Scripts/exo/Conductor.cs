@@ -21,6 +21,14 @@ public class Conductor : MonoBehaviour
 
     private void Start()
     {
+
+        //// GridSupportTest
+        //foreach(var step in GridSupport.Iterate(2, 3))
+        //{
+        //    Debug.Log($"({step.count}) outer: {step.outer} / inner: {step.inner}");
+            
+        //}
+
         // init grid
         int width = Math.Max(inputWidth, 7);
         int height = Math.Max(inputHeight, 5);
