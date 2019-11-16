@@ -65,3 +65,5 @@
 [rework, rebuild] almost brought group coloring back
 
 [rebuild] TODO : remove group-to-color mapping when removing a group
+
+[debuggery] something's not fine with the crate swapping
