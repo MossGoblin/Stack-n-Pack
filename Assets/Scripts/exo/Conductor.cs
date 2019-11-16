@@ -62,7 +62,7 @@ public class Conductor : MonoBehaviour
             int posY = (int)tile.transform.position.y;
             if (gridRef.storageGrid[posX, posY] != null)
             {
-                // TODO
+                // TODO : What is going on here with my iteration
                 int groupIndex = gridRef.storageGrid[posX, posY].Group;
                 Group group = groupMaster.GetGroupByIndex(groupIndex);
                 int colorIndex = groupMaster.groupToColorMap[group];

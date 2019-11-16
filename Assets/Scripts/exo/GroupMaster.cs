@@ -103,6 +103,7 @@ public class GroupMaster : MonoBehaviour
                 {
                     Group obsoleteGroup = GetGroupByIndex(obsoleteGroupIndex);
                     groupList.Remove(obsoleteGroup);
+                    groupToColorMap.Remove(obsoleteGroup);
                 }
             break;
         }
@@ -141,6 +142,7 @@ public class GroupMaster : MonoBehaviour
 
         // remove obsolete group
         groupList.Remove(obsoleteGroup);
+        groupToColorMap.Remove(obsoleteGroup);
 
         // TODO : REM update underlying tile graphics
 

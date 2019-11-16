@@ -119,11 +119,23 @@ public class PlayerController : MonoBehaviour
             crateMaster.RemoveCrate(crateToBePickedUp);
             // -- remove crate grom group
             master.groupMaster.RemoveCrateFromGroup(crateToBePickedUp);
+            newContent = 0;
         }
 
-        // move player
-        Vector3 newPosition = new Vector3(newPos.newX, newPos.newY);
-        transform.position = newPosition;
+        // can we move
+        bool allowMovement = false;
+        if ((newContent == 0) ||
+            (!oldContent && clampsOpen))
+        {
+            allowMovement = true;
+        }
+
+        // move, if possible
+        if (allowMovement)
+        {
+            Vector3 newPosition = new Vector3(newPos.newX, newPos.newY);
+            transform.position = newPosition;
+        }
 
         // TODO :: Temp return
         return true;
