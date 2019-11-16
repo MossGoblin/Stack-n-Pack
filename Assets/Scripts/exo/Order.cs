@@ -8,27 +8,29 @@ public class Order
     // props
     public int ContentIndex { get; private set; }
     private int complexity;
+    private int[] rarityGrid;
     
     // refs
-    private Storage gridRef;
+    // private Storage gridRef;
 
-    public Order (int complexity, Storage grid)
+    public Order (int complexity, int[] rarityGrid)
     {
         this.complexity = complexity;
-        gridRef = grid;
+        this.rarityGrid = rarityGrid;
+        GenerateContent();
     }
 
-    private void GenerateContent()
+    private void GenerateContent() // is this breakdown still in use ??
     {
             /*
-            1   2   3   4   5   6
-            2   2   2   2   2
-            3   3   3   3   3   3
-                4   4   4   4   4
+            types   1   2   3   4   5   6
+            cmpl 1  3   3   3   3   3
+            cmpl 2  4   4   4   4   4   4
+            cmpl 3      5   5   5   5   5
             */
             int minType = 0;
             int maxType = 0;
-            int typeCount = complexity;
+            int typeCount = complexity + 2;
 
         switch (complexity)
         {
@@ -46,7 +48,7 @@ public class Order
             break;
         }
 
-        // pick typeCount number of types from amongst minType and maxType
+        // pick typeCount number of types from between minType and maxType
         List<int> selectedTypes = new List<int>();
         while(selectedTypes.Count < typeCount)
         {
@@ -60,7 +62,9 @@ public class Order
         // pick random number of crates (complexity-1 to complexity) for each of the selected type and calculate ContentIndex
         foreach (int type in selectedTypes)
         {
-            ContentIndex += (int)(Math.Pow(10, selectedTypes[typeCount])) * UnityEngine.Random.Range(complexity - 1, complexity);
+            int numberOfCrates = UnityEngine.Random.Range((int)Math.Max(1, complexity - 1), complexity);
+            ContentIndex += (int)Math.Pow(10, type) * numberOfCrates;
+            // ContentIndex += (int)(Math.Pow(10, selectedTypes[typeCount])) * UnityEngine.Random.Range(complexity - 1, complexity);
         }
     }
 
@@ -70,8 +74,8 @@ public class Order
             int cumulativeChance = 0;
             for (int count = 0; count < 7; count++)
             {
-                cumulativeChance += gridRef.Rarity[count];
-                if (rndNumber <= gridRef.Rarity[count])
+                cumulativeChance += rarityGrid[count];
+                if (rndNumber <= rarityGrid[count])
                 {
                     return count + 1;
                 }

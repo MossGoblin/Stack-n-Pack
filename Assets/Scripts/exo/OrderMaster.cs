@@ -11,10 +11,11 @@ public class OrderMaster : MonoBehaviour
     [SerializeField] private int orderAmount = 2;
 
     // refs
+    public Storage grid;
+    public Conductor master;
 
     void Start()
     {
-        //grid = GameObject.FindObjectOfType<GridController>.GetConponent<Grid>();
         orderList = new List<Order>();
 
         // Init orders
@@ -24,5 +25,15 @@ public class OrderMaster : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void IssueOrder()
+    {
+        grid = master.gridRef;
+        int[] rarityGrid = grid.Rarity;
+        Order newOrder = new Order(complexityLevel, rarityGrid);
+        orderList.Add(newOrder);
+        Debug.Log($"new order issued: level {complexityLevel}");
+        Debug.Log($"order index = {orderList[0].ContentIndex}");
     }
 }

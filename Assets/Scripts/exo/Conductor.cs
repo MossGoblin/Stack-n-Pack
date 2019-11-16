@@ -8,6 +8,10 @@ public class Conductor : MonoBehaviour
     // props and fields
     public int inputWidth;
     public int inputHeight;
+
+    // score/energy variables
+    public int totalZap = 0;
+    public int currentZap = 0;
     [SerializeField] GameObject tilePrefab;
     [SerializeField] Sprite serviceLaneSprite;
     [SerializeField] GameObject factoryLeft;
@@ -18,17 +22,10 @@ public class Conductor : MonoBehaviour
     public CrateMaster crateMaster;
     public PlayerController playerMaster;
     public GroupMaster groupMaster;
+    public OrderMaster orderMaster;
 
     private void Start()
     {
-
-        //// GridSupportTest
-        //foreach(var step in GridSupport.Iterate(2, 3))
-        //{
-        //    Debug.Log($"({step.count}) outer: {step.outer} / inner: {step.inner}");
-            
-        //}
-
         // init grid
         int width = Math.Max(inputWidth, 7);
         int height = Math.Max(inputHeight, 5);
@@ -39,8 +36,16 @@ public class Conductor : MonoBehaviour
         BuildSpace();
         // place factories
         PlaceFactories();
+        // generate orders
+        // GenerateOrders();
         // place player
         PlacePlayer();
+    }
+
+    private void GenerateOrders()
+    {
+        Debug.Log("Orders to be generated");
+        orderMaster.IssueOrder();
     }
 
     private void Update()

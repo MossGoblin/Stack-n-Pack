@@ -69,3 +69,5 @@
 [intermittent] safety commit; grouping and coloring appear to be fine (see Pitch Black...)
 
 [debuggery] something's not fine with the crate swapping
+
+[incremental] started generating orders (at laaast!); still working on a sample order; TODO - check if the orders should be indexed starting from 0 or from 1

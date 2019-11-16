@@ -64,6 +64,12 @@ public class PlayerController : MonoBehaviour
         {
             MovePlayer(posD);
         }
+
+        // TEMP Inputs
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            master.orderMaster.IssueOrder();
+        }
     }
 
     private bool MovePlayer((int xDX, int yDY) posD)
