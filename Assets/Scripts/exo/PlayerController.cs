@@ -74,10 +74,10 @@ public class PlayerController : MonoBehaviour
         // 4. release a crate, if any
         // 5. move player
         // 6. pick up a crate, if any
-        
+
         (int oldX, int oldY) oldPos = ((int)transform.position.x, (int)transform.position.y);
         (int newX, int newY) newPos = ((posD.xDX + oldPos.oldX), (posD.yDY + oldPos.oldY));
-        
+
         // 1. if new position outside of borders - return false
         if (!gridRef.WithinBorders(newPos))
         {
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 2. check if there is a crate to be released
-        bool oldContent = (Content != 0);
+        // bool oldContent = (Content != 0); // deprecated
 
         // 3. check if there is a crate to be picked up
         int newContent = 0;
@@ -97,7 +97,6 @@ public class PlayerController : MonoBehaviour
         // TODO :: HERE - RELEASING CRATE
         bool positionViableForRelease = gridRef.WithinStorage(oldPos);
 
-        // going through the motions
         // are we releasing crate?
         if (clampsOpen && positionViableForRelease && Content != 0)
         {
@@ -125,7 +124,7 @@ public class PlayerController : MonoBehaviour
         // can we move
         bool allowMovement = false;
         if ((newContent == 0) ||
-            (!oldContent && clampsOpen))
+            (Content == 0 && newContent != 0 && clampsOpen))
         {
             allowMovement = true;
         }

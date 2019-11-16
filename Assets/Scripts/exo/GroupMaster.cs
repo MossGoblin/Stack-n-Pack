@@ -136,13 +136,19 @@ public class GroupMaster : MonoBehaviour
         {
             Stack<Crate> progressStack = new Stack<Crate>();
             progressStack.Push(startingNbr);
+            // create the nrenew group
+            int newGroupNumber = NewGroupNumber();
+            Group newGroup = new Group(startingNbr, newGroupNumber);
+            groupList.Add(newGroup);
+            groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
+
             // add all connected to the stack, using new group number
-            ProgressNbrsStack(progressStack, NewGroupNumber());
+            ProgressNbrsStack(progressStack, newGroupNumber);
         }
 
         // remove obsolete group
-        groupList.Remove(obsoleteGroup);
-        groupToColorMap.Remove(obsoleteGroup);
+        groupToColorMap.Remove(obsoleteGroup); // remove color mapping
+        groupList.Remove(obsoleteGroup); // remove the group itself
 
         // TODO : REM update underlying tile graphics
 

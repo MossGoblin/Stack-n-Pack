@@ -66,4 +66,6 @@
 
 [rebuild] TODO : remove group-to-color mapping when removing a group
 
+[intermittent] safety commit; grouping and coloring appear to be fine (see Pitch Black...)
+
 [debuggery] something's not fine with the crate swapping
