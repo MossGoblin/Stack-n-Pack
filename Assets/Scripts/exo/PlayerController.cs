@@ -65,6 +65,12 @@ public class PlayerController : MonoBehaviour
             MovePlayer(posD);
         }
 
+        // picking up content from a factory
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            TryLoadCrate();
+        }
+
         // TEMP Inputs
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
@@ -143,6 +149,36 @@ public class PlayerController : MonoBehaviour
         }
 
         // TODO :: Temp return
+        return true;
+    }
+
+    private bool TryLoadCrate()
+    {
+        // check if there is space for the new content
+        if (Content != 0)
+        {
+            return false;
+        }
+
+        // check if in position
+        Factory workingFactory = null;
+        foreach (Factory factory in gridRef.factoryGrid)
+        {
+            if (factory.PosGrid_X == transform.position.x && factory.PosGrid_Y == transform.position.y)
+            {
+                workingFactory = factory;
+            }
+        }
+
+        // are we in position ??
+        if (workingFactory == null)
+        {
+            return false;
+        }
+
+        // load content
+        Content = workingFactory.Content;
+        workingFactory.ReStock();
         return true;
     }
 

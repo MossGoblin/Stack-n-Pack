@@ -26,7 +26,6 @@ public class Crate
         RegisterCrate();
     }
 
-
     private void RegisterCrate()
     {
         gridRef.storageGrid[PositionX_Grid, PositionY_Grid] = this;

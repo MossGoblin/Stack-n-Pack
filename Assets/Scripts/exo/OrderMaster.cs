@@ -10,6 +10,8 @@ public class OrderMaster : MonoBehaviour
     private int complexityLevel = 1;
     [SerializeField] private int orderAmount = 2;
 
+    private int seed;
+
     // refs
     public Storage grid;
     public Conductor master;
@@ -17,7 +19,8 @@ public class OrderMaster : MonoBehaviour
     void Start()
     {
         orderList = new List<Order>();
-
+        seed = (int)UnityEngine.Random.Range(1, 100);
+        UnityEngine.Random.InitState(seed);
         // Init orders
         //InitOrders(complexityLevel);
     }
@@ -31,9 +34,11 @@ public class OrderMaster : MonoBehaviour
     {
         grid = master.gridRef;
         int[] rarityGrid = grid.Rarity;
-        Order newOrder = new Order(complexityLevel, rarityGrid);
+        seed = (int)UnityEngine.Random.Range(1, 100);
+        Order newOrder = new Order(complexityLevel, rarityGrid, seed);
         orderList.Add(newOrder);
         Debug.Log($"new order issued: level {complexityLevel}");
-        Debug.Log($"order index = {orderList[0].ContentIndex}");
+        Debug.Log($"seed: {seed}");
+        Debug.Log($"order index = {newOrder.ContentIndex}");
     }
 }

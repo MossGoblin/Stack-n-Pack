@@ -28,7 +28,7 @@ public class Factory
         ReStock();
     }
 
-    private void ReStock()
+    public void ReStock()
     {
         Content = crateMaster.RandomType();
         FactoryGO.GetComponentInChildren<SpriteRenderer>().color = crateMaster.colorPool[Content - 1];

@@ -66,6 +66,36 @@ public class GroupMaster : MonoBehaviour
                 }
                 break;
             default: // more than 1 nbr
+
+                // if all nbrs are of the same group
+                List<int> nbrGroupList = new List<int>();
+                for (int count = 0; count < 4; count++)
+                {
+                    if ((crateNbrs[count] != null)) // if this is a nbr
+                    {
+                        if (nbrGroupList.Contains(crateNbrs[count].Group))
+                        {
+                            break;
+                        }
+                        nbrGroupList.Add(crateNbrs[count].Group);
+                    }
+                }
+                if (nbrGroupList.Count > 1)
+                {
+                    for (int count = 0; count < 4; count++)
+                    {
+                        if (crateNbrs[count] != null)
+                        {
+                            crate.SetGroup(crateNbrs[count].Group);
+                            // find group OBJ and add crate to it
+                            newGroup = GetGroupByIndex(crateNbrs[count].Group);
+                            newGroup.AddCrate(crate);
+                        }
+                    }
+                    break;                   
+                }
+                // TODO :: HERE -- proliferate group number !!
+                // if there are 2 or more nbrs and they are of more than 1 group
                 // find the largest adjacent group
                 int largestGroupIndex = 0;
                 int largestGroupSize = 0;
@@ -83,6 +113,8 @@ public class GroupMaster : MonoBehaviour
                         }
                     }
                 }
+
+
                 crate.SetGroup(largestGroupIndex);
                 // find group OBJ and add crate to it
                 newGroup = GetGroupByIndex(largestGroupIndex);

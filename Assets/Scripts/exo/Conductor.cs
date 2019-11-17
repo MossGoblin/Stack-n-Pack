@@ -79,7 +79,6 @@ public class Conductor : MonoBehaviour
                 tile.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
-
     }
 
     private void PlacePlayer()
