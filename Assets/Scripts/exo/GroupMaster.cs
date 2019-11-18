@@ -46,7 +46,7 @@ public class GroupMaster : MonoBehaviour
         switch (nbrsCount)
         {
             case 0: // no nbrs
-                lastCreatedGroup++;
+                NewGroupNumber();
                 crate.SetGroup(lastCreatedGroup);
                 newGroup = new Group(crate, lastCreatedGroup); // TODO : NEW GROUP
                 groupList.Add(newGroup);
@@ -62,6 +62,7 @@ public class GroupMaster : MonoBehaviour
                         // find group OBJ and add crate to it
                         newGroup = GetGroupByIndex(crateNbrs[count].Group);
                         newGroup.AddCrate(crate);
+                        break;
                     }
                 }
                 break;
@@ -80,7 +81,7 @@ public class GroupMaster : MonoBehaviour
                         nbrGroupList.Add(crateNbrs[count].Group);
                     }
                 }
-                if (nbrGroupList.Count > 1)
+                if (nbrGroupList.Count == 1) // 1 group in the nbrs
                 {
                     for (int count = 0; count < 4; count++)
                     {
@@ -90,6 +91,7 @@ public class GroupMaster : MonoBehaviour
                             // find group OBJ and add crate to it
                             newGroup = GetGroupByIndex(crateNbrs[count].Group);
                             newGroup.AddCrate(crate);
+                            break;
                         }
                     }
                     break;                   
@@ -146,6 +148,7 @@ public class GroupMaster : MonoBehaviour
 
     public void RemoveCrateFromGroup(Crate crate)
     {
+        List<Crate> updatedCrates = new List<Crate>();
 
         // get nbrs
         Crate[] startingNbrs = crate.Neighbours();
@@ -166,16 +169,16 @@ public class GroupMaster : MonoBehaviour
         // for each nbr - create new group
         foreach (Crate startingNbr in startingNbrsList)
         {
-            Stack<Crate> progressStack = new Stack<Crate>();
-            progressStack.Push(startingNbr);
-            // create the nrenew group
+
             int newGroupNumber = NewGroupNumber();
             Group newGroup = new Group(startingNbr, newGroupNumber);
             groupList.Add(newGroup);
             groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
 
+            Stack<Crate> progressStack = new Stack<Crate>();
+            progressStack.Push(startingNbr);
             // add all connected to the stack, using new group number
-            ProgressNbrsStack(progressStack, newGroupNumber);
+            ProgressNbrsStack(progressStack, newGroupNumber, updatedCrates);
         }
 
         // remove obsolete group
@@ -186,7 +189,7 @@ public class GroupMaster : MonoBehaviour
 
     }
 
-    private void ProgressNbrsStack(Stack<Crate> stack, int newGroupNumber)
+    private void ProgressNbrsStack(Stack<Crate> stack, int newGroupNumber, List<Crate> updatedCrates)
     {
         // INGRESS -- fill the stack
         // get nbrs, push each unpushed into the stack, then iterate
@@ -207,13 +210,19 @@ public class GroupMaster : MonoBehaviour
                 if (!stack.Contains(nbrCrate))
                 {
                     stack.Push(nbrCrate);
-                    ProgressNbrsStack(stack, newGroupNumber);  // if new nbr was added to stack - > delve in
+                    ProgressNbrsStack(stack, newGroupNumber, updatedCrates);  // if new nbr was added to stack - > delve in
                 }
             }
         }
 
-        // EGRESS -- empty the stack and apply new group number
-        stack.Pop().SetGroup(newGroupNumber);
+        // EGRESS -- empty the stack and apply new group number if a new group number has not yet been applied
+        if (!updatedCrates.Contains(stack.Peek()))
+        {
+            // create the new group
+            updatedCrates.Add(stack.Peek());
+            GetGroupByIndex(stack.Peek().Group).RemoveCrate(stack.Peek());
+            stack.Pop().SetGroup(newGroupNumber);
+        }
     }
 
     private Group GetGroupByCrate(Crate crate)
@@ -242,6 +251,7 @@ public class GroupMaster : MonoBehaviour
 
     private int NewGroupNumber()
     {
-        return lastCreatedGroup++;
+        lastCreatedGroup++;
+        return lastCreatedGroup;
     }
 }

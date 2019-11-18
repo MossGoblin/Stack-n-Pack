@@ -131,7 +131,6 @@ public class CrateMaster : MonoBehaviour
         Crate newCrate = new Crate(pos.posX, pos.posY, master, type);
         newCrate.SetUpGO(newCrateGO);
         crateList.Add(newCrate);
-        gridRef.storageGrid[pos.posX, pos.posY] = newCrate;
         groupMaster.AssignCrateToNewGroup(newCrate);
     }
 
