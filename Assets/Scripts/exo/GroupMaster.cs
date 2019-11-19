@@ -146,84 +146,145 @@ public class GroupMaster : MonoBehaviour
 
     }
 
+
     public void RemoveCrateFromGroup(Crate crate)
     {
-        List<Crate> updatedCrates = new List<Crate>();
+        // prepare structures
+        List<Crate> updatedCrates = new List<Crate>(); // list of crates with updated groups
+        List<Crate> checkedCrates = new List<Crate>(); // list of crates that are being checked
+        Stack<Crate> stack = new Stack<Crate>();
 
-        // get nbrs
-        Crate[] startingNbrs = crate.Neighbours();
+        // get first nbrs
+        Crate[] crateNbrs = crate.Neighbours();
 
-        // find the group to be dissolved
-        Group obsoleteGroup = GetGroupByCrate(crate);
+        // find group to be dissolved
+        Group group = GetGroupByCrate(crate);
 
-        // nbr array to list
-        List<Crate> startingNbrsList = new List<Crate>();
-        foreach (Crate nbrCrate in startingNbrs)
+        // iterate nbrs - add to updated, add to stack, process stack
+        foreach (Crate nbr in crateNbrs)
         {
-            if (nbrCrate != null)
+            if (nbr != null && !checkedCrates.Contains(nbr))
             {
-                startingNbrsList.Add(nbrCrate);
+                checkedCrates.Add(nbr); // mark as checked
+                stack.Push(nbr); // add to stack
+                Group newGroup = new Group(nbr, NewGroupNumber()); // prepare new group
+                groupList.Add(newGroup);
+                groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
+                // process stack
+                ProcessStack(stack, checkedCrates, updatedCrates, newGroup);
             }
         }
-
-        // for each nbr - create new group
-        foreach (Crate startingNbr in startingNbrsList)
-        {
-
-            int newGroupNumber = NewGroupNumber();
-            Group newGroup = new Group(startingNbr, newGroupNumber);
-            groupList.Add(newGroup);
-            groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
-
-            Stack<Crate> progressStack = new Stack<Crate>();
-            progressStack.Push(startingNbr);
-            // add all connected to the stack, using new group number
-            ProgressNbrsStack(progressStack, newGroupNumber, updatedCrates);
-        }
-
-        // remove obsolete group
-        groupToColorMap.Remove(obsoleteGroup); // remove color mapping
-        groupList.Remove(obsoleteGroup); // remove the group itself
-
-        // TODO : REM update underlying tile graphics
-
     }
 
-    private void ProgressNbrsStack(Stack<Crate> stack, int newGroupNumber, List<Crate> updatedCrates)
+    private void ProcessStack(Stack<Crate> stack, List<Crate> checkList, List<Crate> updateList, Group newGroup)
     {
-        // INGRESS -- fill the stack
-        // get nbrs, push each unpushed into the stack, then iterate
-        // get nbrs
-        Crate[] nbrs = stack.Peek().Neighbours(); // get current nbrs
-        List<Crate> nbrList = new List<Crate>();
-        foreach (Crate nbrCrate in nbrs)
+        // INGRESS
+        // get crate from stack - get nbrs - add nbrs to stack and list
+        while (stack.Count > 0)
         {
-            if (nbrCrate != null)
+            Crate nextCrate = stack.Peek(); // get crate from stack - PEEK ONLY
+            Crate[] nbrs = nextCrate.Neighbours(); // get nbrs
+            foreach (Crate nbr in nbrs) // get deeper if there are unchecked nbrs
             {
-                nbrList.Add(nbrCrate);
-            }
-        }
-        if (nbrList.Count > 0) // if there are nbrs
-        {
-            foreach (Crate nbrCrate in nbrList) // add nbrs to stack if not already added
-            {
-                if (!stack.Contains(nbrCrate))
+                if (nbr != null && !checkList.Contains(nbr))
                 {
-                    stack.Push(nbrCrate);
-                    ProgressNbrsStack(stack, newGroupNumber, updatedCrates);  // if new nbr was added to stack - > delve in
+                    stack.Push(nbr);
+                    checkList.Add(nbr);
+                    ProcessStack(stack, checkList, updateList, newGroup);
                 }
             }
-        }
 
-        // EGRESS -- empty the stack and apply new group number if a new group number has not yet been applied
-        if (!updatedCrates.Contains(stack.Peek()))
-        {
-            // create the new group
-            updatedCrates.Add(stack.Peek());
-            GetGroupByIndex(stack.Peek().Group).RemoveCrate(stack.Peek());
-            stack.Pop().SetGroup(newGroupNumber);
+            // EGRESS
+            // pull a crate from the stack - reassign group
+            Crate crateToUpdate = stack.Pop();
+            if (!updateList.Contains(crateToUpdate)) // was the crate already updated?
+            {
+                GetGroupByCrate(crateToUpdate).RemoveCrate(crateToUpdate); // ermoveremove crate from old group
+                crateToUpdate.SetGroup(newGroup.Index); // update group index in crate
+                newGroup.AddCrate(crateToUpdate); // add crate to new group
+                updateList.Add(crateToUpdate); // mark crate as updated
+            }
         }
     }
+
+    // public void Old_RemoveCrateFromGroup(Crate crate) // "Old_" - being rewritten
+    // {
+    //     List<Crate> updatedCrates = new List<Crate>();
+
+    //     // get nbrs
+    //     Crate[] startingNbrs = crate.Neighbours();
+
+    //     // find the group to be dissolved
+    //     Group obsoleteGroup = GetGroupByCrate(crate);
+
+    //     // nbr array to list
+    //     List<Crate> startingNbrsList = new List<Crate>();
+    //     foreach (Crate nbrCrate in startingNbrs)
+    //     {
+    //         if (nbrCrate != null)
+    //         {
+    //             startingNbrsList.Add(nbrCrate);
+    //         }
+    //     }
+
+    //     // for each nbr - create new group
+    //     foreach (Crate startingNbr in startingNbrsList)
+    //     {
+
+    //         int newGroupNumber = NewGroupNumber();
+    //         Group newGroup = new Group(startingNbr, newGroupNumber);
+    //         groupList.Add(newGroup);
+    //         groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
+
+    //         Stack<Crate> progressStack = new Stack<Crate>();
+    //         progressStack.Push(startingNbr);
+    //         // add all connected to the stack, using new group number
+    //         ProgressNbrsStack(progressStack, newGroupNumber, updatedCrates);
+    //     }
+
+    //     // remove obsolete group
+    //     groupToColorMap.Remove(obsoleteGroup); // remove color mapping
+    //     groupList.Remove(obsoleteGroup); // remove the group itself
+
+    //     // TODO : REM update underlying tile graphics
+
+    // }
+
+    // private void Old_ProgressNbrsStack(Stack<Crate> stack, int newGroupNumber, List<Crate> updatedCrates)  // "Old_" - being rewritten
+    // {
+    //     // INGRESS -- fill the stack
+    //     // get nbrs, push each unpushed into the stack, then iterate
+    //     // get nbrs
+    //     Crate[] nbrs = stack.Peek().Neighbours(); // get current nbrs
+    //     List<Crate> nbrList = new List<Crate>();
+    //     foreach (Crate nbrCrate in nbrs)
+    //     {
+    //         if (nbrCrate != null)
+    //         {
+    //             nbrList.Add(nbrCrate);
+    //         }
+    //     }
+    //     if (nbrList.Count > 0) // if there are nbrs
+    //     {
+    //         foreach (Crate nbrCrate in nbrList) // add nbrs to stack if not already added
+    //         {
+    //             if (!stack.Contains(nbrCrate))
+    //             {
+    //                 stack.Push(nbrCrate);
+    //                 ProgressNbrsStack(stack, newGroupNumber, updatedCrates);  // if new nbr was added to stack - > delve in
+    //             }
+    //         }
+    //     }
+
+    //     // EGRESS -- empty the stack and apply new group number if a new group number has not yet been applied
+    //     if (!updatedCrates.Contains(stack.Peek()))
+    //     {
+    //         // create the new group
+    //         updatedCrates.Add(stack.Peek());
+    //         GetGroupByIndex(stack.Peek().Group).RemoveCrate(stack.Peek());
+    //         stack.Pop().SetGroup(newGroupNumber);
+    //     }
+    // }
 
     private Group GetGroupByCrate(Crate crate)
     {

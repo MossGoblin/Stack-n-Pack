@@ -1,17 +1,7 @@
 = BUGS =
 
--- groupList not maintained properly!! -- should not re-check groups if crate picked up from service lane
+-- recursive group reassignment glitchy
 
 = REFACTORING =
 
--- start objectification -- sooner or later??
-	-- move the crates into a class FIRST as soon as possible
--- use string for the order indices, instead of int
--- try out the special pick-up command scheme
--- simplify vacancy check by using the crateGrid
--- hash groups on each change ??
-
-= = =
-
--- when splitting group - assume the identity of teh largest successor
--- rework the initial distribution of rarityes - crate00 is always most common, crate06 is always most rate, the rest are random
+-- completely move group registration within Group; think about deconstructor for deregistration; similar for Crate
