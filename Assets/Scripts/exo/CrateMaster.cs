@@ -104,9 +104,9 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // initiate first large groupStrip - pick a random point in the color array
-        // TODO :: temp preset color
-        int randomStartingColorIndex = 170;
-        //int randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
+        // Temp preset color
+        // int randomStartingColorIndex = 170;
+        int randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
         colorChunks.Add(randomStartingColorIndex, paletteArray.Length - 1);
 
         return true;
@@ -132,6 +132,9 @@ public class CrateMaster : MonoBehaviour
         newCrate.SetUpGO(newCrateGO);
         crateList.Add(newCrate);
         groupMaster.AssignCrateToNewGroup(newCrate);
+
+        // mark down if this is the first created crate
+        master.cratesStarted = true;
     }
 
     // Pick a new color from the palette

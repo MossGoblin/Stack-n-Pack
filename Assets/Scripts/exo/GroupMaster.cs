@@ -94,7 +94,7 @@ public class GroupMaster : MonoBehaviour
                     }
                     break;                   
                 }
-                // TODO :: HERE -- proliferate group number !!
+                // proliferate group number !!
                 // if there are 2 or more nbrs and they are of more than 1 group
                 // find the largest adjacent group
                 int largestGroupIndex = 0;
@@ -249,7 +249,6 @@ public class GroupMaster : MonoBehaviour
     //     groupToColorMap.Remove(obsoleteGroup); // remove color mapping
     //     groupList.Remove(obsoleteGroup); // remove the group itself
 
-    //     // TODO : REM update underlying tile graphics
 
     // }
 

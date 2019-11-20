@@ -106,7 +106,6 @@ public class PlayerController : MonoBehaviour
             newContent = gridRef.storageGrid[newPos.newX, newPos.newY].Content;
         }
 
-        // TODO :: HERE - RELEASING CRATE
         bool positionViableForRelease = gridRef.WithinStorage(oldPos);
 
         // are we releasing crate?
@@ -119,7 +118,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // are we picking up a crate
-        if (Content == 0 && newContent != 0)
+        if (Content == 0 && newContent != 0 && clampsOpen)
         {
             // pick up crate
             // - get crate from position
