@@ -75,3 +75,5 @@
 [incremental, rework] restored content loading from fatories; group number proliferation needs fixing
 
 [rework] some wires have crossed; need to rework the recursion, possibly simplify it a little
+
+[incremental] started working on the order visuals; a bit annoying...

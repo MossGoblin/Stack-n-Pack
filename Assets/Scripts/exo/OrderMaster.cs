@@ -24,19 +24,20 @@ public class OrderMaster : MonoBehaviour
         orderList = new List<Order>();
         seed = (int)UnityEngine.Random.Range(1, 100);
         UnityEngine.Random.InitState(seed);
+
+        // Init orders
+        InitOrders(complexityLevel);
         
     }
 
     void Update()
     {
-        // Init orders
-        InitOrders(complexityLevel);
     }
 
     public void IssueOrder()
     {
         seed = (int)UnityEngine.Random.Range(1, 100);
-        Order newOrder = new Order(complexityLevel, grid.Rarity, seed);
+        Order newOrder = new Order(complexityLevel, master.Rarity, seed);
         orderList.Add(newOrder);
         Debug.Log($"new order issued: level {complexityLevel}");
         Debug.Log($"seed: {seed}");
@@ -46,8 +47,7 @@ public class OrderMaster : MonoBehaviour
     private void InitOrders(int complexityLevel)
     {
         // Issue one order, for starters
-        // ONLY if we have already begun with the crates
-        if (master.cratesStarted)
+        for (int count = 0; count < complexityLevel + 4; count++)
         {
             IssueOrder();
         }

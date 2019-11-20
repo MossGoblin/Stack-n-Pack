@@ -1,7 +1,11 @@
 = BUGS =
 
--- recursive group reassignment glitchy
+-- recursive group reassignment glitchy - is it still glitchy?
 
 = REFACTORING =
 
+= POSSIBLE CHANGES =
+
 -- completely move group registration within Group; think about deconstructor for deregistration; similar for Crate
+
+= TODO = 

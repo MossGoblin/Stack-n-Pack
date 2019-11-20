@@ -59,7 +59,7 @@ public class CrateMaster : MonoBehaviour
         int cumulativeChance = 0;
         for (int count = 0; count < 6; count++)
         {
-            cumulativeChance += gridRef.Rarity[count];
+            cumulativeChance += master.Rarity[count];
             if (rndNumber <= cumulativeChance)
             {
                 return count + 1;
@@ -132,9 +132,6 @@ public class CrateMaster : MonoBehaviour
         newCrate.SetUpGO(newCrateGO);
         crateList.Add(newCrate);
         groupMaster.AssignCrateToNewGroup(newCrate);
-
-        // mark down if this is the first created crate
-        master.cratesStarted = true;
     }
 
     // Pick a new color from the palette

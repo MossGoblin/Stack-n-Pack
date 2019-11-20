@@ -17,15 +17,13 @@ public class Conductor : MonoBehaviour
     [SerializeField] GameObject factoryLeft;
     [SerializeField] GameObject factoryRight;
 
-    // state variables
-    public bool cratesStarted = false;
-
     // refs
     public Storage gridRef;
     public CrateMaster crateMaster;
     public PlayerController playerMaster;
     public GroupMaster groupMaster;
     public OrderMaster orderMaster;
+    public int[] Rarity { get; private set; } = new int[] { 29, 24, 19, 14, 9, 5 };
 
     private void Start()
     {
