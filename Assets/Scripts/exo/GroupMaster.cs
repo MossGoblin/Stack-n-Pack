@@ -8,7 +8,6 @@ public class GroupMaster : MonoBehaviour
 {
     // props
     private List<Group> groupList;
-    private List<int> groupIndices;
     private int lastCreatedGroup;
     public Dictionary<Group, int> groupToColorMap;
 
@@ -22,7 +21,6 @@ public class GroupMaster : MonoBehaviour
         this.gridRef = master.gridRef;
 
         groupList = new List<Group>();
-        groupIndices = new List<int>();
         groupToColorMap = new Dictionary<Group, int>();
         lastCreatedGroup = 0;
     }
@@ -159,6 +157,8 @@ public class GroupMaster : MonoBehaviour
 
         // find group to be dissolved
         Group group = GetGroupByCrate(crate);
+        // remove crate from group
+        group.RemoveCrate(crate);
 
         // iterate nbrs - add to updated, add to stack, process stack
         foreach (Crate nbr in crateNbrs)
@@ -174,6 +174,10 @@ public class GroupMaster : MonoBehaviour
                 ProcessStack(stack, checkedCrates, updatedCrates, newGroup);
             }
         }
+
+        // Remove old group
+        groupList.Remove(group);
+        groupToColorMap.Remove(group);
     }
 
     private void ProcessStack(Stack<Crate> stack, List<Crate> checkList, List<Crate> updateList, Group newGroup)
@@ -199,9 +203,8 @@ public class GroupMaster : MonoBehaviour
             Crate crateToUpdate = stack.Pop();
             if (!updateList.Contains(crateToUpdate)) // was the crate already updated?
             {
-                GetGroupByCrate(crateToUpdate).RemoveCrate(crateToUpdate); // ermoveremove crate from old group
+                GetGroupByCrate(crateToUpdate).RemoveCrate(crateToUpdate); // remove crate from old group
                 crateToUpdate.SetGroup(newGroup.Index); // update group index in crate
-                newGroup.AddCrate(crateToUpdate); // add crate to new group
                 updateList.Add(crateToUpdate); // mark crate as updated
             }
         }
@@ -286,7 +289,7 @@ public class GroupMaster : MonoBehaviour
     //     }
     // }
 
-    private Group GetGroupByCrate(Crate crate)
+    public Group GetGroupByCrate(Crate crate)
     {
         foreach (Group group in groupList)
         {
