@@ -12,9 +12,6 @@ public class Storage
     public Factory[] factoryGrid;
     public GameObject[,] tileGrid;
     public int gameProgress = 1;
-
-    public int[] Rarity { get; private set; } = new int[] { 29, 24, 19, 14, 9, 5 };
-
     public Storage(int width, int hight)
     {
         StorageWidth = width;
