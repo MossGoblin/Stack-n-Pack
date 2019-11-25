@@ -54,7 +54,7 @@
      <Compile Include="Assets\Scripts\exo\Order.cs" />
      <Compile Include="Assets\Scripts\exo\OrderCommand.cs" />
      <Compile Include="Assets\Scripts\exo\OrderMaster.cs" />
-     <Compile Include="Assets\Scripts\exo\OrderVisuals.cs" />
+     <Compile Include="Assets\Scripts\exo\OrdersVisual.cs" />
      <Compile Include="Assets\Scripts\exo\PlayerController.cs" />
      <Compile Include="Assets\Scripts\exo\PlayerUIController.cs" />
      <Compile Include="Assets\Scripts\exo\Storage.cs" />

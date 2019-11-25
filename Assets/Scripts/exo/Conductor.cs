@@ -46,7 +46,7 @@ public class Conductor : MonoBehaviour
     private void GenerateOrders()
     {
         Debug.Log("Orders to be generated");
-        orderMaster.IssueOrder();
+        // TODO :: Issue orders
     }
 
     private void Update()
@@ -75,7 +75,7 @@ public class Conductor : MonoBehaviour
             }
             else
             {
-                // TODO :: Fix default tile color
+                // FIXME :: Fix default tile color
                 tile.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }

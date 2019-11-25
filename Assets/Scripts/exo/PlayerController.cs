@@ -70,12 +70,6 @@ public class PlayerController : MonoBehaviour
         {
             TryLoadCrate();
         }
-
-        // TEMP Inputs
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            master.orderMaster.IssueOrder();
-        }
     }
 
     private bool MovePlayer((int xDX, int yDY) posD)
@@ -147,7 +141,7 @@ public class PlayerController : MonoBehaviour
             transform.position = newPosition;
         }
 
-        // TODO :: Temp return
+        // TODO ? Temp return
         return true;
     }
 

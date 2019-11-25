@@ -77,3 +77,7 @@
 [rework] some wires have crossed; need to rework the recursion, possibly simplify it a little
 
 [incremental] started working on the order visuals; a bit annoying...
+
+[b > incremental]  deconstructing order index and resolving the visuals worked; proof-of-contept only
+
+[b > incremental] working on orders

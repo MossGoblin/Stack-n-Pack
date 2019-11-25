@@ -8,14 +8,16 @@ public class OrderMaster : MonoBehaviour
     // props
     List<Order> orderList;
     private int complexityLevel = 1;
-    [SerializeField] private int orderAmount = 2;
+    // [SerializeField] private int orderAmount = 2;
 
-
+    [SerializeField] GameObject orderPrefab;
     private int seed;
 
     // refs
     public Storage grid;
     public Conductor master;
+
+    [SerializeField] Transform orderHolder;
 
     void Start()
     {
@@ -24,24 +26,31 @@ public class OrderMaster : MonoBehaviour
         orderList = new List<Order>();
         seed = (int)UnityEngine.Random.Range(1, 100);
         UnityEngine.Random.InitState(seed);
-
-        // Init orders
-        InitOrders(complexityLevel);
         
     }
 
     void Update()
     {
+        // TEMP Inputs
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            InitOrders(complexityLevel);
+        }
     }
 
     public void IssueOrder()
     {
+        // generate OBJ
         seed = (int)UnityEngine.Random.Range(1, 100);
         Order newOrder = new Order(complexityLevel, master.Rarity, seed);
         orderList.Add(newOrder);
         Debug.Log($"new order issued: level {complexityLevel}");
         Debug.Log($"seed: {seed}");
         Debug.Log($"order index = {newOrder.ContentIndex}");
+
+        // Instantiate GO
+        GameObject neworderGO = Instantiate(orderPrefab, orderHolder);
+        // TODO : HERE - deal with order visuals
     }
 
     private void InitOrders(int complexityLevel)
@@ -52,6 +61,7 @@ public class OrderMaster : MonoBehaviour
             IssueOrder();
         }
 
+        
         // FIXME : HERE
     }
 

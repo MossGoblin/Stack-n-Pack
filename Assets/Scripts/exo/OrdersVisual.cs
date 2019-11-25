@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderVisuals : MonoBehaviour
+public class OrdersVisual : MonoBehaviour
 {
     // refs
     public Transform sampleOrder;
@@ -21,9 +21,9 @@ public class OrderVisuals : MonoBehaviour
 
     private void GetTempInput()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Tilde))
         {
-            sampleOrder.GetComponent<OrderCommand>().UpdateVisuals(10210);
+            sampleOrder.GetComponent<OrderCommand>().UpdateVisuals(20102);
         }
     }
 }

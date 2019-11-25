@@ -488,8 +488,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f70dd22613bef99458fea82addaef8da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderAmount: 2
+  orderPrefab: {fileID: 3499496821450023379, guid: b1495470bc053934485bc82a4c44aed1,
+    type: 3}
   master: {fileID: 1036902686}
+  orderHolder: {fileID: 1220585118}
 --- !u!1 &438889853
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,7 +740,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &688881104
 Transform:
   m_ObjectHideFlags: 0
@@ -762,7 +764,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 688881103}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a09080d516116ed4c93f90fa2fd82f11, type: 3}
+  m_Script: {fileID: 11500000, guid: 555b264c02dde934bb8a02a4f57e3459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sampleOrder: {fileID: 945075025}
@@ -1270,7 +1272,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1220585117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a09080d516116ed4c93f90fa2fd82f11, type: 3}
+  m_Script: {fileID: 11500000, guid: 555b264c02dde934bb8a02a4f57e3459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sampleOrder: {fileID: 945075025}
