@@ -81,3 +81,5 @@
 [b > incremental]  deconstructing order index and resolving the visuals worked; proof-of-contept only
 
 [b > incremental] working on orders
+
+[b > incremental] orders generate fine' proceed to order-group index comparison

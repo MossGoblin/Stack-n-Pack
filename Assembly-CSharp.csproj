@@ -44,20 +44,19 @@
     <ImplicitlyExpandNETStandardFacades>false</ImplicitlyExpandNETStandardFacades>
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
-  <ItemGroup>     <Compile Include="Assets\Scripts\exo\Conductor.cs" />
-     <Compile Include="Assets\Scripts\exo\Crate.cs" />
-     <Compile Include="Assets\Scripts\exo\CrateMaster.cs" />
-     <Compile Include="Assets\Scripts\exo\Factory.cs" />
-     <Compile Include="Assets\Scripts\exo\GridSupport.cs" />
-     <Compile Include="Assets\Scripts\exo\Group.cs" />
-     <Compile Include="Assets\Scripts\exo\GroupMaster.cs" />
-     <Compile Include="Assets\Scripts\exo\Order.cs" />
-     <Compile Include="Assets\Scripts\exo\OrderCommand.cs" />
-     <Compile Include="Assets\Scripts\exo\OrderMaster.cs" />
-     <Compile Include="Assets\Scripts\exo\OrdersVisual.cs" />
-     <Compile Include="Assets\Scripts\exo\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\exo\PlayerUIController.cs" />
-     <Compile Include="Assets\Scripts\exo\Storage.cs" />
+  <ItemGroup>     <Compile Include="Assets\Scripts\Conductor.cs" />
+     <Compile Include="Assets\Scripts\Crate.cs" />
+     <Compile Include="Assets\Scripts\CrateMaster.cs" />
+     <Compile Include="Assets\Scripts\Factory.cs" />
+     <Compile Include="Assets\Scripts\GridSupport.cs" />
+     <Compile Include="Assets\Scripts\Group.cs" />
+     <Compile Include="Assets\Scripts\GroupMaster.cs" />
+     <Compile Include="Assets\Scripts\Order.cs" />
+     <Compile Include="Assets\Scripts\OrderGO.cs" />
+     <Compile Include="Assets\Scripts\OrderMaster.cs" />
+     <Compile Include="Assets\Scripts\PlayerMaster.cs" />
+     <Compile Include="Assets\Scripts\PlayerUIController.cs" />
+     <Compile Include="Assets\Scripts\Storage.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/[ CODEE ]/[ GITTED ]/Stack-n-Pack/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
