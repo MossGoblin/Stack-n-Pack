@@ -36,7 +36,7 @@ public class Crate
     {
         CrateGO = crateGO;
         SpriteRenderer contentMarker = CrateGO.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        contentMarker.color = crateMaster.colorPool[Content - 1];
+        contentMarker.color = crateMaster.colorPool[Content];
     }
 
     // Set up group

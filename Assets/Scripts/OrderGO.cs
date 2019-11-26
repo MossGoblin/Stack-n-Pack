@@ -9,6 +9,9 @@ public class OrderGO : MonoBehaviour
     public Transform[] typeDisplay;
     public Sprite[] images;
 
+    public Transform[] matchDisplay;
+    public Sprite[] matchDigit;
+
     public Order orderData;
 
     // Start is called before the first frame update
@@ -25,9 +28,11 @@ public class OrderGO : MonoBehaviour
 
     public void UpdateVisuals(int[] index)
     {
+        // display content
         for (int count = 0; count < 6; count++)
         {
             typeDisplay[count].GetComponent<Image>().sprite = images[index[count]];
         }
+
     }
 }

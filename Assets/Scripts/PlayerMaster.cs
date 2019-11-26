@@ -118,7 +118,7 @@ public class PlayerMaster : MonoBehaviour
             // - get crate from position
             Crate crateToBePickedUp = gridRef.storageGrid[newPos.newX, newPos.newY];
             // - update player content
-            Content = crateToBePickedUp.Content;
+            Content = crateToBePickedUp.Content + 1;
             // - remove crate from grid and list
             crateMaster.RemoveCrate(crateToBePickedUp);
             // -- remove crate grom group

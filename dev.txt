@@ -83,3 +83,5 @@
 [b > incremental] working on orders
 
 [b > incremental] orders generate fine' proceed to order-group index comparison
+
+[m > incremental] order management kinda fine; order/group matching still clunky

@@ -25,4 +25,9 @@ public class Order
     {
         this.orderGO = orderGO;
     }
+
+    public GameObject GetOrderGO()
+    {
+        return orderGO;
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,9 @@ public class OrderMaster : MonoBehaviour
     // props
     public List<Order> orderList;
     private int complexityLevel = 1;
-    // [SerializeField] private int orderAmount = 2;
+
+    // dictionary of matches
+    Dictionary<Order, List<Group>> matches = new Dictionary<Order, List<Group>>();
 
     private int seed;
 
@@ -36,6 +39,15 @@ public class OrderMaster : MonoBehaviour
         // update order canvas layout spacing
         int newspacing = (6 - orderList.Count)*10;
         orderHolder.GetComponent<HorizontalLayoutGroup>().spacing = newspacing;
+        HandleInput();
+    }
+
+    private void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            CheckOrderGroupMatches();
+        }
     }
 
     public void IssueOrder()
@@ -78,28 +90,111 @@ public class OrderMaster : MonoBehaviour
             */
             int typeCount = complexityLevel + 2;
 
-        // pick typeCount number of types from between minType and maxType
-        List<int> selectedTypes = new List<int>();
-        while(selectedTypes.Count < typeCount)
+        bool uniqueIndex = false;
+        while (!uniqueIndex)
         {
-            int newType = UnityEngine.Random.Range(0, 5);
-            if (!selectedTypes.Contains(newType))
+            uniqueIndex = true;
+
+            // pick typeCount number of types from between minType and maxType
+            List<int> selectedTypes = new List<int>();
+            while(selectedTypes.Count < typeCount)
             {
-                selectedTypes.Add(newType);
+                int newType = UnityEngine.Random.Range(0, 5);
+                if (!selectedTypes.Contains(newType))
+                {
+                    selectedTypes.Add(newType);
+                }
+            }
+
+            // pick random number of crates (complexity-1 to complexity) for each of the selected type and calculate ContentIndex
+            for (int count = 0; count < 6; count++)
+            {
+                if (selectedTypes.Contains(count))
+                {
+                int numberOfCrates = (int)UnityEngine.Random.Range(complexityLevel, typeCount);
+                orderIndex[count] = numberOfCrates;
+                }
+            }
+
+            // check if this index is already used
+            foreach (var order in orderList)
+            {
+                if (order.ContentIndex.SequenceEqual(orderIndex))
+                {
+                    uniqueIndex = false;
+                    break;
+                }
             }
         }
-
-        // pick random number of crates (complexity-1 to complexity) for each of the selected type and calculate ContentIndex
-        for (int count = 0; count < 6; count++)
-        {
-            if (selectedTypes.Contains(count))
-            {
-            int numberOfCrates = (int)UnityEngine.Random.Range(complexityLevel, typeCount);
-            orderIndex[count] = numberOfCrates;
-            }
-        }
-
         return orderIndex;
+    }
+
+    public void CheckOrderGroupMatches()
+    {
+        // collection of checked groups
+        List<Group> checkedGroups = new List<Group>();
+
+        // iterate orders
+        foreach (var order in orderList)
+        {
+            // iterate groups
+            foreach (Group group in master.groupMaster.GroupList())
+            {
+                // mark group as checked
+                checkedGroups.Add(group);
+
+                if (!checkedGroups.Contains(group) && order.ContentIndex.SequenceEqual(group.Content))
+                {
+                    // record the match
+                    if (!matches.ContainsKey(order))
+                    {
+                        matches.Add(order, new List<Group>());
+                    }
+                    matches[order].Add(group);
+                }
+            }
+        }
+        // FIXME :: UPDATE MATCHES WHEN REMOVING A GROUP!
+        UpdateOrderGroupMatchVisuals();
+        
+    }
+
+    // update match visuals
+    private void UpdateOrderGroupMatchVisuals()
+    {
+        int numberOfMatches = 1;
+
+        foreach (var order in matches)
+        {
+            for (int matchesPerGroup = 0; matchesPerGroup < 3; matchesPerGroup++)
+            {
+                // check of there is such a match in the group list for that order
+                if (matchesPerGroup < order.Value.Count)
+                {
+                    // .. if there is - get the group color from the map
+                    int groupColorIndex = master.groupMaster.groupToColorMap[order.Value[matchesPerGroup]];
+                    // update the digit image and color it
+                    OrderGO orderGO = order.Key.GetOrderGO().GetComponent<OrderGO>();
+                    // digit to use
+                    int digitToUse = numberOfMatches;
+                    if (digitToUse == 10)
+                    {
+                        digitToUse = 0;
+                    }
+
+                    if (numberOfMatches < 10)
+                    {
+                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().sprite = orderGO.matchDigit[digitToUse];
+                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().color = master.crateMaster.paletteArray[groupColorIndex];
+                    }
+                    else
+                    {
+                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().sprite = null;
+                    }
+                }
+            }
+        }
+
     }
 
 }

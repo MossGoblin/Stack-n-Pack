@@ -56,6 +56,7 @@ public class GroupMaster : MonoBehaviour
                 {
                     if (crateNbrs[count] != null)
                     {
+                        // set new group to crate
                         crate.SetGroup(crateNbrs[count].Group);
                         // find group OBJ and add crate to it
                         newGroup = GetGroupByIndex(crateNbrs[count].Group);
@@ -85,6 +86,7 @@ public class GroupMaster : MonoBehaviour
                     {
                         if (crateNbrs[count] != null)
                         {
+                            // set up the group for the crate
                             crate.SetGroup(crateNbrs[count].Group);
                             // find group OBJ and add crate to it
                             newGroup = GetGroupByIndex(crateNbrs[count].Group);
@@ -114,20 +116,24 @@ public class GroupMaster : MonoBehaviour
                     }
                 }
 
-
+                // set up the largest group for the crate
                 crate.SetGroup(largestGroupIndex);
-                // find group OBJ and add crate to it
+                // find group OBJ and add the crate to it
                 newGroup = GetGroupByIndex(largestGroupIndex);
                 newGroup.AddCrate(crate);
                 // remove obsolete groups
-                obsoleteGroups.Remove(largestGroupIndex); // make sure the largest group is removed from obsolete
-                Group largestGroup = GetGroupByIndex(largestGroupIndex);
+                obsoleteGroups.Remove(largestGroupIndex); // make sure the largest group is NOT obsolete
+                Group largestGroup = newGroup;
                 foreach (Crate checkCrate in master.crateMaster.crateList) // the new crate is not in the crateList YET!
                 {
-                    if (obsoleteGroups.Contains(checkCrate.Group)) // if a group is in the obolete list -> assign the crate the new group, 
-                                                                   // ... then add it to the group
+                    if (obsoleteGroups.Contains(checkCrate.Group)) // if a group is in the obolete list..
+                                                                   
                     {
+                        // remove the crate from the current group
+                        GetGroupByCrate(checkCrate).RemoveCrate(checkCrate);
+                        // .. assign the crate the new group, 
                         checkCrate.SetGroup(largestGroupIndex);
+                        // .. then add it to the group
                         largestGroup.AddCrate(crate);
                     }
                 }
@@ -178,6 +184,7 @@ public class GroupMaster : MonoBehaviour
         // Remove old group
         groupList.Remove(group);
         groupToColorMap.Remove(group);
+        // TODO : trigger order re-check
     }
 
     private void ProcessStack(Stack<Crate> stack, List<Crate> checkList, List<Crate> updateList, Group newGroup)
@@ -319,5 +326,10 @@ public class GroupMaster : MonoBehaviour
     {
         lastCreatedGroup++;
         return lastCreatedGroup;
+    }
+
+    public List<Group> GroupList()
+    {
+        return groupList;
     }
 }
