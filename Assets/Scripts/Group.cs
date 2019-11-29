@@ -14,6 +14,7 @@ public class Group
         CrateList = new List<Crate>();
         CrateList.Add(initialCrate);
         Index = index;
+        Content = new int[6];
         BuildContentArray();
     }
 
@@ -27,21 +28,28 @@ public class Group
     {
         CrateList.Remove(crate);
         BuildContentArray();
+        
     }
 
     private void BuildContentArray()
     {
         // reset content array
-        Content = new int[6];
-        for (int count = 0; count < 6; count++)
-        {
-            Content[count] = 0;
-        }
+        Array.Clear(Content, 0, Content.Length - 1);
+        // Content = new int[6];
+        // for (int count = 0; count < 6; count++)
+        // {
+        //     Content[count] = 0;
+        // }
 
         // rebuild
         foreach (Crate crate in CrateList)
         {
             Content[crate.Content]++;
         }
+    }
+
+    public void RebuildContent()
+    {
+        BuildContentArray();
     }
 }

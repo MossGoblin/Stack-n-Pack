@@ -31,7 +31,6 @@ public class OrderMaster : MonoBehaviour
         UnityEngine.Random.InitState(seed);
         // initial orders
         InitOrders(complexityLevel);
-        
     }
 
     void Update()
@@ -72,8 +71,8 @@ public class OrderMaster : MonoBehaviour
 
     private void InitOrders(int complexityLevel)
     {
-        // Issue one order, for starters
-        for (int count = 0; count < complexityLevel + 4; count++)
+        // always 5 orders
+        for (int count = 0; count < 5; count++)
         {
             IssueOrder();
         }
@@ -99,7 +98,7 @@ public class OrderMaster : MonoBehaviour
             List<int> selectedTypes = new List<int>();
             while(selectedTypes.Count < typeCount)
             {
-                int newType = UnityEngine.Random.Range(0, 5);
+                int newType = UnityEngine.Random.Range(0, 6);
                 if (!selectedTypes.Contains(newType))
                 {
                     selectedTypes.Add(newType);
@@ -131,6 +130,9 @@ public class OrderMaster : MonoBehaviour
 
     public void CheckOrderGroupMatches()
     {
+        // reset match dicrionary
+        matches.Clear();
+
         // collection of checked groups
         List<Group> checkedGroups = new List<Group>();
 
@@ -140,9 +142,6 @@ public class OrderMaster : MonoBehaviour
             // iterate groups
             foreach (Group group in master.groupMaster.GroupList())
             {
-                // mark group as checked
-                checkedGroups.Add(group);
-
                 if (!checkedGroups.Contains(group) && order.ContentIndex.SequenceEqual(group.Content))
                 {
                     // record the match
@@ -152,6 +151,11 @@ public class OrderMaster : MonoBehaviour
                     }
                     matches[order].Add(group);
                 }
+                if (!checkedGroups.Contains(group))
+                {
+                    // mark group as checked
+                    checkedGroups.Add(group);
+                }
             }
         }
         // FIXME :: UPDATE MATCHES WHEN REMOVING A GROUP!
@@ -160,41 +164,83 @@ public class OrderMaster : MonoBehaviour
     }
 
     // update match visuals
+
+    // new plan:
+    /*
+
+    allow 10 matches
+    iterate orders/group match dictionary up to the number of matches
+    for each of the orders check only the first two groups
+    if there are enough groups (1 or 2) - display the matches
+    mark the value of the digit for use ??
+    */
+
     private void UpdateOrderGroupMatchVisuals()
     {
-        int numberOfMatches = 1;
-
-        foreach (var order in matches)
+        // reset indicators
+        foreach (var order in orderList)
         {
-            for (int matchesPerGroup = 0; matchesPerGroup < 3; matchesPerGroup++)
+            OrderGO orderGO = order.GetOrderGO().GetComponent<OrderGO>();
+            foreach (var display in orderGO.matchDisplay)
             {
-                // check of there is such a match in the group list for that order
-                if (matchesPerGroup < order.Value.Count)
-                {
-                    // .. if there is - get the group color from the map
-                    int groupColorIndex = master.groupMaster.groupToColorMap[order.Value[matchesPerGroup]];
-                    // update the digit image and color it
-                    OrderGO orderGO = order.Key.GetOrderGO().GetComponent<OrderGO>();
-                    // digit to use
-                    int digitToUse = numberOfMatches;
-                    if (digitToUse == 10)
-                    {
-                        digitToUse = 0;
-                    }
-
-                    if (numberOfMatches < 10)
-                    {
-                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().sprite = orderGO.matchDigit[digitToUse];
-                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().color = master.crateMaster.paletteArray[groupColorIndex];
-                    }
-                    else
-                    {
-                        orderGO.matchDisplay[matchesPerGroup].GetComponent<Image>().sprite = null;
-                    }
-                }
+                display.GetComponent<Image>().sprite = null;
+                display.GetComponent<Image>().color = Color.clear;
             }
         }
 
+        int globalMatchNumber = 1;
+
+        foreach (var order in matches)
+        {
+            for (int matchCount = 0; matchCount < 2; matchCount++)
+            {
+                if (globalMatchNumber <= 10 && (matchCount + 1) <= order.Value.Count) // we have a group in the list that is either number 1 or 2
+                {
+                    // get the color of that group
+                    int groupColorIndex = master.groupMaster.groupToColorMap[order.Value[matchCount]];
+                    int digitToUse = matches.Keys.ToList().IndexOf(order.Key) * 2 + matchCount + 1;
+                    if (digitToUse == 10) // roll around 10 into 0 (to use the digit row of the keyboard)
+                    {
+                        digitToUse = 0;
+                    }
+                    OrderGO orderGO = order.Key.GetOrderGO().GetComponent<OrderGO>();
+                    orderGO.matchDisplay[matchCount].GetComponent<Image>().sprite = orderGO.matchDigit[digitToUse];
+                    orderGO.matchDisplay[matchCount].GetComponent<Image>().color = master.crateMaster.paletteArray[groupColorIndex];
+                    globalMatchNumber++;
+                }
+            }
+        }
     }
 
+    public void RemoveGroupMatches(Group group)
+    {
+        List<Order> ordersToBeRemoved = new List<Order>();
+        // iterate matches and remove groups
+        foreach (var match in matches)
+        {
+            if (match.Value.Contains(group)) // if the match contains the removed group
+            {
+                match.Value.Remove(group); // remove teh group from the list of matches
+                if (match.Value.Count == 0) // if there are no longer any matches for that order
+                {
+                    ordersToBeRemoved.Add(match.Key);
+                }
+            }
+        }
+        // clean up orders with no valid group matches
+        foreach (var order in ordersToBeRemoved)
+        {
+            matches.Remove(order);
+        }
+
+        // TODO : HERE - trigger match update ?? Maybe ??
+    }
+
+    public void IncreaseComplexity()
+    {
+        if (complexityLevel < 3)
+        {
+            complexityLevel++;
+        }
+    }
 }

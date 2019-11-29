@@ -113,7 +113,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 494}
   m_MaxSize: {x: 18008, y: 14044}
   vertical: 1
-  controlID: 7646
+  controlID: 5692
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 494}
   m_MaxSize: {x: 18008, y: 14044}
   vertical: 0
-  controlID: 7647
+  controlID: 5693
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -161,10 +161,10 @@ MonoBehaviour:
     y: 0
     width: 605
     height: 645
-  m_MinSize: {x: 202, y: 444}
-  m_MaxSize: {x: 4002, y: 8044}
+  m_MinSize: {x: 202, y: 422}
+  m_MaxSize: {x: 4002, y: 8022}
   vertical: 1
-  controlID: 7648
+  controlID: 5567
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_MinSize: {x: 234, y: 494}
   m_MaxSize: {x: 10004, y: 14044}
   vertical: 1
-  controlID: 7623
+  controlID: 5701
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_MinSize: {x: 277, y: 194}
   m_MaxSize: {x: 4002, y: 8044}
   vertical: 1
-  controlID: 7548
+  controlID: 5694
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -491,9 +491,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -70.60008, y: 167.92459, z: -62.609375}
+    m_Target: {x: -24.470114, y: -57.262047, z: -89.955894}
     speed: 2
-    m_Value: {x: -70.60008, y: 167.92459, z: -62.609375}
+    m_Value: {x: -24.470114, y: -57.262047, z: -89.955894}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -526,9 +526,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 97.81496
+    m_Target: 188.51534
     speed: 2
-    m_Value: 97.81496
+    m_Value: 188.51534
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -609,9 +609,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: e8330000
-      m_LastClickedID: 13288
-      m_ExpandedIDs: 4cf3ffff66fbffffe83300000a340000183400005034000056340000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 72fbffff0a34000050340000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -674,20 +674,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Visuals/UI
+    - Assets/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Visuals/UI
+  - Assets/Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\Yolly\Google Drive\Codee\[ GAMESTUFF ]\Unity\StackExchange\StackExchange\Stack-n-Pack
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 12}
-    m_SelectedIDs: 22300000
-    m_LastClickedID: 12322
-    m_ExpandedIDs: 00000000ee2d0000b62f00000c300000d63100005432000000ca9a3b
+    m_SelectedIDs: 0e300000
+    m_LastClickedID: 12302
+    m_ExpandedIDs: 00000000f02d0000b82f00000e300000d83100005632000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -715,7 +715,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: c6310000
     m_LastClickedID: 12742
-    m_ExpandedIDs: 00000000ee2d0000b62f00000c300000d63100005432000000ca9a3b
+    m_ExpandedIDs: 00000000f02d0000b82f00000e300000d83100005632000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

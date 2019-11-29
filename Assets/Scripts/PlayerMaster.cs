@@ -74,6 +74,8 @@ public class PlayerMaster : MonoBehaviour
 
     private bool MovePlayer((int xDX, int yDY) posD)
     {
+        bool pickedUp = false;
+        bool dropped = false;
         // 1. check if the new location is within borders
         // 2. check if there is a crate to be released
         // 3. check if there is a crate to be picked up AND can be picked up
@@ -109,6 +111,7 @@ public class PlayerMaster : MonoBehaviour
             // create crate
             crateMaster.PlaceCrate(Content, oldPos);
             Content = 0;
+            dropped = true;
         }
 
         // are we picking up a crate
@@ -124,6 +127,7 @@ public class PlayerMaster : MonoBehaviour
             // -- remove crate grom group
             master.groupMaster.RemoveCrateFromGroup(crateToBePickedUp);
             newContent = 0;
+            pickedUp = true;
         }
 
         // can we move
@@ -139,6 +143,13 @@ public class PlayerMaster : MonoBehaviour
         {
             Vector3 newPosition = new Vector3(newPos.newX, newPos.newY);
             transform.position = newPosition;
+        }
+
+        // check if we have picked up or dropped a crate
+        if (pickedUp || dropped)
+        {
+            // trigger each group to rebuild content
+            master.groupMaster.RecheckAllGroupsContent();
         }
 
         // TODO ? Temp return

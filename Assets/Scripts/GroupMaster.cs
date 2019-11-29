@@ -131,6 +131,7 @@ public class GroupMaster : MonoBehaviour
                     {
                         // remove the crate from the current group
                         GetGroupByCrate(checkCrate).RemoveCrate(checkCrate);
+                        master.orderMaster.RemoveGroupMatches(GetGroupByCrate(checkCrate));
                         // .. assign the crate the new group, 
                         checkCrate.SetGroup(largestGroupIndex);
                         // .. then add it to the group
@@ -140,16 +141,13 @@ public class GroupMaster : MonoBehaviour
                 foreach (int obsoleteGroupIndex in obsoleteGroups) // remove each group with an obsolete index (crates already assigned to the largest group)
                 {
                     Group obsoleteGroup = GetGroupByIndex(obsoleteGroupIndex);
-                    groupList.Remove(obsoleteGroup);
                     groupToColorMap.Remove(obsoleteGroup);
+                    groupList.Remove(obsoleteGroup);
                 }
             break;
         }
-
         // TODO ?? should ADD update underlying tile graphics
-
     }
-
 
     public void RemoveCrateFromGroup(Crate crate)
     {
@@ -165,6 +163,7 @@ public class GroupMaster : MonoBehaviour
         Group group = GetGroupByCrate(crate);
         // remove crate from group
         group.RemoveCrate(crate);
+        master.orderMaster.RemoveGroupMatches(group);
 
         // iterate nbrs - add to updated, add to stack, process stack
         foreach (Crate nbr in crateNbrs)
@@ -182,8 +181,10 @@ public class GroupMaster : MonoBehaviour
         }
 
         // Remove old group
-        groupList.Remove(group);
         groupToColorMap.Remove(group);
+        groupList.Remove(group);
+        master.orderMaster.RemoveGroupMatches(group);
+
         // TODO : trigger order re-check
     }
 
@@ -213,6 +214,8 @@ public class GroupMaster : MonoBehaviour
                 if (!updateList.Contains(crateToUpdate)) // was the crate already updated?
                 {
                     GetGroupByCrate(crateToUpdate).RemoveCrate(crateToUpdate); // remove crate from old group
+                    master.orderMaster.RemoveGroupMatches(GetGroupByCrate(crateToUpdate));
+                    newGroup.AddCrate(crateToUpdate); // add crate to new group
                     crateToUpdate.SetGroup(newGroup.Index); // update group index in crate
                     updateList.Add(crateToUpdate); // mark crate as updated
                 }
@@ -220,83 +223,15 @@ public class GroupMaster : MonoBehaviour
         }
     }
 
-    // public void Old_RemoveCrateFromGroup(Crate crate) // "Old_" - being rewritten
-    // {
-    //     List<Crate> updatedCrates = new List<Crate>();
-
-    //     // get nbrs
-    //     Crate[] startingNbrs = crate.Neighbours();
-
-    //     // find the group to be dissolved
-    //     Group obsoleteGroup = GetGroupByCrate(crate);
-
-    //     // nbr array to list
-    //     List<Crate> startingNbrsList = new List<Crate>();
-    //     foreach (Crate nbrCrate in startingNbrs)
-    //     {
-    //         if (nbrCrate != null)
-    //         {
-    //             startingNbrsList.Add(nbrCrate);
-    //         }
-    //     }
-
-    //     // for each nbr - create new group
-    //     foreach (Crate startingNbr in startingNbrsList)
-    //     {
-
-    //         int newGroupNumber = NewGroupNumber();
-    //         Group newGroup = new Group(startingNbr, newGroupNumber);
-    //         groupList.Add(newGroup);
-    //         groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
-
-    //         Stack<Crate> progressStack = new Stack<Crate>();
-    //         progressStack.Push(startingNbr);
-    //         // add all connected to the stack, using new group number
-    //         ProgressNbrsStack(progressStack, newGroupNumber, updatedCrates);
-    //     }
-
-    //     // remove obsolete group
-    //     groupToColorMap.Remove(obsoleteGroup); // remove color mapping
-    //     groupList.Remove(obsoleteGroup); // remove the group itself
-
-
-    // }
-
-    // private void Old_ProgressNbrsStack(Stack<Crate> stack, int newGroupNumber, List<Crate> updatedCrates)  // "Old_" - being rewritten
-    // {
-    //     // INGRESS -- fill the stack
-    //     // get nbrs, push each unpushed into the stack, then iterate
-    //     // get nbrs
-    //     Crate[] nbrs = stack.Peek().Neighbours(); // get current nbrs
-    //     List<Crate> nbrList = new List<Crate>();
-    //     foreach (Crate nbrCrate in nbrs)
-    //     {
-    //         if (nbrCrate != null)
-    //         {
-    //             nbrList.Add(nbrCrate);
-    //         }
-    //     }
-    //     if (nbrList.Count > 0) // if there are nbrs
-    //     {
-    //         foreach (Crate nbrCrate in nbrList) // add nbrs to stack if not already added
-    //         {
-    //             if (!stack.Contains(nbrCrate))
-    //             {
-    //                 stack.Push(nbrCrate);
-    //                 ProgressNbrsStack(stack, newGroupNumber, updatedCrates);  // if new nbr was added to stack - > delve in
-    //             }
-    //         }
-    //     }
-
-    //     // EGRESS -- empty the stack and apply new group number if a new group number has not yet been applied
-    //     if (!updatedCrates.Contains(stack.Peek()))
-    //     {
-    //         // create the new group
-    //         updatedCrates.Add(stack.Peek());
-    //         GetGroupByIndex(stack.Peek().Group).RemoveCrate(stack.Peek());
-    //         stack.Pop().SetGroup(newGroupNumber);
-    //     }
-    // }
+    public void RecheckAllGroupsContent()
+    {
+        foreach (var group in groupList)
+        {
+            group.RebuildContent();
+        }
+        // trigger recheck of all order/group matches
+        master.orderMaster.CheckOrderGroupMatches();
+    }
 
     public Group GetGroupByCrate(Crate crate)
     {
