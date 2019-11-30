@@ -53,6 +53,7 @@ public class Conductor : MonoBehaviour
     {
         ApplyTileHighlight();
 
+        // FIXME : To be deleted - debugging option only
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             // Test Place a Crate
@@ -102,7 +103,16 @@ public class Conductor : MonoBehaviour
 
     private void LoadTestContent()
     {
-        playerMaster.Content = (int)UnityEngine.Random.Range(1, 6);
+        bool done = false;
+        while(!done)
+        {
+            int newContent = (int)UnityEngine.Random.Range(1, 7);
+            if (newContent != playerMaster.Content)
+            {
+                playerMaster.Content = newContent;
+                done = true;
+            }
+        }
     }
 
     public void BuildSpace()

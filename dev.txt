@@ -87,3 +87,5 @@
 [m > incremental] order management kinda fine; order/group matching still clunky
 
 [m > incremental] something is wrong with re-calculating group content; still debugging
+
+[m > incremental] streamlined some; found a super weird glitch the door to madness...

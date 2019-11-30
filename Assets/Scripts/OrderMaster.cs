@@ -56,9 +56,9 @@ public class OrderMaster : MonoBehaviour
         int[] newContent = GenerateContent();
         Order newOrder = new Order(complexityLevel, newContent);
         orderList.Add(newOrder);
-        Debug.Log($"new order issued: level {complexityLevel}");
-        Debug.Log($"seed: {seed}");
-        Debug.Log($"order index = {newOrder.ContentIndex}");
+        // Debug.Log($"new order issued: level {complexityLevel}");
+        // Debug.Log($"seed: {seed}");
+        // Debug.Log($"order index = {newOrder.ContentIndex}");
 
         // Instantiate GO
         GameObject newOrderGO = Instantiate(orderPrefab, orderHolder);

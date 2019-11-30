@@ -20,8 +20,11 @@ public class Group
 
     public void AddCrate(Crate crate)
     {
-        CrateList.Add(crate);
-        BuildContentArray();
+        if (!CrateList.Contains(crate))
+        {
+            CrateList.Add(crate);
+            BuildContentArray();
+        }
     }
 
     public void RemoveCrate(Crate crate)
@@ -34,7 +37,7 @@ public class Group
     private void BuildContentArray()
     {
         // reset content array
-        Array.Clear(Content, 0, Content.Length - 1);
+        Array.Clear(Content, 0, Content.Length);
         // Content = new int[6];
         // for (int count = 0; count < 6; count++)
         // {

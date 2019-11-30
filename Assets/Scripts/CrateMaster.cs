@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CrateMaster : MonoBehaviour
@@ -164,11 +165,34 @@ public class CrateMaster : MonoBehaviour
         return newColorIndex;
     }
 
+    public bool RemoveColorMapping(Group group)
+    {
+        int oldChunkIndex = master.groupMaster.groupToColorMap[group]; // the index of the color from the grou/color map
+        int oldChunkIndexPosition = colorChunks.Keys.ToList().IndexOf(oldChunkIndex);
+        int oldChunkSize = colorChunks[oldChunkIndex]; // the size of the chunk for that color in the group/color map
+        master.groupMaster.groupToColorMap.Remove(group); // remove the group/color pair
+        colorChunks.Remove(oldChunkIndex); // remove the obsolete chunk
+        int previousChunkIndexPosition = 0;
+        if (oldChunkIndexPosition > 0)
+        {
+            previousChunkIndexPosition = oldChunkIndexPosition - 1;
+        }
+        else
+        {
+            previousChunkIndexPosition = colorChunks.Count - 1;
+        }
+        int previousChunkIndex = colorChunks.Keys.ToList()[previousChunkIndexPosition];
+        colorChunks[previousChunkIndex] += oldChunkSize + 1;
+        return true;
+    }
+
     public void RemoveCrate(Crate crate)
     {
         crateList.Remove(crate);
         gridRef.storageGrid[crate.PositionX_Grid, crate.PositionY_Grid] = null;
         GameObject crateGO = crate.CrateGO;
         GameObject.Destroy(crateGO);
+        // remove crate from group; recalculate group content
+
     }
 }

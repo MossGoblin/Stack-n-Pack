@@ -141,8 +141,9 @@ public class GroupMaster : MonoBehaviour
                 foreach (int obsoleteGroupIndex in obsoleteGroups) // remove each group with an obsolete index (crates already assigned to the largest group)
                 {
                     Group obsoleteGroup = GetGroupByIndex(obsoleteGroupIndex);
-                    groupToColorMap.Remove(obsoleteGroup);
-                    groupList.Remove(obsoleteGroup);
+                    RemoveGroup(obsoleteGroup);
+                    // groupToColorMap.Remove(obsoleteGroup);
+                    // groupList.Remove(obsoleteGroup);
                 }
             break;
         }
@@ -161,9 +162,10 @@ public class GroupMaster : MonoBehaviour
 
         // find group to be dissolved
         Group group = GetGroupByCrate(crate);
+        // remove group from order/group matches
+        master.orderMaster.RemoveGroupMatches(group);
         // remove crate from group
         group.RemoveCrate(crate);
-        master.orderMaster.RemoveGroupMatches(group);
 
         // iterate nbrs - add to updated, add to stack, process stack
         foreach (Crate nbr in crateNbrs)
@@ -172,7 +174,8 @@ public class GroupMaster : MonoBehaviour
             {
                 checkedCrates.Add(nbr); // mark as checked
                 stack.Push(nbr); // add to stack
-                Group newGroup = new Group(nbr, NewGroupNumber()); // prepare new group
+                // move crate to new group
+                Group newGroup = new Group(nbr, NewGroupNumber()); // prepare new group with nbr
                 groupList.Add(newGroup);
                 groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
                 // process stack
@@ -181,9 +184,10 @@ public class GroupMaster : MonoBehaviour
         }
 
         // Remove old group
-        groupToColorMap.Remove(group);
-        groupList.Remove(group);
-        master.orderMaster.RemoveGroupMatches(group);
+        RemoveGroup(group);
+        // groupToColorMap.Remove(group);
+        // groupList.Remove(group);
+        // master.orderMaster.RemoveGroupMatches(group);
 
         // TODO : trigger order re-check
     }
@@ -266,5 +270,19 @@ public class GroupMaster : MonoBehaviour
     public List<Group> GroupList()
     {
         return groupList;
+    }
+
+    public void RemoveGroup(Group group)
+    {
+        // check for crates - if no crates - proceed
+        // remove group from grouplist
+        // remove group from color mapping
+        // remove group from matchlist
+        if (group.Content.SequenceEqual(new int[]{0, 0, 0, 0, 0, 0}))
+        {
+            groupList.Remove(group);
+            master.crateMaster.RemoveColorMapping(group);
+            master.orderMaster.RemoveGroupMatches(group);
+        }
     }
 }
