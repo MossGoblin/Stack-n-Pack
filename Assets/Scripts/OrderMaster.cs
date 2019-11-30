@@ -134,7 +134,7 @@ public class OrderMaster : MonoBehaviour
         matches.Clear();
 
         // collection of checked groups
-        List<Group> checkedGroups = new List<Group>();
+        List<Group> matchedGroups = new List<Group>();
 
         // iterate orders
         foreach (var order in orderList)
@@ -142,7 +142,7 @@ public class OrderMaster : MonoBehaviour
             // iterate groups
             foreach (Group group in master.groupMaster.GroupList())
             {
-                if (!checkedGroups.Contains(group) && order.ContentIndex.SequenceEqual(group.Content))
+                if (!matchedGroups.Contains(group) && order.ContentIndex.SequenceEqual(group.Content))
                 {
                     // record the match
                     if (!matches.ContainsKey(order))
@@ -150,11 +150,11 @@ public class OrderMaster : MonoBehaviour
                         matches.Add(order, new List<Group>());
                     }
                     matches[order].Add(group);
-                }
-                if (!checkedGroups.Contains(group))
-                {
-                    // mark group as checked
-                    checkedGroups.Add(group);
+                    if (!matchedGroups.Contains(group))
+                    {
+                        // mark group as checked
+                        matchedGroups.Add(group);
+                    }
                 }
             }
         }
@@ -198,7 +198,14 @@ public class OrderMaster : MonoBehaviour
                 {
                     // get the color of that group
                     int groupColorIndex = master.groupMaster.groupToColorMap[order.Value[matchCount]];
-                    int digitToUse = matches.Keys.ToList().IndexOf(order.Key) * 2 + matchCount + 1;
+                    // int digitToUse = matches.Keys.ToList().IndexOf(order.Key) * 2 + matchCount + 1; // FIXME : DIGITS
+
+                    // FIX
+                    // get the index of the orderGO in the layoutGroup
+                    int indexInHolder = order.Key.GetOrderGO().transform.GetSiblingIndex();
+                    int digitToUse = indexInHolder * 2 + matchCount + 1;
+
+
                     if (digitToUse == 10) // roll around 10 into 0 (to use the digit row of the keyboard)
                     {
                         digitToUse = 0;

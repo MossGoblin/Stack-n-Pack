@@ -88,4 +88,6 @@
 
 [m > incremental] something is wrong with re-calculating group content; still debugging
 
-[m > incremental] streamlined some; found a super weird glitch the door to madness...
+[m > incremental] streamlined some; found a super weird glitch and the door to madness...
+
+[m > incremental] multiple groups matching seems OK, proper action gidits assigned; a rogue bug with duplicate color indices is present (have to checl color release...)

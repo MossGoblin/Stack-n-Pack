@@ -48,7 +48,17 @@ public class GroupMaster : MonoBehaviour
                 crate.SetGroup(lastCreatedGroup);
                 newGroup = new Group(crate, lastCreatedGroup); // TODO : NEW GROUP
                 groupList.Add(newGroup);
-                groupToColorMap.Add(newGroup, master.crateMaster.GetNewColor());
+                int newColor = 0;
+                if (!master.crateMaster.startingColorUsed)
+                {
+                    newColor = master.crateMaster.randomStartingColorIndex;
+                    master.crateMaster.startingColorUsed = true;
+                }
+                else
+                {
+                    newColor = master.crateMaster.GetNewColor();
+                }
+                groupToColorMap.Add(newGroup, newColor);
                 break;
             case 1: // 1 nbr
                 // find nbr and assign its group to crate
@@ -80,7 +90,7 @@ public class GroupMaster : MonoBehaviour
                         nbrGroupList.Add(crateNbrs[count].Group);
                     }
                 }
-                if (nbrGroupList.Count == 1) // 1 group in the nbrs
+                if (nbrGroupList.Count == 1) // 1 group in the nbrs -- add crate to it
                 {
                     for (int count = 0; count < 4; count++)
                     {
@@ -96,54 +106,56 @@ public class GroupMaster : MonoBehaviour
                     }
                     break;                   
                 }
-                // proliferate group number !!
-                // if there are 2 or more nbrs and they are of more than 1 group
-                // find the largest adjacent group
-                int largestGroupIndex = 0;
-                int largestGroupSize = 0;
-                List<int> obsoleteGroups = new List<int>(); ;
-                for (int count = 0; count < 4; count++)
+                else // more than 1 group in the nbrs - find the largest one and assign all relevant crates to it
                 {
-                    if ((crateNbrs[count] != null)) // if this is a nbr
+                    // if there are 2 or more nbrs and they are of more than 1 group
+                    // find the largest adjacent group
+                    int largestGroupIndex = 0;
+                    int largestGroupSize = 0;
+                    List<int> obsoleteGroups = new List<int>(); ;
+                    for (int count = 0; count < 4; count++)
                     {
-                        obsoleteGroups.Add(crateNbrs[count].Group); // add nbr.Group to obsolete groups
-                        Group group = GetGroupByCrate(crateNbrs[count]); // find the group of that nbr
-                        if (group.CrateList.Count > largestGroupSize) // if this group is largest so far, note that in the 'largest...' variables
+                        if ((crateNbrs[count] != null)) // if this is a nbr
                         {
-                            largestGroupSize = group.CrateList.Count;
-                            largestGroupIndex = group.Index;
+                            obsoleteGroups.Add(crateNbrs[count].Group); // add nbr.Group to obsolete groups
+                            Group group = GetGroupByCrate(crateNbrs[count]); // find the group of that nbr
+                            if (group.CrateList.Count > largestGroupSize) // if this group is largest so far, note that in the 'largest...' variables
+                            {
+                                largestGroupSize = group.CrateList.Count;
+                                largestGroupIndex = group.Index;
+                            }
                         }
                     }
-                }
 
-                // set up the largest group for the crate
-                crate.SetGroup(largestGroupIndex);
-                // find group OBJ and add the crate to it
-                newGroup = GetGroupByIndex(largestGroupIndex);
-                newGroup.AddCrate(crate);
-                // remove obsolete groups
-                obsoleteGroups.Remove(largestGroupIndex); // make sure the largest group is NOT obsolete
-                Group largestGroup = newGroup;
-                foreach (Crate checkCrate in master.crateMaster.crateList) // the new crate is not in the crateList YET!
-                {
-                    if (obsoleteGroups.Contains(checkCrate.Group)) // if a group is in the obolete list..
-                                                                   
+                    // set up the largest group for the crate
+                    crate.SetGroup(largestGroupIndex);
+                    // find group OBJ and add the crate to it
+                    newGroup = GetGroupByIndex(largestGroupIndex);
+                    newGroup.AddCrate(crate);
+                    // remove obsolete groups
+                    obsoleteGroups.Remove(largestGroupIndex); // make sure the largest group is NOT obsolete
+                    Group largestGroup = newGroup;
+                    foreach (Crate checkCrate in master.crateMaster.crateList) // the new crate is not in the crateList YET!
                     {
-                        // remove the crate from the current group
-                        GetGroupByCrate(checkCrate).RemoveCrate(checkCrate);
-                        master.orderMaster.RemoveGroupMatches(GetGroupByCrate(checkCrate));
-                        // .. assign the crate the new group, 
-                        checkCrate.SetGroup(largestGroupIndex);
-                        // .. then add it to the group
-                        largestGroup.AddCrate(crate);
+                        if (obsoleteGroups.Contains(checkCrate.Group)) // if a group is in the obolete list..
+
+                        {
+                            // remove the crate from the current group
+                            GetGroupByCrate(checkCrate).RemoveCrate(checkCrate);
+                            master.orderMaster.RemoveGroupMatches(GetGroupByCrate(checkCrate));
+                            // .. assign the crate the new group, 
+                            checkCrate.SetGroup(largestGroupIndex);
+                            // .. then add it to the group
+                            largestGroup.AddCrate(crate);
+                        }
                     }
-                }
-                foreach (int obsoleteGroupIndex in obsoleteGroups) // remove each group with an obsolete index (crates already assigned to the largest group)
-                {
-                    Group obsoleteGroup = GetGroupByIndex(obsoleteGroupIndex);
-                    RemoveGroup(obsoleteGroup);
-                    // groupToColorMap.Remove(obsoleteGroup);
-                    // groupList.Remove(obsoleteGroup);
+                    foreach (int obsoleteGroupIndex in obsoleteGroups) // remove each group with an obsolete index (crates already assigned to the largest group)
+                    {
+                        Group obsoleteGroup = GetGroupByIndex(obsoleteGroupIndex);
+                        RemoveGroup(obsoleteGroup);
+                        // groupToColorMap.Remove(obsoleteGroup);
+                        // groupList.Remove(obsoleteGroup);
+                    }
                 }
             break;
         }

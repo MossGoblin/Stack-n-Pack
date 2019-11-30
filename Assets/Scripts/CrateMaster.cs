@@ -13,6 +13,9 @@ public class CrateMaster : MonoBehaviour
     public Dictionary<int, int> colorChunks;
     public List<Crate> crateList;
 
+    public int randomStartingColorIndex;
+    public bool startingColorUsed;
+
     public Color[] colorPool = new Color[]
     {
         new Color(0.5f, 0.4f, 0.0f, 1f),
@@ -105,10 +108,10 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // initiate first large groupStrip - pick a random point in the color array
-        // Temp preset color
         // int randomStartingColorIndex = 170;
-        int randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
+        randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
         colorChunks.Add(randomStartingColorIndex, paletteArray.Length - 1);
+        startingColorUsed = false;
 
         return true;
     }
@@ -153,12 +156,10 @@ public class CrateMaster : MonoBehaviour
 
         // pick the middle of the chink as new index
         int newColorIndex = ((largestChunk / 2) + largestChunkIndex + 1) % paletteArray.Length; // make sure the color index loops
-        //if (newColorIndex > paletteArray.Length)
-        //{
-        //    newColorIndex -= paletteArray.Length; // loop if larger than the palette length
-        //}
+
         // cut the old chunk in half
         colorChunks[largestChunkIndex] = largestChunk / 2;
+        
         // register the new color in the chunk dict
         colorChunks.Add(newColorIndex, largestChunk / 2);
 
