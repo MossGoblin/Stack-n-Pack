@@ -14,6 +14,9 @@ public class OrderMaster : MonoBehaviour
     // dictionary of matches
     Dictionary<Order, List<Group>> matches = new Dictionary<Order, List<Group>>();
 
+    // list of active matches
+    bool[] activeMatches = new bool[10];
+
     private int seed;
 
     // refs
@@ -21,6 +24,8 @@ public class OrderMaster : MonoBehaviour
     public Conductor master;
     [SerializeField] Transform orderHolder;
     [SerializeField] GameObject orderPrefab;
+
+    [SerializeField] Text confirmationText;
 
     void Start()
     {
@@ -43,10 +48,16 @@ public class OrderMaster : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        if (Input.GetKeyDown(KeyCode.Backspace)) // FIXME TBD Debug
         {
             CheckOrderGroupMatches();
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha0) || Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            
+        }
+
     }
 
     public void IssueOrder()
@@ -158,8 +169,7 @@ public class OrderMaster : MonoBehaviour
                 }
             }
         }
-        // FIXME :: UPDATE MATCHES WHEN REMOVING A GROUP!
-        UpdateOrderGroupMatchVisuals();
+        UpdateOrderGroupMatchVisualsAndTriggers();
         
     }
 
@@ -168,14 +178,14 @@ public class OrderMaster : MonoBehaviour
     // new plan:
     /*
 
-    allow 10 matches
-    iterate orders/group match dictionary up to the number of matches
-    for each of the orders check only the first two groups
-    if there are enough groups (1 or 2) - display the matches
+    allow 10 matches - 2 per order
+    iterate orders/group match dictionary
+    for each of the orders check until all matches are found, up to 2
+    if there are enough groups (1 or 2) - display the matches and record the matches as active
     mark the value of the digit for use ??
     */
 
-    private void UpdateOrderGroupMatchVisuals()
+    private void UpdateOrderGroupMatchVisualsAndTriggers()
     {
         // reset indicators
         foreach (var order in orderList)
@@ -183,8 +193,14 @@ public class OrderMaster : MonoBehaviour
             OrderGO orderGO = order.GetOrderGO().GetComponent<OrderGO>();
             foreach (var display in orderGO.matchDisplay)
             {
+                // clear order match visuals
                 display.GetComponent<Image>().sprite = null;
                 display.GetComponent<Image>().color = Color.clear;
+                // clear active matches array
+                for (int count = 0; count < 10; count++)
+                {
+                    activeMatches[count] = false;
+                }
             }
         }
 
@@ -198,9 +214,7 @@ public class OrderMaster : MonoBehaviour
                 {
                     // get the color of that group
                     int groupColorIndex = master.groupMaster.groupToColorMap[order.Value[matchCount]];
-                    // int digitToUse = matches.Keys.ToList().IndexOf(order.Key) * 2 + matchCount + 1; // FIXME : DIGITS
 
-                    // FIX
                     // get the index of the orderGO in the layoutGroup
                     int indexInHolder = order.Key.GetOrderGO().transform.GetSiblingIndex();
                     int digitToUse = indexInHolder * 2 + matchCount + 1;
@@ -210,9 +224,18 @@ public class OrderMaster : MonoBehaviour
                     {
                         digitToUse = 0;
                     }
+                    // update order visual
                     OrderGO orderGO = order.Key.GetOrderGO().GetComponent<OrderGO>();
                     orderGO.matchDisplay[matchCount].GetComponent<Image>().sprite = orderGO.matchDigit[digitToUse];
                     orderGO.matchDisplay[matchCount].GetComponent<Image>().color = master.crateMaster.paletteArray[groupColorIndex];
+                    // update active match list
+                    int matchToActivate = digitToUse - 1;
+                    if (digitToUse == -1)
+                    {
+                        matchToActivate = 10;
+                    }
+                    activeMatches[matchToActivate] = true;
+
                     globalMatchNumber++;
                 }
             }
@@ -241,6 +264,11 @@ public class OrderMaster : MonoBehaviour
         }
 
         // TODO : HERE - trigger match update ?? Maybe ??
+    }
+
+    private bool DispatchOrder(Order order)
+    {
+        return true; // TODO HERE
     }
 
     public void IncreaseComplexity()
