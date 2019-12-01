@@ -91,3 +91,5 @@
 [m > incremental] streamlined some; found a super weird glitch and the door to madness...
 
 [m > incremental] multiple groups matching seems OK, proper action gidits assigned; a rogue bug with duplicate color indices is present (have to checl color release...)
+
+[m > incremental] found the little buggar! order/group matching appears to work fine; could not induce a bug at this point; plus I found that having one order contain another is fun! NOW the last part - clean up finished orders!

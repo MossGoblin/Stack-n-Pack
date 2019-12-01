@@ -78,19 +78,8 @@ public class GroupMaster : MonoBehaviour
             default: // more than 1 nbr
 
                 // if all nbrs are of the same group
-                List<int> nbrGroupList = new List<int>();
-                for (int count = 0; count < 4; count++)
-                {
-                    if ((crateNbrs[count] != null)) // if this is a nbr
-                    {
-                        if (nbrGroupList.Contains(crateNbrs[count].Group))
-                        {
-                            break;
-                        }
-                        nbrGroupList.Add(crateNbrs[count].Group);
-                    }
-                }
-                if (nbrGroupList.Count == 1) // 1 group in the nbrs -- add crate to it
+
+                if (NbrCount(crateNbrs) == 1)
                 {
                     for (int count = 0; count < 4; count++)
                     {
@@ -146,7 +135,7 @@ public class GroupMaster : MonoBehaviour
                             // .. assign the crate the new group, 
                             checkCrate.SetGroup(largestGroupIndex);
                             // .. then add it to the group
-                            largestGroup.AddCrate(crate);
+                            largestGroup.AddCrate(checkCrate);
                         }
                     }
                     foreach (int obsoleteGroupIndex in obsoleteGroups) // remove each group with an obsolete index (crates already assigned to the largest group)
@@ -297,4 +286,16 @@ public class GroupMaster : MonoBehaviour
             master.orderMaster.RemoveGroupMatches(group);
         }
     }
-}
+
+private int NbrCount(Crate[] nbrs)
+{
+    int nbrsCount = 0;
+        for (int count = 0; count < 4; count++)
+        {
+            if (nbrs[count] != null)
+            {
+                nbrsCount++;
+            }
+        }
+		return nbrsCount;
+}}
