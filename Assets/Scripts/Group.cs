@@ -31,7 +31,6 @@ public class Group
     {
         CrateList.Remove(crate);
         BuildContentArray();
-        
     }
 
     private void BuildContentArray()
@@ -51,6 +50,11 @@ public class Group
         }
     }
 
+    public void RemoveAllCrates()
+    {
+        CrateList.Clear();
+        RebuildContent();
+    }
     public void RebuildContent()
     {
         BuildContentArray();

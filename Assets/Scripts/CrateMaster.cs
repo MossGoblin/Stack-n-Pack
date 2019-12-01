@@ -108,7 +108,6 @@ public class CrateMaster : MonoBehaviour
             }
         }
         // initiate first large groupStrip - pick a random point in the color array
-        // int randomStartingColorIndex = 170;
         randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
         colorChunks.Add(randomStartingColorIndex, paletteArray.Length - 1);
         startingColorUsed = false;
@@ -142,6 +141,11 @@ public class CrateMaster : MonoBehaviour
     // Pick a new color from the palette
     public int GetNewColor()
     {
+        if (!startingColorUsed)
+        {
+            startingColorUsed = true;
+            return randomStartingColorIndex;
+        }
         // iterate chunks
         int largestChunk = 0;
         int largestChunkIndex = 0;
@@ -174,6 +178,15 @@ public class CrateMaster : MonoBehaviour
         master.groupMaster.groupToColorMap.Remove(group); // remove the group/color pair
         colorChunks.Remove(oldChunkIndex); // remove the obsolete chunk
         int previousChunkIndexPosition = 0;
+        
+        //check if this was the last color
+        if (colorChunks.Count == 0)
+        {
+            randomStartingColorIndex = UnityEngine.Random.Range(0, paletteArray.Length - 1);
+            colorChunks.Add(randomStartingColorIndex, paletteArray.Length - 1);
+            startingColorUsed = false;            
+            return true;
+        }
         if (oldChunkIndexPosition > 0)
         {
             previousChunkIndexPosition = oldChunkIndexPosition - 1;

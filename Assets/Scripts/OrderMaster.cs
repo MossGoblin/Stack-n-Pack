@@ -43,22 +43,8 @@ public class OrderMaster : MonoBehaviour
         // update order canvas layout spacing
         int newspacing = (6 - orderList.Count)*10;
         orderHolder.GetComponent<HorizontalLayoutGroup>().spacing = newspacing;
-        HandleInput();
     }
 
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace)) // FIXME TBD Debug
-        {
-            CheckOrderGroupMatches();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha0) || Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            
-        }
-
-    }
 
     public void IssueOrder()
     {
@@ -170,7 +156,6 @@ public class OrderMaster : MonoBehaviour
             }
         }
         UpdateOrderGroupMatchVisualsAndTriggers();
-        
     }
 
     // update match visuals
@@ -266,8 +251,49 @@ public class OrderMaster : MonoBehaviour
         // TODO : HERE - trigger match update ?? Maybe ??
     }
 
-    private bool DispatchOrder(Order order)
+    public bool TryToDispatchOrder(int orderMatchIndex)
     {
+        // check if the order match is active
+        if (!activeMatches[orderMatchIndex])
+        {
+            return false;
+        }
+
+        // if the match is active
+        // find the order that has that index
+        int orderIndex = orderMatchIndex / 2;
+        Order orderForDispatch = orderList.ElementAt(orderIndex);
+        List<Group> matchingGroups = matches[orderForDispatch];
+
+        // TODO TEMP DISPATCH - ONLY 1 MATCHING GROUP
+        // 1. remove matches
+        // 2. remove order
+        // 3. remove group
+
+        // 3. remove group
+        // 3.1 biold a list for crates to be removed
+        List<Crate> cratesForDispatch = matchingGroups[0].CrateList;
+        // 3.2 - remove all crates from the group
+        matchingGroups[0].RemoveAllCrates();
+        // 3.2 - remove the group itself
+        master.groupMaster.RemoveGroup(matchingGroups[0]);
+        // 3.3 Remove the actial crates
+        foreach (Crate crate in cratesForDispatch)
+        {
+            master.crateMaster.RemoveCrate(crate);
+        }
+        // 2. remove order
+        orderList.Remove(orderForDispatch);
+        // 1. remove matches
+        matches.Remove(orderForDispatch);
+
+
+
+        // Issue new order
+        IssueOrder();
+        // Recheck all order/group matches
+        CheckOrderGroupMatches();
+
         return true; // TODO HERE
     }
 

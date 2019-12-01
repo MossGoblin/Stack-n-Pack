@@ -95,3 +95,5 @@
 [m > incremental] found the little buggar! order/group matching appears to work fine; could not induce a bug at this point; plus I found that having one order contain another is fun! NOW the last part - clean up finished orders!
 
 [m > incremental] bugaroo again maybe - check picking up a crate with two nbrs of teh same group; TODO : consolidate input with Input.inputString
+
+[m > incremental, bug hunt] a problem with the timing when dispatching' lastly we hit a stone when re-applying highlighting back to the storage 
