@@ -35,13 +35,6 @@ public class Storage
         return true;
     }
 
-    public int[] WorldFromGrid(int posX, int posY)
-    {
-        int worldX = posX - (StorageWidth / 2);
-        int worldY = posY - (StorageHeight / 2);
-        return new int[] { worldX, worldY };
-    }
-
     internal bool WithinBorders((int xDX, int yDY) pos)
     {
         if (pos.xDX >= 0 &&

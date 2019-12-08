@@ -260,39 +260,50 @@ public class OrderMaster : MonoBehaviour
         }
 
         // if the match is active
+
+        // DISPATCH SEQUENCE
+        // 00 COLLECT OBJECTS
         // find the order that has that index
         int orderIndex = orderMatchIndex / 2;
         Order orderForDispatch = orderList.ElementAt(orderIndex);
-        List<Group> matchingGroups = matches[orderForDispatch];
+        // matching groups
+        List<Group> groupsForDispatch = matches[orderForDispatch];
+        // crates to be dispatched
+        List<Crate> cratesForDispatch = groupsForDispatch[0].CrateList;
+        // group to color mapping
 
-        // TODO TEMP DISPATCH - ONLY 1 MATCHING GROUP
-        // 1. remove matches
-        // 2. remove order
-        // 3. remove group
-
-        // 3. remove group
-        // 3.1 biold a list for crates to be removed
-        List<Crate> cratesForDispatch = matchingGroups[0].CrateList;
-        // 3.2 - remove all crates from the group
-        matchingGroups[0].RemoveAllCrates();
-        // 3.2 - remove the group itself
-        master.groupMaster.RemoveGroup(matchingGroups[0]);
-        // 3.3 Remove the actial crates
-        foreach (Crate crate in cratesForDispatch)
-        {
-            master.crateMaster.RemoveCrate(crate);
-        }
-        // 2. remove order
-        orderList.Remove(orderForDispatch);
-        // 1. remove matches
+        // 01 DISSOLVE CONNECTIONS
+        master.crateMaster.RemoveColorMapping(groupsForDispatch[0]);
         matches.Remove(orderForDispatch);
 
+        // 02 REMOVE CRATES
+        foreach (Crate crate in cratesForDispatch)
+        {
+            // remove from storage
+            master.gridRef.storageGrid[crate.PositionX_Grid, crate.PositionY_Grid] = null;
+            // remove gameObject
+            GameObject.Destroy(crate.CrateGO);
+            // deregister object
+            master.crateMaster.crateList.Remove(crate);
+        }
+        // remove from group
+        groupsForDispatch[0].RemoveAllCrates();
+        // 03 REMOVE GROUP
+        // deregister group
+        master.groupMaster.GroupList().Remove(groupsForDispatch[0]);
+        
+        // 04 REMOVE ORDER
+        // remove order GO
+        GameObject.Destroy(orderForDispatch.GetOrderGO());
+        orderList.Remove(orderForDispatch);
 
-
+        // 05 REBUILD
+        // rebuilt storage visuals
+        // master.ApplyTileHighlight(); // DO WE NEED THIS
         // Issue new order
         IssueOrder();
         // Recheck all order/group matches
-        CheckOrderGroupMatches();
+        CheckOrderGroupMatches();        
 
         return true; // TODO HERE
     }
