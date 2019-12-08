@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class Conductor : MonoBehaviour
 {
+
+    // TBD
+    int tempContentCounter = 1;
+
+    // menu bool
+    public bool InMenu = false;
+
     // props and fields
     public int inputWidth;
     public int inputHeight;
 
-    // score/energy variables
-    public int totalZap = 0;
-    public int currentZap = 0;
+
     [SerializeField] GameObject tilePrefab;
     [SerializeField] Sprite serviceLaneSprite;
     [SerializeField] GameObject factoryLeft;
@@ -45,9 +50,13 @@ public class Conductor : MonoBehaviour
 
     private void HandleInput()
     {
+        if(InMenu)
+        {
+            return;
+        }
+
         bool dispatchTriggered = false;
-        // TODO Place Input Here
-                // FIXME : To be deleted - debugging option only
+        // FIXME : To be deleted - debugging option only
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             // Test Place a Crate
@@ -115,7 +124,7 @@ public class Conductor : MonoBehaviour
     private void GenerateOrders()
     {
         Debug.Log("Orders to be generated");
-        // TODO :: Issue orders
+        // TODO :: TBD Issue orders
     }
 
     private void Update()
@@ -167,15 +176,17 @@ public class Conductor : MonoBehaviour
 
     private void LoadTestContent()
     {
-        bool done = false;
-        while(!done)
+        if (playerMaster.Content == 0)
         {
-            int newContent = (int)UnityEngine.Random.Range(1, 7);
-            if (newContent != playerMaster.Content)
-            {
-                playerMaster.Content = newContent;
-                done = true;
-            }
+            tempContentCounter = 1;
+        }
+
+        playerMaster.Content = tempContentCounter;
+        tempContentCounter++;
+        tempContentCounter = tempContentCounter%7;
+        if (tempContentCounter == 0)
+        {
+            tempContentCounter++;
         }
     }
 

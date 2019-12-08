@@ -12,6 +12,10 @@ public class PlayerMaster : MonoBehaviour
     // selfrefs
     Transform transform;
 
+    // score/energy variables
+    public int totalZap = 0;
+    public int currentZap = 0;
+
     // refs
     public Conductor master;
     private Storage gridRef;
@@ -34,6 +38,11 @@ public class PlayerMaster : MonoBehaviour
 
     private void HandleInput()
     {
+        if(master.InMenu)
+        {
+            return;
+        }
+
         if (Input.GetKey(KeyCode.Space))
         {
             clampsOpen = true;

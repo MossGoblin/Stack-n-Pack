@@ -18,6 +18,8 @@ public class PlayerUIController : MonoBehaviour
     Transform playerClampsUI;
     Transform playerContentUI;
 
+    [SerializeField] Text zapText;
+
     // refs
     [SerializeField] CrateMaster crateMaster;
     
@@ -47,8 +49,15 @@ public class PlayerUIController : MonoBehaviour
         }
 
         UpdateContentImage();
+        UpdateZapVisuals();
     }
 
+    private void UpdateZapVisuals()
+    {
+        int zap = player.currentZap;
+        string zapCountString = zap.ToString("000");
+        zapText.text = zapCountString;
+    }
     private void UpdateContentImage()
     {
         if (player.Content > 0)

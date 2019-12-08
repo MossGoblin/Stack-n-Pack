@@ -46,7 +46,7 @@ public class GroupMaster : MonoBehaviour
             case 0: // no nbrs
                 NewGroupNumber();
                 crate.SetGroup(lastCreatedGroup);
-                newGroup = new Group(crate, lastCreatedGroup); // TODO : NEW GROUP
+                newGroup = new Group(crate, lastCreatedGroup);
                 groupList.Add(newGroup);
                 int newColor = 0;
                 if (!master.crateMaster.startingColorUsed)

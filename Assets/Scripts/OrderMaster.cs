@@ -24,7 +24,6 @@ public class OrderMaster : MonoBehaviour
     public Conductor master;
     [SerializeField] Transform orderHolder;
     [SerializeField] GameObject orderPrefab;
-
     [SerializeField] Text confirmationText;
 
     void Start()
@@ -217,7 +216,7 @@ public class OrderMaster : MonoBehaviour
                     int matchToActivate = digitToUse - 1;
                     if (digitToUse == -1)
                     {
-                        matchToActivate = 10;
+                        matchToActivate = 9;
                     }
                     activeMatches[matchToActivate] = true;
 
@@ -248,7 +247,7 @@ public class OrderMaster : MonoBehaviour
             matches.Remove(order);
         }
 
-        // TODO : HERE - trigger match update ?? Maybe ??
+        // TODO : trigger match update ?? Maybe ??
     }
 
     public bool TryToDispatchOrder(int orderMatchIndex)
@@ -271,6 +270,13 @@ public class OrderMaster : MonoBehaviour
         // crates to be dispatched
         List<Crate> cratesForDispatch = groupsForDispatch[0].CrateList;
         // group to color mapping
+
+        // check if more than 1 group would be dispatched
+        bool twoGroupsForDispatch = false;
+        if (groupsForDispatch.Count == 2)
+        {
+            twoGroupsForDispatch = ConfirmTwoGroupDispatch(orderMatchIndex);
+        }
 
         // 01 DISSOLVE CONNECTIONS
         master.crateMaster.RemoveColorMapping(groupsForDispatch[0]);
@@ -305,9 +311,40 @@ public class OrderMaster : MonoBehaviour
         // Recheck all order/group matches
         CheckOrderGroupMatches();        
 
-        return true; // TODO HERE
+        return true;
     }
 
+    private bool ConfirmTwoGroupDispatch(int orderMatchIndex)
+    {
+        master.InMenu = true;
+        // enable dialog box
+        bool validInput = false;
+        bool result = false;
+        confirmationText.enabled = true;
+        string newText = "Two groups match this order.\nPress 'Enter/Return' to dispatch both groups.\nPress anything else to clear only one.";
+        confirmationText.text = newText;
+        // while (!validInput)
+        // {
+        // if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) // two orders
+        //     {
+        //         confirmationText.enabled = false;
+        //         validInput = true;
+        //         result = true;
+        //     }
+        //     else if (Input.GetKeyDown(KeyCode.Space)) // one order
+        //     {
+        //         confirmationText.enabled = false;
+        //         validInput = true;
+        //         result = false;
+        //     }
+        // }
+
+        // master.InMenu = false;
+
+        // TODO : Here - double group conformation
+
+        return result;
+    }
     public void IncreaseComplexity()
     {
         if (complexityLevel < 3)

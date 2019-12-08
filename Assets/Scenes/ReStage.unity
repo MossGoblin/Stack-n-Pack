@@ -324,7 +324,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &318028535
 RectTransform:
   m_ObjectHideFlags: 0
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 8463340128131868922}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 318028534}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
@@ -365,13 +365,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 40
+    m_Font: {fileID: 12800000, guid: f0dba07545498654fb0b1546575ee7a8, type: 3}
+    m_FontSize: 27
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 0
     m_MaxSize: 50
-    m_Alignment: 4
+    m_Alignment: 7
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -381,7 +381,7 @@ MonoBehaviour:
 
     Press ''Enter/Return'' to dispatch both groups.
 
-    Press ''Space'' or ''1'' again to clear only one.'
+    Press ''Space''clear only one.'
 --- !u!222 &318028537
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -505,6 +505,83 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &879655051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 879655052}
+  - component: {fileID: 879655054}
+  - component: {fileID: 879655053}
+  m_Layer: 5
+  m_Name: EnergyCounter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &879655052
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879655051}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1974664214}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -690.9, y: 66.8}
+  m_SizeDelta: {x: 130, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &879655053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879655051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: f0dba07545498654fb0b1546575ee7a8, type: 3}
+    m_FontSize: 42
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 50
+    m_Alignment: 7
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 000
+--- !u!222 &879655054
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879655051}
+  m_CullTransparentMesh: 0
 --- !u!1 &907818234
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,10 +695,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b24ce415f3e49174b84e467e87d55fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InMenu: 0
   inputWidth: 15
   inputHeight: 13
-  totalZap: 0
-  currentZap: 0
   tilePrefab: {fileID: 6497766969401098699, guid: 851e1d609f4821042a709dcb364895a7,
     type: 3}
   serviceLaneSprite: {fileID: 21300000, guid: 0664b876827a2b341a43ab30e2b19f0c, type: 3}
@@ -807,6 +883,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Content: 0
   clampsOpen: 0
+  totalZap: 0
+  currentZap: 123
   master: {fileID: 1036902686}
 --- !u!1 &1659844966
 GameObject:
@@ -1275,6 +1353,7 @@ RectTransform:
   - {fileID: 1659844967}
   - {fileID: 22154800}
   - {fileID: 318028535}
+  - {fileID: 879655052}
   m_Father: {fileID: 1142418594}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1299,6 +1378,7 @@ MonoBehaviour:
   clampSpriteOpen: {fileID: 21300000, guid: 5a1c1c1e591e6b64099d44e14912a888, type: 3}
   crateImage: {fileID: 21300000, guid: f9aba35f34bf39740853666e3692f248, type: 3}
   player: {fileID: 0}
+  zapText: {fileID: 879655053}
   crateMaster: {fileID: 90213367}
 --- !u!1001 &8463340128131868922
 PrefabInstance:
@@ -1307,10 +1387,44 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1974664214}
     m_Modifications:
+    - target: {fileID: 8463340127826956802, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_Text
+      value: 'Two groups match this order.
+
+        Press ''Enter/Return'' to dispatch both groups.
+
+        Press ''Space''clear only one.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463340127826956802, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463340127826956802, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463340127826956802, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463340127826956802, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8463340127826956812, guid: c418665f62d72964f997e178e9029c8a,
         type: 3}
       propertyPath: m_Name
       value: MultipleMatchesText
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463340127826956812, guid: c418665f62d72964f997e178e9029c8a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8463340127826956813, guid: c418665f62d72964f997e178e9029c8a,
         type: 3}

@@ -131,11 +131,10 @@ public class CrateMaster : MonoBehaviour
     public void PlaceCrate(int type, (int posX, int posY) pos)
     {
         GameObject newCrateGO = Instantiate(cratePrefab, new Vector3(pos.posX, pos.posY, 0), Quaternion.identity, crateHolder);
-        Crate newCrate = new Crate(pos.posX, pos.posY, master, type - 1); // TODO :: NEW CRATE TYPE
+        Crate newCrate = new Crate(pos.posX, pos.posY, master, type - 1);
         newCrate.SetUpGO(newCrateGO);
         crateList.Add(newCrate);
         groupMaster.AssignCrateToNewGroup(newCrate);
-        // TODO : trigger order re-check
     }
 
     // Pick a new color from the palette
