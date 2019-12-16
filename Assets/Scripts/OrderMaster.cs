@@ -24,7 +24,7 @@ public class OrderMaster : MonoBehaviour
     public Conductor master;
     [SerializeField] Transform orderHolder;
     [SerializeField] GameObject orderPrefab;
-    [SerializeField] Text confirmationText;
+    // [SerializeField] Text confirmationText;
 
     void Start()
     {
@@ -214,7 +214,7 @@ public class OrderMaster : MonoBehaviour
                     orderGO.matchDisplay[matchCount].GetComponent<Image>().color = master.crateMaster.paletteArray[groupColorIndex];
                     // update active match list
                     int matchToActivate = digitToUse - 1;
-                    if (digitToUse == -1)
+                    if (matchToActivate == -1)
                     {
                         matchToActivate = 9;
                     }
@@ -261,26 +261,31 @@ public class OrderMaster : MonoBehaviour
         // if the match is active
 
         // DISPATCH SEQUENCE
+
         // 00 COLLECT OBJECTS
         // find the order that has that index
         int orderIndex = orderMatchIndex / 2;
         Order orderForDispatch = orderList.ElementAt(orderIndex);
         // matching groups
         List<Group> groupsForDispatch = matches[orderForDispatch];
-        // crates to be dispatched
-        List<Crate> cratesForDispatch = groupsForDispatch[0].CrateList;
-        // group to color mapping
 
-        // check if more than 1 group would be dispatched
-        bool twoGroupsForDispatch = false;
-        if (groupsForDispatch.Count == 2)
+        // crates to be dispatched
+        List<Crate> cratesForDispatch = new List<Crate>();
+        foreach (Group group in groupsForDispatch)
         {
-            twoGroupsForDispatch = ConfirmTwoGroupDispatch(orderMatchIndex);
+            cratesForDispatch.AddRange(group.CrateList);
         }
 
+        // ALWAYS DISPATCH ALL GROUPS (otherwise a ton of new code would be required)
+
         // 01 DISSOLVE CONNECTIONS
-        master.crateMaster.RemoveColorMapping(groupsForDispatch[0]);
-        matches.Remove(orderForDispatch);
+        // group to color mapping
+        foreach (Group group in groupsForDispatch)
+        {
+            master.crateMaster.RemoveColorMapping(group);
+            matches.Remove(orderForDispatch);           
+        }
+
 
         // 02 REMOVE CRATES
         foreach (Crate crate in cratesForDispatch)
@@ -292,11 +297,19 @@ public class OrderMaster : MonoBehaviour
             // deregister object
             master.crateMaster.crateList.Remove(crate);
         }
+    
         // remove from group
-        groupsForDispatch[0].RemoveAllCrates();
+        foreach (Group group in groupsForDispatch)
+        {
+            group.RemoveAllCrates();
+        }
+    
         // 03 REMOVE GROUP
         // deregister group
-        master.groupMaster.GroupList().Remove(groupsForDispatch[0]);
+        foreach (Group group in groupsForDispatch)
+        {
+            master.groupMaster.GroupList().Remove(group);
+        }
         
         // 04 REMOVE ORDER
         // remove order GO
@@ -314,37 +327,6 @@ public class OrderMaster : MonoBehaviour
         return true;
     }
 
-    private bool ConfirmTwoGroupDispatch(int orderMatchIndex)
-    {
-        master.InMenu = true;
-        // enable dialog box
-        bool validInput = false;
-        bool result = false;
-        confirmationText.enabled = true;
-        string newText = "Two groups match this order.\nPress 'Enter/Return' to dispatch both groups.\nPress anything else to clear only one.";
-        confirmationText.text = newText;
-        // while (!validInput)
-        // {
-        // if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) // two orders
-        //     {
-        //         confirmationText.enabled = false;
-        //         validInput = true;
-        //         result = true;
-        //     }
-        //     else if (Input.GetKeyDown(KeyCode.Space)) // one order
-        //     {
-        //         confirmationText.enabled = false;
-        //         validInput = true;
-        //         result = false;
-        //     }
-        // }
-
-        // master.InMenu = false;
-
-        // TODO : Here - double group conformation
-
-        return result;
-    }
     public void IncreaseComplexity()
     {
         if (complexityLevel < 3)

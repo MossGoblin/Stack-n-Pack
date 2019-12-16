@@ -10,7 +10,7 @@ public class Conductor : MonoBehaviour
     int tempContentCounter = 1;
 
     // menu bool
-    public bool InMenu = false;
+    public bool gamePaused = false;
 
     // props and fields
     public int inputWidth;
@@ -28,6 +28,7 @@ public class Conductor : MonoBehaviour
     public CrateMaster crateMaster;
     public GroupMaster groupMaster;
     public OrderMaster orderMaster;
+    public UIMaster UIMaster;
     public int[] Rarity { get; private set; } = new int[] { 29, 24, 19, 14, 9, 5 };
 
     private void Start()
@@ -50,74 +51,78 @@ public class Conductor : MonoBehaviour
 
     private void HandleInput()
     {
-        if(InMenu)
+        if(!gamePaused)
         {
-            return;
-        }
+            bool dispatchTriggered = false;
 
-        bool dispatchTriggered = false;
-        // FIXME : To be deleted - debugging option only
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
-        {
-            // Test Place a Crate
-            LoadTestContent();
-        }
+            // FIXME : To be deleted - debugging option only
+            if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                // Test Place a Crate
+                LoadTestContent();
+            }
+            // FIXME : PAUSE MENU
+            if (Input.GetKeyDown(KeyCode.Escape)) // manually pause game
+            {
+                gamePaused = true;
+            }
 
-        // order dispatching here
-        int orderToDispatch = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
-        {
-            orderToDispatch = 0;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            orderToDispatch = 1;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            orderToDispatch = 2;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
-        {
-            orderToDispatch = 3;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
-        {
-            orderToDispatch = 4;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6))
-        {
-            orderToDispatch = 5;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7))
-        {
-            orderToDispatch = 6;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8))
-        {
-            orderToDispatch = 7;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha9) || Input.GetKeyDown(KeyCode.Keypad9))
-        {
-            orderToDispatch = 8;
-            dispatchTriggered = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha0) || Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            orderToDispatch = 9;
-            dispatchTriggered = true;
-        }
-        if (dispatchTriggered)
-        {
-            orderMaster.TryToDispatchOrder(orderToDispatch);
+            // order dispatching here
+            int orderToDispatch = 0;
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                orderToDispatch = 0;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                orderToDispatch = 1;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                orderToDispatch = 2;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                orderToDispatch = 3;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                orderToDispatch = 4;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6))
+            {
+                orderToDispatch = 5;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7))
+            {
+                orderToDispatch = 6;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8))
+            {
+                orderToDispatch = 7;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha9) || Input.GetKeyDown(KeyCode.Keypad9))
+            {
+                orderToDispatch = 8;
+                dispatchTriggered = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha0) || Input.GetKeyDown(KeyCode.Keypad0))
+            {
+                orderToDispatch = 9;
+                dispatchTriggered = true;
+            }
+            if (dispatchTriggered)
+            {
+                orderMaster.TryToDispatchOrder(orderToDispatch);
+            }
         }
     }
 

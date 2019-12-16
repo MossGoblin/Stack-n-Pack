@@ -38,46 +38,44 @@ public class PlayerMaster : MonoBehaviour
 
     private void HandleInput()
     {
-        if(master.InMenu)
+        if(!master.gamePaused)
         {
-            return;
-        }
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            clampsOpen = true;
-        }
-        else
-        {
-            clampsOpen = false;
-        }
-
-        (int xDX, int yDY) posD = (0, 0);
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            posD = (0, 1);
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            posD = (0, -1);
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            posD = (-1, 0);
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            posD = (1, 0);
-        }
-        if (posD.xDX != 0 || posD.yDY != 0)
-        {
-            MovePlayer(posD);
-        }
-
-        // picking up content from a factory
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            TryLoadCrate();
+            if (Input.GetKey(KeyCode.Space))
+            {
+                clampsOpen = true;
+            }
+            else
+            {
+                clampsOpen = false;
+            }
+    
+            (int xDX, int yDY) posD = (0, 0);
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                posD = (0, 1);
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                posD = (0, -1);
+            }
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                posD = (-1, 0);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                posD = (1, 0);
+            }
+            if (posD.xDX != 0 || posD.yDY != 0)
+            {
+                MovePlayer(posD);
+            }
+    
+            // picking up content from a factory
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                TryLoadCrate();
+            }
         }
     }
 
