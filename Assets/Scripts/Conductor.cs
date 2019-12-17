@@ -126,16 +126,9 @@ public class Conductor : MonoBehaviour
         }
     }
 
-    private void GenerateOrders()
-    {
-        Debug.Log("Orders to be generated");
-        // TODO :: TBD Issue orders
-    }
-
     private void Update()
     {
         ApplyTileHighlight();
-
         HandleInput();
     }
 

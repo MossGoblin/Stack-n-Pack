@@ -7,7 +7,7 @@ public class Order
 {
     // props
     public int[] ContentIndex { get; private set; }
-    private int complexity;
+    public int complexity { get; private set; }
     private int[] rarityGrid;
 
     // refs
@@ -30,4 +30,6 @@ public class Order
     {
         return orderGO;
     }
+
+
 }

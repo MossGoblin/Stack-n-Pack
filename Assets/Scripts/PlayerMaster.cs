@@ -13,8 +13,11 @@ public class PlayerMaster : MonoBehaviour
     Transform transform;
 
     // score/energy variables
-    public int totalZap = 0;
-    public int currentZap = 0;
+    [SerializeField] int[] zapBounds = new int[] {150, 300, 600}; 
+    int totalZap;
+    [SerializeField] public int currentZap = 100;
+    [SerializeField] int zapToPickUp = 1;
+    [SerializeField] int zapToPlace = 1;
 
     // refs
     public Conductor master;
@@ -24,6 +27,7 @@ public class PlayerMaster : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        totalZap = currentZap;
         Content = 0;
         transform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         crateMaster = master.crateMaster;
@@ -33,6 +37,12 @@ public class PlayerMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (currentZap <= 0)
+        {
+            // FIXME : Call a PopUp;
+            Debug.Log("No more ZAP!");
+            Application.Quit();
+        }
         HandleInput();
     }
 
@@ -112,17 +122,18 @@ public class PlayerMaster : MonoBehaviour
         bool positionViableForRelease = gridRef.WithinStorage(oldPos);
 
         // are we releasing crate?
-        if (clampsOpen && positionViableForRelease && Content != 0)
+        if (clampsOpen && positionViableForRelease && Content != 0 && currentZap >= zapToPlace)
         {
             // release crate:
             // create crate
             crateMaster.PlaceCrate(Content, oldPos);
             Content = 0;
             dropped = true;
+            LoseZap(zapToPlace);
         }
 
         // are we picking up a crate
-        if (Content == 0 && newContent != 0 && clampsOpen)
+        if (Content == 0 && newContent != 0 && clampsOpen && currentZap >= zapToPickUp)
         {
             // pick up crate
             // - get crate from position
@@ -135,6 +146,7 @@ public class PlayerMaster : MonoBehaviour
             master.groupMaster.RemoveCrateFromGroup(crateToBePickedUp);
             newContent = 0;
             pickedUp = true;
+            LoseZap(zapToPickUp);
         }
 
         // can we move
@@ -191,6 +203,32 @@ public class PlayerMaster : MonoBehaviour
         Content = workingFactory.Content;
         workingFactory.ReStock();
         return true;
+    }
+
+    public void GainZap(int zapGain)
+    {
+        totalZap += zapGain;
+        currentZap += zapGain;
+        if (currentZap >= 999)
+        {
+            master.UIMaster.PopUpWin();
+        }
+
+        if (totalZap > zapBounds[master.orderMaster.GetComplexity()- 1])
+        {
+            master.orderMaster.IncreaseComplexity();
+        }
+        Debug.Log($"Gained {zapGain} zap");
+    }
+
+    private void LoseZap(int zapLoss)
+    {
+        currentZap -= zapLoss;
+        if (currentZap <= 0)
+        {
+            master.UIMaster.PopUpLose();
+        }
+        Debug.Log($"Lost {zapLoss} zap");
     }
 
 }

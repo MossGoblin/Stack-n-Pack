@@ -8,15 +8,18 @@ public class UIMaster : MonoBehaviour
 {
     // refs
     [SerializeField] private Conductor master;
-    [SerializeField] private GameObject popupText;
-    [SerializeField] private TextMeshPro popupTextElement;
+    [SerializeField] private GameObject popup;
+    [SerializeField] private TextMeshProUGUI popupText;
+
+    private const string pauseText = "- GAME PAUSED -\nEnter : continue\nQ : Quit";
+    private const string winText = "You got MAX!\nYou WIN!";
+    private const string noZapText = "You are out of ZAP!";
 
     // TextMesh popupText;
     // Start is called before the first frame update
     void Start()
     {
-        popupText.SetActive(false);
-        // string popupText = popupTextElement.GetComponent<TMPro.TextMeshProUGUI>().text;
+        popup.SetActive(false);
     }
 
     // Update is called once per frame
@@ -25,11 +28,13 @@ public class UIMaster : MonoBehaviour
 
         if (master.gamePaused)
         {
-            popupText.SetActive(true);
+            popup.SetActive(true);
+            popupText.text = pauseText;
+            // popupText.GetComponent<TMPro.TextMeshProUGUI>().text = pauseText;
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                popupText.SetActive(false);
+                popup.SetActive(false);
                 master.gamePaused = false;
             }
             if (Input.GetKeyDown(KeyCode.Q))
@@ -38,5 +43,27 @@ public class UIMaster : MonoBehaviour
                 Application.Quit();
             }
         }   
+    }
+
+    public void PopUpLose()
+    {
+        popup.SetActive(true);
+        popupText.text = noZapText;
+        if (Input.anyKeyDown)
+            {
+                Debug.Log("End Game - Lose");
+                Application.Quit();
+            }
+    }
+
+    public void PopUpWin()
+    {
+        popup.SetActive(true);
+        popupText.text = winText;
+        if (Input.anyKeyDown)
+            {
+                Debug.Log("End Game - Win");
+                Application.Quit();
+            }
     }
 }

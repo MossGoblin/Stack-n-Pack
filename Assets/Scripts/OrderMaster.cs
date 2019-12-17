@@ -269,6 +269,24 @@ public class OrderMaster : MonoBehaviour
         // matching groups
         List<Group> groupsForDispatch = matches[orderForDispatch];
 
+        // INTERMEDIATE - calculate zap gain
+        // calculate singular zap value - for one group
+        int zapGain = 0;
+        for (int count = 0; count < 6; count++)
+        {
+            zapGain += orderForDispatch.ContentIndex[count] * (count+1);
+        }
+        // multiply for double group
+        if (groupsForDispatch.Count > 1)
+        {
+            zapGain = Mathf.RoundToInt(zapGain * 2.5f);
+        }
+        // factor in the complexity of the order
+        zapGain += Mathf.RoundToInt(zapGain * orderForDispatch.complexity * 0.2f);
+
+        // send zap to player
+        master.playerMaster.GainZap(zapGain);
+
         // crates to be dispatched
         List<Crate> cratesForDispatch = new List<Crate>();
         foreach (Group group in groupsForDispatch)
@@ -327,11 +345,17 @@ public class OrderMaster : MonoBehaviour
         return true;
     }
 
+    public int GetComplexity()
+    {
+        return complexityLevel;
+    }
+    
     public void IncreaseComplexity()
     {
         if (complexityLevel < 3)
         {
             complexityLevel++;
         }
+        Debug.Log($"Complexity up to {complexityLevel}");
     }
 }
