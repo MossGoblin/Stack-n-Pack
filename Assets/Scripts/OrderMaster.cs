@@ -247,7 +247,6 @@ public class OrderMaster : MonoBehaviour
             matches.Remove(order);
         }
 
-        // TODO : trigger match update ?? Maybe ??
     }
 
     public bool TryToDispatchOrder(int orderMatchIndex)
@@ -282,7 +281,10 @@ public class OrderMaster : MonoBehaviour
             zapGain = Mathf.RoundToInt(zapGain * 2.5f);
         }
         // factor in the complexity of the order
-        zapGain += Mathf.RoundToInt(zapGain * orderForDispatch.complexity * 0.2f);
+        // zapGain += Mathf.RoundToInt(zapGain * orderForDispatch.complexity * 0.2f);
+        // more aggresive complexity factor
+        zapGain *= zapGain * orderForDispatch.complexity;
+        
 
         // send zap to player
         master.playerMaster.GainZap(zapGain);

@@ -59,9 +59,8 @@ public class Conductor : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 // Test Place a Crate
-                LoadTestContent();
+                // LoadTestContent();
             }
-            // FIXME : PAUSE MENU
             if (Input.GetKeyDown(KeyCode.Escape)) // manually pause game
             {
                 gamePaused = true;
@@ -147,7 +146,6 @@ public class Conductor : MonoBehaviour
             }
             else
             {
-                // FIXME :: Fix default tile color
                 tile.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }

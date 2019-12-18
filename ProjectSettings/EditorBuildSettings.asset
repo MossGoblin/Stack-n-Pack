@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/ReStage.unity
+    guid: 2205f1fa6a914ba409ac4bebf5130c03
   m_configObjects: {}

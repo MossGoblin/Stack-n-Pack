@@ -39,9 +39,9 @@ public class PlayerMaster : MonoBehaviour
     {
         if (currentZap <= 0)
         {
-            // FIXME : Call a PopUp;
+            master.gamePaused = true;
+            master.UIMaster.gameLoss = true;
             Debug.Log("No more ZAP!");
-            Application.Quit();
         }
         HandleInput();
     }
@@ -171,7 +171,6 @@ public class PlayerMaster : MonoBehaviour
             master.groupMaster.RecheckAllGroupsContent();
         }
 
-        // TODO ? Temp return
         return true;
     }
 
@@ -211,7 +210,8 @@ public class PlayerMaster : MonoBehaviour
         currentZap += zapGain;
         if (currentZap >= 999)
         {
-            master.UIMaster.PopUpWin();
+            master.UIMaster.gameWin = true;
+            master.gamePaused = true;
         }
 
         if (totalZap > zapBounds[master.orderMaster.GetComplexity()- 1])
@@ -226,7 +226,8 @@ public class PlayerMaster : MonoBehaviour
         currentZap -= zapLoss;
         if (currentZap <= 0)
         {
-            master.UIMaster.PopUpLose();
+            master.UIMaster.gameLoss = true;
+            master.gamePaused = true;
         }
         Debug.Log($"Lost {zapLoss} zap");
     }

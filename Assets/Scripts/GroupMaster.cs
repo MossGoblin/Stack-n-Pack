@@ -148,7 +148,6 @@ public class GroupMaster : MonoBehaviour
                 }
             break;
         }
-        // TODO ?? should ADD update underlying tile graphics
     }
 
     public void RemoveCrateFromGroup(Crate crate)
@@ -190,7 +189,6 @@ public class GroupMaster : MonoBehaviour
         // groupList.Remove(group);
         // master.orderMaster.RemoveGroupMatches(group);
 
-        // TODO : trigger order re-check
     }
 
     private void ProcessStack(Stack<Crate> stack, List<Crate> checkList, List<Crate> updateList, Group newGroup)
