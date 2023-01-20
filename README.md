@@ -50,6 +50,8 @@ A simple tile arrangement game
 * Fulfilling an order earns energy points
 
 * Matching 1 order with multiple groups will allow all of the matching groups to be dispatched when the order is completed, but with diminishing return (probably halving the reward with each repetition)
+  
+  * NOTE: Not sure if that was implemented
 
 * Picking up crates, placing crates and moving while having a loaded crate costs the player energy points
 
