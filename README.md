@@ -20,11 +20,13 @@ A simple tile arrangement game
 
 * Reduce the size of the grid, so that the limited space can play its role
 
+* Fix the instructions - add full information about crate types; better explanation of movement and crate handling (move bulk info in a pop-up or smth)
+
 ## OUTLINE
 
 * The player starts with an empty grid
 
-* Player is represented by a robot, the size of a grid cell
+* The player is represented by a robot, the size of a grid cell
 
 * Using the arrow keys, the player can move the robot around within the grid
 
@@ -42,7 +44,7 @@ A simple tile arrangement game
 
 * The color of a factory shows the crate that can be picked up
 
-* In the beginning of the game and each time the player picks a crate from a factory, the factory generates new random crate (in accordance with the rarity of the types of crates)
+* Each time the player picks a crate from a factory, the factory generates new random crate (in accordance with the rarity of the types of crates)
 
 * Placing the crates in the grid groups them by orthogonal adjacency
 
