@@ -8,8 +8,17 @@ A simple tile arrangement game
 
 * There is a change in the game logic I would implement right away and (of course) the game needs rebalancing (grid size vs resources and such), but let's say that it's a working prototype.
 
+* I don't remember if the win condition is implemented...
+
 * P.S. The idiotic UI with almost unreadable text? Blame on the 'prototype' word.
 
+## TODO
+
+* Continuous movement when an arrow key is held down
+
+* Add battery that limits the energy the player has at his disposal. When an order is fulfilled, the battery is filled first, then the remainder goes towards the win condition
+
+* Reduce the size of the grid, so that the limited space can play its role
 
 ## OUTLINE
 
@@ -53,7 +62,7 @@ A simple tile arrangement game
   
   * NOTE: Not sure if that was implemented
 
-* Picking up crates, placing crates and moving while having a loaded crate costs the player energy points
+* Picking up and placing crates costs the player energy points
 
 * The game tracks both the current energy points of the player as well as the total earned amount of energy points
 
